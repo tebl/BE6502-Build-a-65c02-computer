@@ -1,0 +1,19 @@
+# For PCBs designed using KiCAD: http://www.kicad-pcb.org/
+
+# Temporary files
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.zip
+
+# Netlist files (exported from Eeschema)
+*.net
+
+# Autorouter files (exported from Pcbnew)
+.dsn
+
+documentation/simulation
+Resources/
+
+BE6502 SBC/export/BE6502 SBC.zip
