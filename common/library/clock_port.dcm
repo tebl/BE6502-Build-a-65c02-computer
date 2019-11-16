@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP CLOCK_PORT
+D Generic connector, single row, 01x04
+K connector
+F ~
+$ENDCMP
+#
+#End Doc Library
