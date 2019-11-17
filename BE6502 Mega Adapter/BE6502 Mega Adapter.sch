@@ -232,7 +232,7 @@ F 3 "" H 12750 4850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 15400 11075 0    60   ~ 0
-B
+A
 Wire Bus Line
 	12625 950  6425 950 
 Wire Wire Line
@@ -320,8 +320,8 @@ Wire Bus Line
 	12625 5875 12950 5875
 Wire Wire Line
 	12750 4775 12750 4850
-Text Notes 11825 10250 0    60   ~ 0
-...
+Text Notes 11825 10350 0    60   ~ 0
+The video series uses an Arduino Mega 2560 to monitor the bus signals used by the\ncomputer, this way code can be stepped through (at a low frequency) without the\nuse of a logic analyzer. This module acts as an Arduino shield that maps out all the\nsignals as well as doubling up as a 2/3 slot backplane for your own expansions.
 $Comp
 L Arduino_Mega2560_Shield XA1
 U 1 1 5DD08E2A
