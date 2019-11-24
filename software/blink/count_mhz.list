@@ -1,0 +1,163 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 65c02 overlay version 3.01.02
+
+Pass two
+0000-                  1       * ---------------------------------------------------------
+0000-                  2       * Count up in binary with a bunch of nops so that we can
+0000-                  3       * actually read the LEDs (instead of showing up as all on).
+0000-                  4
+0000-                  5               .CR     65c02
+0000-                  6               .TF     count_mhz.hex,INT
+0000-                  7
+8000-                  8               .OR     $8000
+8000-                  9               .TA     $0000
+8000-                 10
+6000-                 11       ORB     .EQ     $6000   VIA Port B data
+6001-                 12       ORA     .EQ     $6001   VIA Port B data
+6002-                 13       DDRB    .EQ     $6002   VIA DDRB
+6003-                 14       DDRA    .EQ     $6003   VIA DDRA
+8000-                 15
+8000-                 16
+8000-A9 FF            17 (  2) START   LDA     #$FF
+8002-8D 02 60         18 (  4)         STA     DDRB
+8005-A9 00            19 (  2)         LDA     #$00
+8007-                 20
+8007-8D 00 60         21 (  4) LOOP    STA     ORB     SET LEDS
+800A-A0 64            22 (  2)         LDY     #100    WAIT SOME TIME
+800C-EA               23 (  2) WAIT    NOP
+800D-EA               24 (  2)         NOP
+800E-EA               25 (  2)         NOP
+800F-EA               26 (  2)         NOP
+8010-EA               27 (  2)         NOP
+8011-EA               28 (  2)         NOP
+8012-EA               29 (  2)         NOP
+8013-EA               30 (  2)         NOP
+8014-EA               31 (  2)         NOP
+8015-EA               32 (  2)         NOP
+8016-EA               33 (  2)         NOP
+8017-EA               34 (  2)         NOP
+8018-EA               35 (  2)         NOP
+8019-EA               36 (  2)         NOP
+801A-EA               37 (  2)         NOP
+801B-EA               38 (  2)         NOP
+801C-EA               39 (  2)         NOP
+801D-EA               40 (  2)         NOP
+801E-EA               41 (  2)         NOP
+801F-EA               42 (  2)         NOP
+8020-EA               43 (  2)         NOP
+8021-EA               44 (  2)         NOP
+8022-EA               45 (  2)         NOP
+8023-EA               46 (  2)         NOP
+8024-EA               47 (  2)         NOP
+8025-EA               48 (  2)         NOP
+8026-EA               49 (  2)         NOP
+8027-EA               50 (  2)         NOP
+8028-EA               51 (  2)         NOP
+8029-EA               52 (  2)         NOP
+802A-EA               53 (  2)         NOP
+802B-EA               54 (  2)         NOP
+802C-EA               55 (  2)         NOP
+802D-EA               56 (  2)         NOP
+802E-EA               57 (  2)         NOP
+802F-EA               58 (  2)         NOP
+8030-EA               59 (  2)         NOP
+8031-EA               60 (  2)         NOP
+8032-EA               61 (  2)         NOP
+8033-EA               62 (  2)         NOP
+8034-EA               63 (  2)         NOP
+8035-EA               64 (  2)         NOP
+8036-EA               65 (  2)         NOP
+8037-EA               66 (  2)         NOP
+8038-EA               67 (  2)         NOP
+8039-EA               68 (  2)         NOP
+803A-EA               69 (  2)         NOP
+803B-EA               70 (  2)         NOP
+803C-EA               71 (  2)         NOP
+803D-EA               72 (  2)         NOP
+803E-EA               73 (  2)         NOP
+803F-EA               74 (  2)         NOP
+8040-EA               75 (  2)         NOP
+8041-EA               76 (  2)         NOP
+8042-EA               77 (  2)         NOP
+8043-EA               78 (  2)         NOP
+8044-EA               79 (  2)         NOP
+8045-EA               80 (  2)         NOP
+8046-EA               81 (  2)         NOP
+8047-EA               82 (  2)         NOP
+8048-EA               83 (  2)         NOP
+8049-EA               84 (  2)         NOP
+804A-EA               85 (  2)         NOP
+804B-EA               86 (  2)         NOP
+804C-EA               87 (  2)         NOP
+804D-EA               88 (  2)         NOP
+804E-EA               89 (  2)         NOP
+804F-EA               90 (  2)         NOP
+8050-EA               91 (  2)         NOP
+8051-EA               92 (  2)         NOP
+8052-EA               93 (  2)         NOP
+8053-EA               94 (  2)         NOP
+8054-EA               95 (  2)         NOP
+8055-EA               96 (  2)         NOP
+8056-EA               97 (  2)         NOP
+8057-EA               98 (  2)         NOP
+8058-EA               99 (  2)         NOP
+8059-EA              100 (  2)         NOP
+805A-EA              101 (  2)         NOP
+805B-EA              102 (  2)         NOP
+805C-EA              103 (  2)         NOP
+805D-EA              104 (  2)         NOP
+805E-EA              105 (  2)         NOP
+805F-EA              106 (  2)         NOP
+8060-EA              107 (  2)         NOP
+8061-EA              108 (  2)         NOP
+8062-EA              109 (  2)         NOP
+8063-EA              110 (  2)         NOP
+8064-EA              111 (  2)         NOP
+8065-EA              112 (  2)         NOP
+8066-EA              113 (  2)         NOP
+8067-EA              114 (  2)         NOP
+8068-EA              115 (  2)         NOP
+8069-EA              116 (  2)         NOP
+806A-EA              117 (  2)         NOP
+806B-EA              118 (  2)         NOP
+806C-EA              119 (  2)         NOP
+806D-EA              120 (  2)         NOP
+806E-EA              121 (  2)         NOP
+806F-EA              122 (  2)         NOP
+8070-EA              123 (  2)         NOP
+8071-EA              124 (  2)         NOP
+8072-EA              125 (  2)         NOP
+8073-EA              126 (  2)         NOP
+8074-EA              127 (  2)         NOP
+8075-EA              128 (  2)         NOP
+8076-EA              129 (  2)         NOP
+8077-EA              130 (  2)         NOP
+8078-EA              131 (  2)         NOP
+8079-EA              132 (  2)         NOP
+807A-EA              133 (  2)         NOP
+807B-EA              134 (  2)         NOP
+807C-EA              135 (  2)         NOP
+807D-EA              136 (  2)         NOP
+807E-EA              137 (  2)         NOP
+807F-88              138 (  2)         DEY
+8080-10 8A           139 (2**)         BPL     WAIT    STILL WAITING?
+8082-1A              140 (  2) DONE    INC             NEXT DIGIT
+8083-4C 07 80        141 (  3)         JMP     LOOP
+8086-                142
+8086-                143       * ---------------------------------------------------------
+8086-                144       * STORE VECTORS AT END OF EPROM.
+FFFA-                145               .OR     $FFFA
+FFFA-                146               .TA     $7FFA
+FFFA-00 80           147               .DA     START   NMI VECTOR
+FFFC-00 80           148               .DA     START   RESET VECTOR
+FFFE-00 80           149               .DA     START   IRQ VECTOR
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+

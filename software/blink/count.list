@@ -1,0 +1,45 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 65c02 overlay version 3.01.02
+
+Pass two
+0000-                  1       * ---------------------------------------------------------
+0000-                  2       * Count up in binary, this has no delays built in so you'd
+0000-                  3       * need to use the clock module in order to see the changes.
+0000-                  4
+0000-                  5
+0000-                  6               .CR     65C02
+0000-                  7               .TF     count.hex,INT
+0000-                  8
+8000-                  9               .OR     $8000
+8000-                 10               .TA     $0000
+8000-                 11
+6000-                 12       ORB     .EQ     $6000   VIA Port B data
+6001-                 13       ORA     .EQ     $6001   VIA Port B data
+6002-                 14       DDRB    .EQ     $6002   VIA DDRB
+6003-                 15       DDRA    .EQ     $6003   VIA DDRA
+8000-                 16
+8000-                 17
+8000-A9 FF            18 (  2) START   LDA     #$FF
+8002-8D 02 60         19 (  4)         STA     DDRB
+8005-A9 00            20 (  2)         LDA     #00
+8007-8D 00 60         21 (  4) LOOP    STA     ORB
+800A-1A               22 (  2)         INC
+800B-4C 07 80         23 (  3)         JMP     LOOP
+800E-                 24
+800E-                 25       * ---------------------------------------------------------
+800E-                 26       * STORE VECTORS AT END OF EPROM.
+FFFA-                 27               .OR     $FFFA
+FFFA-                 28               .TA     $7FFA
+FFFA-00 80            29               .DA     START   NMI VECTOR
+FFFC-00 80            30               .DA     START   RESET VECTOR
+FFFE-00 80            31               .DA     START   IRQ VECTOR
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+
