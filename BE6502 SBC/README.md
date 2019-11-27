@@ -38,6 +38,6 @@ Some vendors will have the same ICs in different form factors, the ones you want
 | U6           | RC1602A, 16x2 character LCD           |     1 |
 | SW1-SW6      | Momentary push button                 |     6 |
 | X1           | 1.000Mhz TTL Oscillator, (DIP 14)     |     1 |
-|              | Jumpers for settings (CAP headers)    |     2 |
+|              | Jumpers for settings (CAP headers)    |     3 |
 
 When constructing the board I recommend using 60/40 solder as the lead-free is more trouble than it's worth for hobby use, take your time with it and try to build up the board starting with the lowest components before moving on to the larger pieces. The LCD will be mounted on top of other components, so check that nothing shorts on the underside and unless you're 100% sure about the construction and my design - install some female header pins on it so that you can easily remove it while troubleshooting the circuit underneath!
