@@ -12,7 +12,7 @@ As you can see from the big shiny thing, I've also got the 1 Mhz oscillator inst
 
 ![1 Mhz](https://github.com/tebl/BE6502/raw/master/BE6502%20SBC/gallery/2019-11-27%2020.50.17.jpg)
 
-I did however have some issues running the CPU reliably at this speed, this is due to the reset circuit specified not being suitable for use at anything other than very low speeds. While we're probably waiting for part 4 of the video series to fix this issue, you can build one yourself on a breadboard with just about the same parts seen earlier. I'm using a somewhat simplified version of the one at [RC6502 Reset Circuit](https://github.com/tebl/RC6502-Apple-1-Replica/tree/master/RC6502%20Reset%20Circuit) by leaving out the oscillator, and we've already got one, and the 74LS74 bits. For masters of the Commodore 64 the circuit will seem familiar, this is because it's the one originally used on its boards!
+I did however have some issues running the CPU reliably at this speed, this is due to the reset circuit specified not being suitable for use at anything other than very low speeds. While we're probably waiting for part 4 of the video series to fix this issue, you can build one yourself on a breadboard with just about the same parts seen earlier. I'm using a somewhat simplified version of the one at [RC6502 Reset Circuit](https://github.com/tebl/RC6502-Apple-1-Replica/tree/master/RC6502%20Reset%20Circuit) by leaving out the oscillator, we've already got one, and the 74LS74 bits. For masters of the Commodore 64 the circuit will seem familiar, this is because it's the one originally used on its boards!
 
 ## Jumpers
 | Reference | Position | Description                                        |
