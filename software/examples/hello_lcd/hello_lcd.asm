@@ -14,10 +14,10 @@ DDRA    .EQ     $6003           VIA DDRA
 
 MESSAGE .AS     /   BE6502 SBC                           github.com\/tebl/,#$00
 
-INITVIA LDA     #%11111111
-        STA     DDRB
-        LDA     #%11100000
-        STA     DDRA
+INITVIA LDA     #%11111111      PORT B. DATA SIGNALS USED WITH
+        STA     DDRB            LCD DISPLAY ONLY, ALSO LEDs.
+        LDA     #%11100000      PORT A. PA0-PA4 INPUT FOR SWITCHES,
+        STA     DDRA            PA5-PA7 USED FOR LCD CONTROL SIGNALS.
         RTS
 
 INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
@@ -86,6 +86,6 @@ DONE    NOP
 * STORE VECTORS AT END OF EPROM.
         .OR     $FFFA
         .TA     $7FFA
-        .DA     START   NMI VECTOR
-        .DA     START   RESET VECTOR
-        .DA     START   IRQ VECTOR
+        .DA     START           NMI VECTOR
+        .DA     START           RESET VECTOR
+        .DA     START           IRQ VECTOR

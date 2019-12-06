@@ -1,0 +1,6 @@
+# Hello LCD
+The BE6502 can be used with most common HD44780-compatible parralell LCD displays, these are commonly listed as LCD 2004 (20 characters wide, 4 lines) or LCD 1602 (16 characters wide, 2 lines). The footprint on the PCB as well as the examples in this folder have been developed for the latter of the displays, the LCD 1602. The former and physically larger display will also work without any changes to the code, but you'll only see two of the lines being used.
+
+I found the page [elm-chan.org/docs/lcd/hd44780_e.html](http://elm-chan.org/docs/lcd/hd44780_e.html) to be very helpful when developing the code for the example code found in this directory. One of the things that initially threw me when working on it is that the display physically has a line lenght of 16-characters, but logically it has a width of 20-characters so if you're outputting text directly to it you'll see some of hidden between the lines. This page also shows the steps needed to properly initialize the display from an unknown state at powering up the computer.
+
+The code does not include the needed delays needed to allow the display enough time to respond during initial power-up, it actually needs something like 160ms between each command. Therefore it should be run using the slow clock module.
