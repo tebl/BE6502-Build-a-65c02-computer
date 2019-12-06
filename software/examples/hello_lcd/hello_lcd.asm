@@ -12,8 +12,7 @@ ORA     .EQ     $6001           VIA Port A data
 DDRB    .EQ     $6002           VIA DDRB
 DDRA    .EQ     $6003           VIA DDRA
 
-MSG1    .AS     /BE6502/,#$00
-MSG2    .AS     /HELLO LCD/,#$00
+MESSAGE .AS     /   BE6502 SBC                           github.com\/tebl/,#$00
 
 INITVIA LDA     #%11111111
         STA     DDRB
@@ -74,10 +73,10 @@ START   JSR     INITVIA         INITIALIZE VIA
         JSR     INITLCD         INITIALIZE LCD
         
 HELLO   LDX     #$00            CLEAR X
-NEXTCHR LDA     MSG1,X          LOAD NEXT CHARACTER
+NEXTCHR LDA     MESSAGE,X       LOAD NEXT CHARACTER
         CMP     #$00            END OF STRING?
         BEQ     DONE
-        JSR	    LCD_CHR         OUTPUT CHARACTER
+        JSR     LCD_CHR         OUTPUT CHARACTER
         INX
         JMP     NEXTCHR
 DONE    NOP

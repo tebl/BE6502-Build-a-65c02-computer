@@ -22,87 +22,96 @@ Pass two
 6002-                 12       DDRB    .EQ     $6002           VIA DDRB
 6003-                 13       DDRA    .EQ     $6003           VIA DDRA
 8000-                 14
-8000-42 45 36 35 
-     30 32 00         15       MSG1    .AS     /BE6502/,#$00
-8007-48 45 4C 4C 
-     4F 20 4C 43 
-     44 00            16       MSG2    .AS     /HELLO LCD/,#$00
-8011-                 17
-8011-A9 FF            18 (  2) INITVIA LDA     #%11111111
-8013-8D 02 60         19 (  4)         STA     DDRB
-8016-A9 E0            20 (  2)         LDA     #%11100000
-8018-8D 03 60         21 (  4)         STA     DDRA
-801B-60               22 (  6)         RTS
-801C-                 23
-801C-A9 30            24 (  2) INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
-801E-20 52 80         25 (  6)         JSR     LCD_CMD
-8021-20 78 80         26 (  6)         JSR     WAITLCD
-8024-                 27
-8024-A9 30            28 (  2)         LDA     #%00110000
-8026-20 52 80         29 (  6)         JSR     LCD_CMD
-8029-20 78 80         30 (  6)         JSR     WAITLCD
-802C-                 31
-802C-A9 30            32 (  2)         LDA     #%00110000
-802E-20 52 80         33 (  6)         JSR     LCD_CMD
-8031-20 78 80         34 (  6)         JSR     WAITLCD
-8034-                 35
-8034-A9 38            36 (  2)         LDA     #%00111000      FUNCTION SET (8-BIT TRANSFER)
-8036-20 52 80         37 (  6)         JSR     LCD_CMD
-8039-20 78 80         38 (  6)         JSR     WAITLCD
-803C-                 39
-803C-A9 0D            40 (  2)         LDA     #%00001101      DISPLAY ON, CURSOR EN.
-803E-20 52 80         41 (  6)         JSR     LCD_CMD
-8041-20 78 80         42 (  6)         JSR     WAITLCD
-8044-                 43
-8044-A9 01            44 (  2)         LDA     #%00000001      CLEAR DISPLAY
-8046-20 52 80         45 (  6)         JSR     LCD_CMD
-8049-20 78 80         46 (  6)         JSR     WAITLCD
-804C-                 47
-804C-A9 06            48 (  2)         LDA     #%00000110      SET ENTRY MODE
-804E-20 52 80         49 (  6)         JSR     LCD_CMD
-8051-60               50 (  6)         RTS
-8052-                 51
-8052-8D 00 60         52 (  4) LCD_CMD STA     ORB             DATA IS IN ACCUMULATOR
-8055-A9 80            53 (  2)         LDA     #%10000000      E=H R/W=L RS=L
-8057-8D 01 60         54 (  4)         STA     ORA
-805A-A9 00            55 (  2)         LDA     #%00000000      E=L PULSE CLOCK LOW
-805C-8D 01 60         56 (  4)         STA     ORA
-805F-A9 80            57 (  2)         LDA     #%10000000      E=H
-8061-8D 01 60         58 (  4)         STA     ORA
-8064-60               59 (  6)         RTS
-8065-                 60
-8065-8D 00 60         61 (  4) LCD_CHR STA     ORB             DATA IS IN ACCUMULATOR
-8068-A9 A0            62 (  2)         LDA     #%10100000      E=H R/W=L RS=H
-806A-8D 01 60         63 (  4)         STA     ORA
-806D-A9 20            64 (  2)         LDA     #%00100000      E=L PULSE CLOCK LOW
-806F-8D 01 60         65 (  4)         STA     ORA
-8072-A9 A4            66 (  2)         LDA     #%10100100      E=H
-8074-8D 01 60         67 (  4)         STA     ORA
-8077-60               68 (  6)         RTS
-8078-                 69
-8078-EA               70 (  2) WAITLCD NOP                     PLACEHOLDER
-8079-60               71 (  6)         RTS
-807A-                 72
-807A-20 11 80         73 (  6) START   JSR     INITVIA         INITIALIZE VIA
-807D-20 1C 80         74 (  6)         JSR     INITLCD         INITIALIZE LCD
-8080-                 75
-8080-A2 00            76 (  2) HELLO   LDX     #$00            CLEAR X
-8082-BD 00 80         77 ( 4*) NEXTCHR LDA     MSG1,X          LOAD NEXT CHARACTER
-8085-C9 00            78 (  2)         CMP     #$00            END OF STRING?
-8087-F0 07            79 (2**)         BEQ     DONE
-8089-20 65 80         80 (  6)         JSR         LCD_CHR         OUTPUT CHARACTER
-808C-E8               81 (  2)         INX
-808D-4C 82 80         82 (  3)         JMP     NEXTCHR
-8090-EA               83 (  2) DONE    NOP
-8091-4C 90 80         84 (  3)         JMP     DONE
-8094-                 85
-8094-                 86       * ---------------------------------------------------------
-8094-                 87       * STORE VECTORS AT END OF EPROM.
-FFFA-                 88               .OR     $FFFA
-FFFA-                 89               .TA     $7FFA
-FFFA-7A 80            90               .DA     START   NMI VECTOR
-FFFC-7A 80            91               .DA     START   RESET VECTOR
-FFFE-7A 80            92               .DA     START   IRQ VECTOR
+8000-20 20 20 42 
+     45 36 35 30 
+     32 20 53 42 
+     43 20 20 20 
+     20 20 20 20 
+     20 20 20 20 
+     20 20 20 20 
+     20 20 20 20 
+     20 20 20 20 
+     20 20 20 20 
+     67 69 74 68 
+     75 62 2E 63 
+     6F 6D 2F 74 
+     65 62 6C 00      15       MESSAGE .AS     /   BE6502 SBC                           github.com\/tebl/,#$00
+8038-                 16
+8038-A9 FF            17 (  2) INITVIA LDA     #%11111111
+803A-8D 02 60         18 (  4)         STA     DDRB
+803D-A9 E0            19 (  2)         LDA     #%11100000
+803F-8D 03 60         20 (  4)         STA     DDRA
+8042-60               21 (  6)         RTS
+8043-                 22
+8043-A9 30            23 (  2) INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
+8045-20 79 80         24 (  6)         JSR     LCD_CMD
+8048-20 9F 80         25 (  6)         JSR     WAITLCD
+804B-                 26
+804B-A9 30            27 (  2)         LDA     #%00110000
+804D-20 79 80         28 (  6)         JSR     LCD_CMD
+8050-20 9F 80         29 (  6)         JSR     WAITLCD
+8053-                 30
+8053-A9 30            31 (  2)         LDA     #%00110000
+8055-20 79 80         32 (  6)         JSR     LCD_CMD
+8058-20 9F 80         33 (  6)         JSR     WAITLCD
+805B-                 34
+805B-A9 38            35 (  2)         LDA     #%00111000      FUNCTION SET (8-BIT TRANSFER)
+805D-20 79 80         36 (  6)         JSR     LCD_CMD
+8060-20 9F 80         37 (  6)         JSR     WAITLCD
+8063-                 38
+8063-A9 0D            39 (  2)         LDA     #%00001101      DISPLAY ON, CURSOR EN.
+8065-20 79 80         40 (  6)         JSR     LCD_CMD
+8068-20 9F 80         41 (  6)         JSR     WAITLCD
+806B-                 42
+806B-A9 01            43 (  2)         LDA     #%00000001      CLEAR DISPLAY
+806D-20 79 80         44 (  6)         JSR     LCD_CMD
+8070-20 9F 80         45 (  6)         JSR     WAITLCD
+8073-                 46
+8073-A9 06            47 (  2)         LDA     #%00000110      SET ENTRY MODE
+8075-20 79 80         48 (  6)         JSR     LCD_CMD
+8078-60               49 (  6)         RTS
+8079-                 50
+8079-8D 00 60         51 (  4) LCD_CMD STA     ORB             DATA IS IN ACCUMULATOR
+807C-A9 80            52 (  2)         LDA     #%10000000      E=H R/W=L RS=L
+807E-8D 01 60         53 (  4)         STA     ORA
+8081-A9 00            54 (  2)         LDA     #%00000000      E=L PULSE CLOCK LOW
+8083-8D 01 60         55 (  4)         STA     ORA
+8086-A9 80            56 (  2)         LDA     #%10000000      E=H
+8088-8D 01 60         57 (  4)         STA     ORA
+808B-60               58 (  6)         RTS
+808C-                 59
+808C-8D 00 60         60 (  4) LCD_CHR STA     ORB             DATA IS IN ACCUMULATOR
+808F-A9 A0            61 (  2)         LDA     #%10100000      E=H R/W=L RS=H
+8091-8D 01 60         62 (  4)         STA     ORA
+8094-A9 20            63 (  2)         LDA     #%00100000      E=L PULSE CLOCK LOW
+8096-8D 01 60         64 (  4)         STA     ORA
+8099-A9 A4            65 (  2)         LDA     #%10100100      E=H
+809B-8D 01 60         66 (  4)         STA     ORA
+809E-60               67 (  6)         RTS
+809F-                 68
+809F-EA               69 (  2) WAITLCD NOP                     PLACEHOLDER
+80A0-60               70 (  6)         RTS
+80A1-                 71
+80A1-20 38 80         72 (  6) START   JSR     INITVIA         INITIALIZE VIA
+80A4-20 43 80         73 (  6)         JSR     INITLCD         INITIALIZE LCD
+80A7-                 74
+80A7-A2 00            75 (  2) HELLO   LDX     #$00            CLEAR X
+80A9-BD 00 80         76 ( 4*) NEXTCHR LDA     MESSAGE,X       LOAD NEXT CHARACTER
+80AC-C9 00            77 (  2)         CMP     #$00            END OF STRING?
+80AE-F0 07            78 (2**)         BEQ     DONE
+80B0-20 8C 80         79 (  6)         JSR     LCD_CHR         OUTPUT CHARACTER
+80B3-E8               80 (  2)         INX
+80B4-4C A9 80         81 (  3)         JMP     NEXTCHR
+80B7-EA               82 (  2) DONE    NOP
+80B8-4C B7 80         83 (  3)         JMP     DONE
+80BB-                 84
+80BB-                 85       * ---------------------------------------------------------
+80BB-                 86       * STORE VECTORS AT END OF EPROM.
+FFFA-                 87               .OR     $FFFA
+FFFA-                 88               .TA     $7FFA
+FFFA-A1 80            89               .DA     START   NMI VECTOR
+FFFC-A1 80            90               .DA     START   RESET VECTOR
+FFFE-A1 80            91               .DA     START   IRQ VECTOR
 
 0 Errors found during assembly.
 0 Warnings found during assembly.
