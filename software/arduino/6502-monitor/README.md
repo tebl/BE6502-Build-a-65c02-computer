@@ -8,8 +8,8 @@ I'm using a Funduino-branded Arduino Mega 2560 with the sketch, but for my own r
 ![Arduino settings](https://github.com/tebl/BE6502/raw/master/software/arduino/6502-monitor/arduino_settings.png)
 
 ## Using the sketch
-The usage of the sketch is expertly explained in Ben Eaters video series, in particular [part 2](https://www.youtube.com/watch?v=yl8vPW5hydQ) of the series. As part of my own notes, but may be of interest to anyone else viewing the page is the image below.
+The usage of the sketch is expertly explained in Ben Eaters video series, in particular [part 2](https://www.youtube.com/watch?v=yl8vPW5hydQ) of the series. As part of my own notes, though it may certainly be of interest to anyone else viewing this page is the image shown below - it attempts to correlate what the computer sees to what you'll see within the Arduino-console.
 
 ![Sketch results](https://github.com/tebl/BE6502/raw/master/software/arduino/6502-monitor/arduino_result.png)
 
-Here the initial steps of the of the CPU initializing and then reading the initialization vector has been highlighted in yellow, then the three first instructions and the way it relates to the assembled version of my [count](https://github.com/tebl/BE6502/tree/master/software/examples/blink)-assembly program can be seen. The remaining colors show how the various parts relate to eachother.
+Here the initial steps of the of the CPU initializing and then reading the initialization vector has been highlighted in yellow, then the three first instructions and the way it relates to the assembled version of my [count](https://github.com/tebl/BE6502/tree/master/software/examples/001%20-%20Blink)-assembly program can be seen (assembled using [SB-Assembler 3](https://www.sbprojects.net/sbasm/)). The remaining colours show how the various parts relate to each other.
