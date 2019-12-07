@@ -9,7 +9,7 @@ Loaded 65c02 overlay version 3.01.02
 
 Pass two
 0000-                  1       * ---------------------------------------------------------
-0000-                  2       * READ SWITCHES AND OUTPUT READ VALUES TO LEDS.
+0000-                  2       * READ SWITCHES, DEBOUNCE AND DO SOMETHING WITH THEM.
 0000-                  3
 0000-                  4               .CR     65C02
 0000-                  5               .TF     debounce.hex,INT
@@ -22,30 +22,76 @@ Pass two
 6002-                 12       DDRB    .EQ     $6002           VIA DDRB
 6003-                 13       DDRA    .EQ     $6003           VIA DDRA
 8000-                 14
-8000-                 15       * ---------------------------------------------------------
-8000-                 16       * SUB-ROUTINES
-8000-A9 FF            17 (  2) INITVIA LDA     #%11111111      PORT B. DATA SIGNALS USED WITH
-8002-8D 02 60         18 (  4)         STA     DDRB            LCD DISPLAY ONLY, ALSO LEDs.
-8005-A9 E0            19 (  2)         LDA     #%11100000      PORT A. PA0-PA4 INPUT FOR SWITCHES,
-8007-8D 03 60         20 (  4)         STA     DDRA            PA5-PA7 USED FOR LCD CONTROL SIGNALS.
-800A-60               21 (  6)         RTS
-800B-                 22
-800B-                 23
-800B-                 24       * ---------------------------------------------------------
-800B-                 25       * MAIN PROGRAM STARTS HERE
-800B-20 00 80         26 (  6) START   JSR     INITVIA         INITIALIZE VIA
-800E-AD 01 60         27 (  4) ECHO    LDA     IRA             READ SWITCHES
-8011-29 1F            28 (  2)         AND     #%00011111      MASK OUT OTHER BITS
-8013-8D 00 60         29 (  4)         STA     ORB             OUTPUT TO LEDS
-8016-4C 0E 80         30 (  3)         JMP     ECHO            DO IT FOREVER
-8019-                 31
-8019-                 32       * ---------------------------------------------------------
-8019-                 33       * STORE VECTORS AT END OF EPROM.
-FFFA-                 34               .OR     $FFFA
-FFFA-                 35               .TA     $7FFA
-FFFA-0B 80            36               .DA     START           NMI VECTOR
-FFFC-0B 80            37               .DA     START           RESET VECTOR
-FFFE-0B 80            38               .DA     START           IRQ VECTOR
+00FF-                 15       SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
+8000-                 16
+8000-                 17       * ---------------------------------------------------------
+8000-                 18       * SUB-ROUTINES
+8000-                 19
+8000-A9 FF            20 (  2) INITVIA LDA     #%11111111      PORT B. DATA SIGNALS USED WITH
+8002-8D 02 60         21 (  4)         STA     DDRB            LCD DISPLAY ONLY, ALSO LEDs.
+8005-A9 E0            22 (  2)         LDA     #%11100000      PORT A. PA0-PA4 INPUT FOR SWITCHES,
+8007-8D 03 60         23 (  4)         STA     DDRA            PA5-PA7 USED FOR LCD CONTROL SIGNALS.
+800A-60               24 (  6)         RTS
+800B-                 25
+800B-AD 01 60         26 (  4) GETKEY  LDA     IRA             READ SWITCHES
+800E-29 1F            27 (  2)         AND     #%00011111      MASK OUT OTHER BITS
+8010-C9 1F            28 (  2)         CMP     #%00011111      NO KEYS PUSHED?
+8012-F0 F7            29 (2**)         BEQ     GETKEY          CHECK AGAIN...
+8014-85 FF            30 (  3)         STA     SWITCH          STORE VALUE READ
+8016-AD 01 60         31 (  4) AGAIN   LDA     IRA             WAIT FOR KEY UP
+8019-29 1F            32 (  2)         AND     #%00011111      MASK OUT OTHER BITS
+801B-C9 1F            33 (  2)         CMP     #%00011111      NO KEYS PUSHED?
+801D-D0 F7            34 (2**)         BNE     AGAIN           CHECK AGAIN...
+801F-60               35 (  6)         RTS
+8020-                 36
+8020-                 37       * ---------------------------------------------------------
+8020-                 38       * MAIN PROGRAM STARTS HERE
+8020-                 39
+8020-20 00 80         40 (  6) START   JSR     INITVIA         INITIALIZE VIA
+8023-                 41
+8023-20 0B 80         42 (  6) FUNCN   JSR     GETKEY
+8026-A5 FF            43 (  3) MIDDLE  LDA     SWITCH
+8028-C9 1E            44 (  2)         CMP     #%00011110
+802A-D0 06            45 (2**)         BNE     UP
+802C-8D 00 60         46 (  4)         STA     ORB
+802F-4C 23 80         47 (  3)         JMP     FUNCN
+8032-                 48
+8032-A5 FF            49 (  3) UP      LDA     SWITCH
+8034-C9 1D            50 (  2)         CMP     #%00011101
+8036-D0 06            51 (2**)         BNE     DOWN
+8038-8D 00 60         52 (  4)         STA     ORB
+803B-4C 23 80         53 (  3)         JMP     FUNCN
+803E-                 54
+803E-A5 FF            55 (  3) DOWN    LDA     SWITCH
+8040-C9 1B            56 (  2)         CMP     #%00011011
+8042-D0 06            57 (2**)         BNE     LEFT
+8044-8D 00 60         58 (  4)         STA     ORB
+8047-4C 23 80         59 (  3)         JMP     FUNCN
+804A-                 60
+804A-A5 FF            61 (  3) LEFT    LDA     SWITCH
+804C-C9 17            62 (  2)         CMP     #%00010111
+804E-D0 06            63 (2**)         BNE     RIGHT
+8050-8D 00 60         64 (  4)         STA     ORB
+8053-4C 23 80         65 (  3)         JMP     FUNCN
+8056-                 66
+8056-A5 FF            67 (  3) RIGHT   LDA     SWITCH
+8058-C9 0F            68 (  2)         CMP     #%00001111
+805A-D0 06            69 (2**)         BNE     UNKNOWN
+805C-8D 00 60         70 (  4)         STA     ORB
+805F-4C 23 80         71 (  3)         JMP     FUNCN
+8062-                 72
+8062-A5 FF            73 (  3) UNKNOWN LDA     SWITCH
+8064-09 E0            74 (  2)         ORA     #%11100000      LIGHT TOP 3 LEDS TO SHOW
+8066-8D 00 60         75 (  4)         STA     ORB              UNKNOWN VALUE DETECTED.
+8069-4C 23 80         76 (  3)         JMP     FUNCN
+806C-                 77
+806C-                 78       * ---------------------------------------------------------
+806C-                 79       * STORE VECTORS AT END OF EEPROM.
+FFFA-                 80               .OR     $FFFA
+FFFA-                 81               .TA     $7FFA
+FFFA-20 80            82               .DA     START           NMI VECTOR
+FFFC-20 80            83               .DA     START           RESET VECTOR
+FFFE-20 80            84               .DA     START           IRQ VECTOR
 
 0 Errors found during assembly.
 0 Warnings found during assembly.
