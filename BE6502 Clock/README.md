@@ -35,6 +35,6 @@ Some vendors will have the same ICs in different form factors, the ones you want
 | SW2          | 6pin 8.5mm x 8.5mm latching switch    |     1 |
 | J1           | 4p straight pin header **             |     1 |
 
-\*) HC-series chips have been specified as that is what Ben Eater used in his Build a 6502 computer series, but can also be HCT-series depending on what you have access to.
+\*) HC-series chips have been specified as that is what Ben Eater used in his Build a 6502 computer series, but can also be HCT-series depending on what you have access to. For more information on the various logic families, see the [6502 Primer on the topic of logic families](http://wilsonminesco.com/6502primer/LogicFamilies.html).
 
 \**) You can use a female right-angle pin header and match it directly to the BE6502 SBC with some careful adjustments, but I recommend using some female to female dupont leads instead as the connector is a bit too loose when not mounting boards on a backing plate.
