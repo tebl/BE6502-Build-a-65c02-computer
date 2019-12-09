@@ -5,6 +5,8 @@
 
 Personally, I am somewhat awful at getting things to work on breadboards - even when buying the good stuff from reputable electronics shops, so I usually just go directly to PCB instead. I've designed a few other amateur projects using the trusty old 6502-processor before, but this'll be the first one to be tackled with the more modern Western Designs CPU (W65C02) instead. His video series depends this specific brand of CPU, this is due to the way it is run using a slow and sometimes completely halted clock that wouldn't work the same on other brands. The older 6502 variants will more than likely loose their context, with the end result being a CPU doing unexpected things instead of running as the machine code would normally dictate. 
 
+![LCD mounter](https://github.com/tebl/BE6502/raw/master/gallery/2019-12-06%2019.39.01.jpg
+)
 ![Computer with backplane](https://github.com/tebl/BE6502/raw/master/gallery/2019-11-27%2021.33.14.jpg)
 
 The BE6502 computer has a 39-pin backplane connector, like most of my other projects and these can be used to connect to an Arduino Mega as in the videos, a logic probe or even a separate larger backplane if you intend to build any more additional expansions for use with the computer. The picture above shows the SBC along with clock and Arduino Mega Shield. See *System modules* below for a listing of available modules, which are required at the various steps in the video series and any optional extras I felt like listing that would be compatible with the supplied boards.
