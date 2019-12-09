@@ -9,6 +9,7 @@
         .TA     $0000
 
 ORB     .EQ     $6000           VIA PORT B DATA
+IRB     .EQ     $6000           VIA PORT A DATA (SAME AS OUTPUT)
 ORA     .EQ     $6001           VIA PORT A DATA 
 IRA     .EQ     $6001           VIA PORT A DATA (SAME AS OUTPUT)
 DDRB    .EQ     $6002           VIA DDRB
@@ -64,7 +65,21 @@ LCD_CMD STA 	ORB             DATA IS IN ACCUMULATOR
         STA     ORA
         RTS
 
-WAITLCD NOP                     PLACEHOLDER FOR BETTER THINGS
+WAITLCD LDA     #%00000000      WE'LL NEED TO READ FROM THE DISPLAY, SO
+        STA     DDRB             PORT B WILL NOW BE INPUTS.
+        LDA     #%11000000      E=H R/W=H RS=L
+        STA     ORA
+        LDA     #%01000000      E=L PULSE CLOCK LOW
+        STA     ORA
+        LDA     #%11000000      E=H
+        STA     ORA
+        LDA     IRB             READ LCD STATUS REGISTER
+        AND     #%10000000      MASK OUT BUSY FLAG
+        BNE     WAITLCD
+        LDA     #%10000000      LEAVE LCD CONTROL SIGNALS IN WRITE
+        STA     ORA
+        LDA     #%11111111      RESET VIA PORT B DATA DIRECTION SO THAT
+        STA     DDRB              WE'RE READY TO SEND THE NEXT COMMAND.
         RTS
         
 LCD_CHR STA 	ORB             DATA IS IN ACCUMULATOR
@@ -110,9 +125,13 @@ FUNCN   JSR     GETKEY
 MIDDLE  LDA     SWITCH
         CMP     #%00011110      BIT 0 LOW?
         BNE     UP               ... TRY UP INSTEAD.
+        LDA     #%00001100      DISABLE CURSOR
+        JSR     LCD_CMD
         LDA     #%01011000      SET TO 'X'
         JSR     LCD_CHR         OUTPUT TO LCD
         JSR     SET_POS         RESET POSITION TO WHERE WE WERE
+        LDA     #%00001101      ENABLE CURSOR AGAIN
+        JSR     LCD_CMD
         JMP     FUNCN
 
 UP      LDA     SWITCH

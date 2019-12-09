@@ -19,158 +19,177 @@ Pass two
 8000-                  9               .TA     $0000
 8000-                 10
 6000-                 11       ORB     .EQ     $6000           VIA PORT B DATA
-6001-                 12       ORA     .EQ     $6001           VIA PORT A DATA
-6001-                 13       IRA     .EQ     $6001           VIA PORT A DATA (SAME AS OUTPUT)
-6002-                 14       DDRB    .EQ     $6002           VIA DDRB
-6003-                 15       DDRA    .EQ     $6003           VIA DDRA
-8000-                 16
-00FF-                 17       SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
-00FE-                 18       LCD_X   .EQ     $FE             LCD X position
-00FD-                 19       LCD_Y   .EQ     $FD             LCD Y position
-8000-                 20
-8000-                 21       * ---------------------------------------------------------
-8000-                 22       * SUB-ROUTINES
-8000-                 23
-8000-A9 FF            24 (  2) INITVIA LDA     #%11111111      PORT B. DATA SIGNALS USED WITH
-8002-8D 02 60         25 (  4)         STA     DDRB            LCD DISPLAY ONLY, ALSO LEDs.
-8005-A9 E0            26 (  2)         LDA     #%11100000      PORT A. PA0-PA4 INPUT FOR SWITCHES,
-8007-8D 03 60         27 (  4)         STA     DDRA            PA5-PA7 USED FOR LCD CONTROL SIGNALS.
-800A-60               28 (  6)         RTS
-800B-                 29
-800B-A9 30            30 (  2) INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
-800D-20 41 80         31 (  6)         JSR     LCD_CMD
-8010-20 54 80         32 (  6)         JSR     WAITLCD
-8013-                 33
-8013-A9 30            34 (  2)         LDA     #%00110000
-8015-20 41 80         35 (  6)         JSR     LCD_CMD
-8018-20 54 80         36 (  6)         JSR     WAITLCD
-801B-                 37
-801B-A9 30            38 (  2)         LDA     #%00110000
-801D-20 41 80         39 (  6)         JSR     LCD_CMD
-8020-20 54 80         40 (  6)         JSR     WAITLCD
-8023-                 41
-8023-A9 38            42 (  2)         LDA     #%00111000      FUNCTION SET (8-BIT TRANSFER)
-8025-20 41 80         43 (  6)         JSR     LCD_CMD
-8028-20 54 80         44 (  6)         JSR     WAITLCD
-802B-                 45
-802B-A9 0D            46 (  2)         LDA     #%00001101      DISPLAY ON, CURSOR EN.
-802D-20 41 80         47 (  6)         JSR     LCD_CMD
-8030-20 54 80         48 (  6)         JSR     WAITLCD
-8033-                 49
-8033-A9 01            50 (  2)         LDA     #%00000001      CLEAR DISPLAY
-8035-20 41 80         51 (  6)         JSR     LCD_CMD
-8038-20 54 80         52 (  6)         JSR     WAITLCD
-803B-                 53
-803B-A9 06            54 (  2)         LDA     #%00000110      SET ENTRY MODE
-803D-20 41 80         55 (  6)         JSR     LCD_CMD
-8040-60               56 (  6)         RTS
-8041-                 57
-8041-8D 00 60         58 (  4) LCD_CMD STA     ORB             DATA IS IN ACCUMULATOR
-8044-A9 80            59 (  2)         LDA     #%10000000      E=H R/W=L RS=L
-8046-8D 01 60         60 (  4)         STA     ORA
-8049-A9 00            61 (  2)         LDA     #%00000000      E=L PULSE CLOCK LOW
-804B-8D 01 60         62 (  4)         STA     ORA
-804E-A9 80            63 (  2)         LDA     #%10000000      E=H
-8050-8D 01 60         64 (  4)         STA     ORA
-8053-60               65 (  6)         RTS
-8054-                 66
-8054-EA               67 (  2) WAITLCD NOP                     PLACEHOLDER FOR BETTER THINGS
-8055-60               68 (  6)         RTS
-8056-                 69
-8056-8D 00 60         70 (  4) LCD_CHR STA     ORB             DATA IS IN ACCUMULATOR
-8059-A9 A0            71 (  2)         LDA     #%10100000      E=H R/W=L RS=H
-805B-8D 01 60         72 (  4)         STA     ORA
-805E-A9 20            73 (  2)         LDA     #%00100000      E=L PULSE CLOCK LOW
-8060-8D 01 60         74 (  4)         STA     ORA
-8063-A9 A4            75 (  2)         LDA     #%10100100      E=H
-8065-8D 01 60         76 (  4)         STA     ORA
-8068-60               77 (  6)         RTS
-8069-                 78
-8069-A0 00            79 (  2) SET_POS LDY     #0
-806B-A9 80            80 (  2)         LDA     #$80            ROW 0 DDRAM ADDRESS
-806D-C4 FD            81 (  3)         CPY     LCD_Y
-806F-F0 02            82 (2**)         BEQ     ADD_X
-8071-A9 C0            83 (  2)         LDA     #$C0            ROW 1 DDRAM ADDRESS
-8073-18               84 (  2) ADD_X   CLC                     CLEAR CARRY
-8074-65 FE            85 (  3)         ADC     LCD_X           ADD X POSITION
-8076-20 41 80         86 (  6)         JSR     LCD_CMD         SEND COMMAND
-8079-60               87 (  6)         RTS
-807A-                 88
-807A-AD 01 60         89 (  4) GETKEY  LDA     IRA             READ SWITCHES
-807D-29 1F            90 (  2)         AND     #%00011111      MASK OUT OTHER BITS
-807F-C9 1F            91 (  2)         CMP     #%00011111      NO KEYS PUSHED?
-8081-F0 F7            92 (2**)         BEQ     GETKEY          CHECK AGAIN...
-8083-85 FF            93 (  3)         STA     SWITCH          STORE VALUE READ
-8085-AD 01 60         94 (  4) AGAIN   LDA     IRA             WAIT FOR KEY UP
-8088-29 1F            95 (  2)         AND     #%00011111      MASK OUT OTHER BITS
-808A-C9 1F            96 (  2)         CMP     #%00011111      NO KEYS PUSHED?
-808C-D0 F7            97 (2**)         BNE     AGAIN           CHECK AGAIN...
-808E-60               98 (  6)         RTS
-808F-                 99
-808F-                100       * ---------------------------------------------------------
-808F-                101       * MAIN PROGRAM STARTS HERE
-808F-                102
-808F-20 00 80        103 (  6) START   JSR     INITVIA         INITIALIZE VIA
-8092-20 0B 80        104 (  6)         JSR     INITLCD         INITIALIZE LCD
-8095-A9 00           105 (  2)         LDA     #0
-8097-85 FE           106 (  3)         STA     LCD_X           CLEAR LCD X POSITION
-8099-85 FD           107 (  3)         STA     LCD_Y           CLEAR LCD Y POSITION
-809B-                108
-809B-20 7A 80        109 (  6) FUNCN   JSR     GETKEY
-809E-A5 FF           110 (  3) MIDDLE  LDA     SWITCH
-80A0-C9 1E           111 (  2)         CMP     #%00011110      BIT 0 LOW?
-80A2-D0 0B           112 (2**)         BNE     UP               ... TRY UP INSTEAD.
-80A4-A9 58           113 (  2)         LDA     #%01011000      SET TO 'X'
-80A6-20 56 80        114 (  6)         JSR     LCD_CHR         OUTPUT TO LCD
-80A9-20 69 80        115 (  6)         JSR     SET_POS         RESET POSITION TO WHERE WE WERE
-80AC-4C 9B 80        116 (  3)         JMP     FUNCN
-80AF-                117
-80AF-A5 FF           118 (  3) UP      LDA     SWITCH
-80B1-C9 1D           119 (  2)         CMP     #%00011101      BIT 1 LOW?
-80B3-D0 0A           120 (2**)         BNE     DOWN             ... TRY DOWN INSTEAD.
-80B5-A9 00           121 (  2)         LDA     #$00            MOVE TO UPPER LINE
-80B7-85 FD           122 (  3)         STA     LCD_Y
-80B9-20 69 80        123 (  6)         JSR     SET_POS         UPDATE DISPLAY
-80BC-4C 9B 80        124 (  3)         JMP     FUNCN
-80BF-                125
-80BF-A5 FF           126 (  3) DOWN    LDA     SWITCH
-80C1-C9 1B           127 (  2)         CMP     #%00011011      BIT 2 LOW?
-80C3-D0 0A           128 (2**)         BNE     LEFT             ... TRY LEFT INSTEAD.
-80C5-A9 01           129 (  2)         LDA     #$01            MOVE TO LOWER LINE
-80C7-85 FD           130 (  3)         STA     LCD_Y
-80C9-20 69 80        131 (  6)         JSR     SET_POS         UPDATE DISPLAY
-80CC-4C 9B 80        132 (  3)         JMP     FUNCN
-80CF-                133
-80CF-A5 FF           134 (  3) LEFT    LDA     SWITCH
-80D1-C9 17           135 (  2)         CMP     #%00010111      BIT 3 LOW?
-80D3-D0 0E           136 (2**)         BNE     RIGHT            ... TRY RIGHT INSTEAD.
-80D5-A5 FE           137 (  3)         LDA     LCD_X
-80D7-C9 00           138 (  2)         CMP     #0
-80D9-F0 C0           139 (2**)         BEQ     FUNCN           DONE IF ALL THE WAY TO THE LEFT
-80DB-C6 FE           140 (  5)         DEC     LCD_X           DECREMENT X POSITION
-80DD-20 69 80        141 (  6)         JSR     SET_POS         UPDATE DISPLAY
-80E0-4C 9B 80        142 (  3)         JMP     FUNCN
-80E3-                143
-80E3-A5 FF           144 (  3) RIGHT   LDA     SWITCH
-80E5-C9 0F           145 (  2)         CMP     #%00001111      BIT 4 LOW?
-80E7-D0 0E           146 (2**)         BNE     NOKEY            GOTO NOKEY IF NOT
-80E9-A5 FE           147 (  3)         LDA     LCD_X
-80EB-C9 0F           148 (  2)         CMP     #15             LAST POSITION
-80ED-F0 AC           149 (2**)         BEQ     FUNCN           DONE IF ALL THE WAY TO THE RIGHT
-80EF-E6 FE           150 (  5)         INC     LCD_X           INCREMENT X POSITION
-80F1-20 69 80        151 (  6)         JSR     SET_POS         UPDATE DISPLAY
-80F4-4C 9B 80        152 (  3)         JMP     FUNCN
-80F7-                153
-80F7-EA              154 (  2) NOKEY   NOP                     WAIT A BIT
-80F8-4C 9B 80        155 (  3)         JMP     FUNCN            THEN RETURN TO SCANNING KEYPAD
-80FB-                156
-80FB-                157       * ---------------------------------------------------------
-80FB-                158       * STORE VECTORS AT END OF EEPROM.
-FFFA-                159               .OR     $FFFA
-FFFA-                160               .TA     $7FFA
-FFFA-8F 80           161               .DA     START           NMI VECTOR
-FFFC-8F 80           162               .DA     START           RESET VECTOR
-FFFE-8F 80           163               .DA     START           IRQ VECTOR
+6000-                 12       IRB     .EQ     $6000           VIA PORT A DATA (SAME AS OUTPUT)
+6001-                 13       ORA     .EQ     $6001           VIA PORT A DATA
+6001-                 14       IRA     .EQ     $6001           VIA PORT A DATA (SAME AS OUTPUT)
+6002-                 15       DDRB    .EQ     $6002           VIA DDRB
+6003-                 16       DDRA    .EQ     $6003           VIA DDRA
+8000-                 17
+00FF-                 18       SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
+00FE-                 19       LCD_X   .EQ     $FE             LCD X position
+00FD-                 20       LCD_Y   .EQ     $FD             LCD Y position
+8000-                 21
+8000-                 22       * ---------------------------------------------------------
+8000-                 23       * SUB-ROUTINES
+8000-                 24
+8000-A9 FF            25 (  2) INITVIA LDA     #%11111111      PORT B. DATA SIGNALS USED WITH
+8002-8D 02 60         26 (  4)         STA     DDRB            LCD DISPLAY ONLY, ALSO LEDs.
+8005-A9 E0            27 (  2)         LDA     #%11100000      PORT A. PA0-PA4 INPUT FOR SWITCHES,
+8007-8D 03 60         28 (  4)         STA     DDRA            PA5-PA7 USED FOR LCD CONTROL SIGNALS.
+800A-60               29 (  6)         RTS
+800B-                 30
+800B-A9 30            31 (  2) INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
+800D-20 41 80         32 (  6)         JSR     LCD_CMD
+8010-20 54 80         33 (  6)         JSR     WAITLCD
+8013-                 34
+8013-A9 30            35 (  2)         LDA     #%00110000
+8015-20 41 80         36 (  6)         JSR     LCD_CMD
+8018-20 54 80         37 (  6)         JSR     WAITLCD
+801B-                 38
+801B-A9 30            39 (  2)         LDA     #%00110000
+801D-20 41 80         40 (  6)         JSR     LCD_CMD
+8020-20 54 80         41 (  6)         JSR     WAITLCD
+8023-                 42
+8023-A9 38            43 (  2)         LDA     #%00111000      FUNCTION SET (8-BIT TRANSFER)
+8025-20 41 80         44 (  6)         JSR     LCD_CMD
+8028-20 54 80         45 (  6)         JSR     WAITLCD
+802B-                 46
+802B-A9 0D            47 (  2)         LDA     #%00001101      DISPLAY ON, CURSOR EN.
+802D-20 41 80         48 (  6)         JSR     LCD_CMD
+8030-20 54 80         49 (  6)         JSR     WAITLCD
+8033-                 50
+8033-A9 01            51 (  2)         LDA     #%00000001      CLEAR DISPLAY
+8035-20 41 80         52 (  6)         JSR     LCD_CMD
+8038-20 54 80         53 (  6)         JSR     WAITLCD
+803B-                 54
+803B-A9 06            55 (  2)         LDA     #%00000110      SET ENTRY MODE
+803D-20 41 80         56 (  6)         JSR     LCD_CMD
+8040-60               57 (  6)         RTS
+8041-                 58
+8041-8D 00 60         59 (  4) LCD_CMD STA     ORB             DATA IS IN ACCUMULATOR
+8044-A9 80            60 (  2)         LDA     #%10000000      E=H R/W=L RS=L
+8046-8D 01 60         61 (  4)         STA     ORA
+8049-A9 00            62 (  2)         LDA     #%00000000      E=L PULSE CLOCK LOW
+804B-8D 01 60         63 (  4)         STA     ORA
+804E-A9 80            64 (  2)         LDA     #%10000000      E=H
+8050-8D 01 60         65 (  4)         STA     ORA
+8053-60               66 (  6)         RTS
+8054-                 67
+8054-A9 00            68 (  2) WAITLCD LDA     #%00000000      WE'LL NEED TO READ FROM THE DISPLAY, SO
+8056-8D 02 60         69 (  4)         STA     DDRB             PORT B WILL NOW BE INPUTS.
+8059-A9 C0            70 (  2)         LDA     #%11000000      E=H R/W=H RS=L
+805B-8D 01 60         71 (  4)         STA     ORA
+805E-A9 40            72 (  2)         LDA     #%01000000      E=L PULSE CLOCK LOW
+8060-8D 01 60         73 (  4)         STA     ORA
+8063-A9 C0            74 (  2)         LDA     #%11000000      E=H
+8065-8D 01 60         75 (  4)         STA     ORA
+8068-AD 00 60         76 (  4)         LDA     IRB             READ LCD STATUS REGISTER
+806B-29 80            77 (  2)         AND     #%10000000      MASK OUT BUSY FLAG
+806D-D0 E5            78 (2**)         BNE     WAITLCD
+806F-A9 80            79 (  2)         LDA     #%10000000      LEAVE LCD CONTROL SIGNALS IN WRITE
+8071-8D 01 60         80 (  4)         STA     ORA
+8074-A9 FF            81 (  2)         LDA     #%11111111      RESET VIA PORT B DATA DIRECTION SO THAT
+8076-8D 02 60         82 (  4)         STA     DDRB              WE'RE READY TO SEND THE NEXT COMMAND.
+8079-60               83 (  6)         RTS
+807A-                 84
+807A-8D 00 60         85 (  4) LCD_CHR STA     ORB             DATA IS IN ACCUMULATOR
+807D-A9 A0            86 (  2)         LDA     #%10100000      E=H R/W=L RS=H
+807F-8D 01 60         87 (  4)         STA     ORA
+8082-A9 20            88 (  2)         LDA     #%00100000      E=L PULSE CLOCK LOW
+8084-8D 01 60         89 (  4)         STA     ORA
+8087-A9 A4            90 (  2)         LDA     #%10100100      E=H
+8089-8D 01 60         91 (  4)         STA     ORA
+808C-60               92 (  6)         RTS
+808D-                 93
+808D-A0 00            94 (  2) SET_POS LDY     #0
+808F-A9 80            95 (  2)         LDA     #$80            ROW 0 DDRAM ADDRESS
+8091-C4 FD            96 (  3)         CPY     LCD_Y
+8093-F0 02            97 (2**)         BEQ     ADD_X
+8095-A9 C0            98 (  2)         LDA     #$C0            ROW 1 DDRAM ADDRESS
+8097-18               99 (  2) ADD_X   CLC                     CLEAR CARRY
+8098-65 FE           100 (  3)         ADC     LCD_X           ADD X POSITION
+809A-20 41 80        101 (  6)         JSR     LCD_CMD         SEND COMMAND
+809D-60              102 (  6)         RTS
+809E-                103
+809E-AD 01 60        104 (  4) GETKEY  LDA     IRA             READ SWITCHES
+80A1-29 1F           105 (  2)         AND     #%00011111      MASK OUT OTHER BITS
+80A3-C9 1F           106 (  2)         CMP     #%00011111      NO KEYS PUSHED?
+80A5-F0 F7           107 (2**)         BEQ     GETKEY          CHECK AGAIN...
+80A7-85 FF           108 (  3)         STA     SWITCH          STORE VALUE READ
+80A9-AD 01 60        109 (  4) AGAIN   LDA     IRA             WAIT FOR KEY UP
+80AC-29 1F           110 (  2)         AND     #%00011111      MASK OUT OTHER BITS
+80AE-C9 1F           111 (  2)         CMP     #%00011111      NO KEYS PUSHED?
+80B0-D0 F7           112 (2**)         BNE     AGAIN           CHECK AGAIN...
+80B2-60              113 (  6)         RTS
+80B3-                114
+80B3-                115       * ---------------------------------------------------------
+80B3-                116       * MAIN PROGRAM STARTS HERE
+80B3-                117
+80B3-20 00 80        118 (  6) START   JSR     INITVIA         INITIALIZE VIA
+80B6-20 0B 80        119 (  6)         JSR     INITLCD         INITIALIZE LCD
+80B9-A9 00           120 (  2)         LDA     #0
+80BB-85 FE           121 (  3)         STA     LCD_X           CLEAR LCD X POSITION
+80BD-85 FD           122 (  3)         STA     LCD_Y           CLEAR LCD Y POSITION
+80BF-                123
+80BF-20 9E 80        124 (  6) FUNCN   JSR     GETKEY
+80C2-A5 FF           125 (  3) MIDDLE  LDA     SWITCH
+80C4-C9 1E           126 (  2)         CMP     #%00011110      BIT 0 LOW?
+80C6-D0 15           127 (2**)         BNE     UP               ... TRY UP INSTEAD.
+80C8-A9 0C           128 (  2)         LDA     #%00001100      DISABLE CURSOR
+80CA-20 41 80        129 (  6)         JSR     LCD_CMD
+80CD-A9 58           130 (  2)         LDA     #%01011000      SET TO 'X'
+80CF-20 7A 80        131 (  6)         JSR     LCD_CHR         OUTPUT TO LCD
+80D2-20 8D 80        132 (  6)         JSR     SET_POS         RESET POSITION TO WHERE WE WERE
+80D5-A9 0D           133 (  2)         LDA     #%00001101      ENABLE CURSOR AGAIN
+80D7-20 41 80        134 (  6)         JSR     LCD_CMD
+80DA-4C BF 80        135 (  3)         JMP     FUNCN
+80DD-                136
+80DD-A5 FF           137 (  3) UP      LDA     SWITCH
+80DF-C9 1D           138 (  2)         CMP     #%00011101      BIT 1 LOW?
+80E1-D0 0A           139 (2**)         BNE     DOWN             ... TRY DOWN INSTEAD.
+80E3-A9 00           140 (  2)         LDA     #$00            MOVE TO UPPER LINE
+80E5-85 FD           141 (  3)         STA     LCD_Y
+80E7-20 8D 80        142 (  6)         JSR     SET_POS         UPDATE DISPLAY
+80EA-4C BF 80        143 (  3)         JMP     FUNCN
+80ED-                144
+80ED-A5 FF           145 (  3) DOWN    LDA     SWITCH
+80EF-C9 1B           146 (  2)         CMP     #%00011011      BIT 2 LOW?
+80F1-D0 0A           147 (2**)         BNE     LEFT             ... TRY LEFT INSTEAD.
+80F3-A9 01           148 (  2)         LDA     #$01            MOVE TO LOWER LINE
+80F5-85 FD           149 (  3)         STA     LCD_Y
+80F7-20 8D 80        150 (  6)         JSR     SET_POS         UPDATE DISPLAY
+80FA-4C BF 80        151 (  3)         JMP     FUNCN
+80FD-                152
+80FD-A5 FF           153 (  3) LEFT    LDA     SWITCH
+80FF-C9 17           154 (  2)         CMP     #%00010111      BIT 3 LOW?
+8101-D0 0E           155 (2**)         BNE     RIGHT            ... TRY RIGHT INSTEAD.
+8103-A5 FE           156 (  3)         LDA     LCD_X
+8105-C9 00           157 (  2)         CMP     #0
+8107-F0 B6           158 (2**)         BEQ     FUNCN           DONE IF ALL THE WAY TO THE LEFT
+8109-C6 FE           159 (  5)         DEC     LCD_X           DECREMENT X POSITION
+810B-20 8D 80        160 (  6)         JSR     SET_POS         UPDATE DISPLAY
+810E-4C BF 80        161 (  3)         JMP     FUNCN
+8111-                162
+8111-A5 FF           163 (  3) RIGHT   LDA     SWITCH
+8113-C9 0F           164 (  2)         CMP     #%00001111      BIT 4 LOW?
+8115-D0 0E           165 (2**)         BNE     NOKEY            GOTO NOKEY IF NOT
+8117-A5 FE           166 (  3)         LDA     LCD_X
+8119-C9 0F           167 (  2)         CMP     #15             LAST POSITION
+811B-F0 A2           168 (2**)         BEQ     FUNCN           DONE IF ALL THE WAY TO THE RIGHT
+811D-E6 FE           169 (  5)         INC     LCD_X           INCREMENT X POSITION
+811F-20 8D 80        170 (  6)         JSR     SET_POS         UPDATE DISPLAY
+8122-4C BF 80        171 (  3)         JMP     FUNCN
+8125-                172
+8125-EA              173 (  2) NOKEY   NOP                     WAIT A BIT
+8126-4C BF 80        174 (  3)         JMP     FUNCN            THEN RETURN TO SCANNING KEYPAD
+8129-                175
+8129-                176       * ---------------------------------------------------------
+8129-                177       * STORE VECTORS AT END OF EEPROM.
+FFFA-                178               .OR     $FFFA
+FFFA-                179               .TA     $7FFA
+FFFA-B3 80           180               .DA     START           NMI VECTOR
+FFFC-B3 80           181               .DA     START           RESET VECTOR
+FFFE-B3 80           182               .DA     START           IRQ VECTOR
 
 0 Errors found during assembly.
 0 Warnings found during assembly.
