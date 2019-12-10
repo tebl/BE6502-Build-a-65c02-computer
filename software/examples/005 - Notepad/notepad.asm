@@ -4,7 +4,7 @@
 * THAT SPOT.
 
         .CR     65C02
-        .TF     scratchpad.hex,INT
+        .TF     notepad.hex,INT
         .OR     $8000
         .TA     $0000
 
@@ -16,8 +16,9 @@ DDRB    .EQ     $6002           VIA DDRB
 DDRA    .EQ     $6003           VIA DDRA
 
 SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
-LCD_X   .EQ     $FE             LCD X POSITION
-LCD_Y   .EQ     $FD             LCD Y POSITION
+LCD_X   .EQ     $FE             LCD X position
+LCD_Y   .EQ     $FD             LCD Y position
+MODE    .EQ     $FC             BUTTON MODE
 
 * ---------------------------------------------------------
 * SUB-ROUTINES
@@ -91,14 +92,16 @@ LCD_CHR STA 	ORB             DATA IS IN ACCUMULATOR
         STA     ORA
         RTS
 
-SET_POS LDY     #0
-        LDA     #$80            ROW 0 DDRAM ADDRESS
-        CPY     LCD_Y
-        BEQ     ADD_X
-        LDA     #$C0            ROW 1 DDRAM ADDRESS
-ADD_X   CLC                     CLEAR CARRY
+LCD_POS JSR     LCD_ADR         GET CURRENT POSITION IN LCD DRAM
+        AND     #$80            ADD IN ORDER TO GET THE LCD COMMAND
+        JSR     LCD_CMD         UPDATE POSITION ON LCD
+        RTS
+
+LCD_ADR LDA     LCD_Y           LOAD Y POSITION (LINE NUMBER)
+        BEQ     ADD_X            LCD_Y POSITION IS 0?
+        LDA     #$40             SET BASE TO $40 FOR LINE 1
+ADD_X   CLC                     CLEAR CARRY BIT (JUST IN CASE)    
         ADC     LCD_X           ADD X POSITION
-        JSR     LCD_CMD         SEND COMMAND
         RTS
 
 GETKEY  LDA     IRA             READ SWITCHES
@@ -120,6 +123,7 @@ START   JSR     INITVIA         INITIALIZE VIA
         LDA     #0
         STA     LCD_X           CLEAR LCD X POSITION
         STA     LCD_Y           CLEAR LCD Y POSITION
+        CLD                     CLEAR DECIMAL MODE JUST IN CASE
 
 FUNCN   JSR     GETKEY
 MIDDLE  LDA     SWITCH
@@ -129,7 +133,7 @@ MIDDLE  LDA     SWITCH
         JSR     LCD_CMD
         LDA     #%01011000      SET TO 'X'
         JSR     LCD_CHR         OUTPUT TO LCD
-        JSR     SET_POS         RESET POSITION TO WHERE WE WERE
+        JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
         LDA     #%00001101      ENABLE CURSOR AGAIN
         JSR     LCD_CMD
         JMP     FUNCN
@@ -139,7 +143,7 @@ UP      LDA     SWITCH
         BNE     DOWN             ... TRY DOWN INSTEAD.
         LDA     #$00            MOVE TO UPPER LINE
         STA     LCD_Y
-        JSR     SET_POS         UPDATE DISPLAY
+        JSR     LCD_POS         UPDATE DISPLAY
         JMP     FUNCN
 
 DOWN    LDA     SWITCH
@@ -147,7 +151,7 @@ DOWN    LDA     SWITCH
         BNE     LEFT             ... TRY LEFT INSTEAD.
         LDA     #$01            MOVE TO LOWER LINE
         STA     LCD_Y
-        JSR     SET_POS         UPDATE DISPLAY
+        JSR     LCD_POS         UPDATE DISPLAY
         JMP     FUNCN
 
 LEFT    LDA     SWITCH
@@ -157,7 +161,7 @@ LEFT    LDA     SWITCH
         CMP     #0
         BEQ     FUNCN           DONE IF ALL THE WAY TO THE LEFT
         DEC     LCD_X           DECREMENT X POSITION
-        JSR     SET_POS         UPDATE DISPLAY
+        JSR     LCD_POS         UPDATE DISPLAY
         JMP     FUNCN
 
 RIGHT   LDA     SWITCH
@@ -167,7 +171,7 @@ RIGHT   LDA     SWITCH
         CMP     #15             LAST POSITION
         BEQ     FUNCN           DONE IF ALL THE WAY TO THE RIGHT
         INC     LCD_X           INCREMENT X POSITION
-        JSR     SET_POS         UPDATE DISPLAY
+        JSR     LCD_POS         UPDATE DISPLAY
         JMP     FUNCN
 
 NOKEY   NOP                     WAIT A BIT
