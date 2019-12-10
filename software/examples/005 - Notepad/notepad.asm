@@ -93,7 +93,7 @@ LCD_CHR STA 	ORB             DATA IS IN ACCUMULATOR
         RTS
 
 LCD_POS JSR     LCD_ADR         GET CURRENT POSITION IN LCD DRAM
-        AND     #$80            ADD IN ORDER TO GET THE LCD COMMAND
+        ORA     #$80            ADD IN ORDER TO GET THE LCD COMMAND
         JSR     LCD_CMD         UPDATE POSITION ON LCD
         RTS
 
@@ -123,7 +123,7 @@ START   JSR     INITVIA         INITIALIZE VIA
         LDA     #0
         STA     LCD_X           CLEAR LCD X POSITION
         STA     LCD_Y           CLEAR LCD Y POSITION
-        CLD                     CLEAR DECIMAL MODE JUST IN CASE
+        CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
 
 FUNCN   JSR     GETKEY
 MIDDLE  LDA     SWITCH
