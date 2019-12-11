@@ -1,10 +1,10 @@
 * ---------------------------------------------------------
-* A SIMPLE APPLICATION THAT LETS YOU MOVE THE CURSOR AROUND
-* ON THE SCREEN, CLICKING THE MIDDLE POSITION PUTS AN X INTO
-* THAT SPOT.
+* ALLOWS YOU TO MOVE AROUND ON THE SCREEN AND CHANGE THE
+* CONTENTS OF EACH POSITION, IN EFFECT MAKING THE SBC AN
+* ELECTRONIC NAMEBADGE.
 
         .CR     65C02
-        .TF     notepad.hex,INT
+        .TF     namebadge.hex,INT
         .OR     $8000
         .TA     $0000
 

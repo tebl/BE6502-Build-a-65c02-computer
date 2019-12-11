@@ -11,7 +11,7 @@ The following examples of code developed for the system are available, they have
 | [002](https://github.com/tebl/BE6502/tree/master/software/examples/002%20-%20Echo)    | echo        | Show switch status on the LEDs directly                    |      X     |      X    |
 | [003](https://github.com/tebl/BE6502/tree/master/software/examples/003%20-%20Debounce)    | debounce    | Read switches and perform code for each of them |      X     |           |
 | [004](https://github.com/tebl/BE6502/tree/master/software/examples/004%20-%20Hello%20LCD)    | hello_lcd   | Initialize LCD and output a string to it        |      X     |           |
-| [005](https://github.com/tebl/BE6502/tree/master/software/examples/005%20-%20Notepad)    | scratchpad   | Use keys to move around LCD and middle button to put an 'X' there|      X     |      X     |
+| [005](https://github.com/tebl/BE6502/tree/master/software/examples/005%20-%20Namebadge)    | scratchpad   | Use keys to move around LCD and middle button to put an 'X' there|      X     |      X     |
 
 For some of the examples I've included more than one version, usually they build upon the previous to make something slightly more impressive (or not, depending on familiarity with writing assembly code). Take a look at the README file that comes with the example, if I've included one, for more of the specifics. Files that belong together should have consistent naming according to what is described above, there are several files with the same name though with differing extensions - the following table is a short description of what you'll find inside:
 
