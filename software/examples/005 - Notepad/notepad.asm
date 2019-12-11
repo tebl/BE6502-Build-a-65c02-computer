@@ -15,10 +15,13 @@ IRA     .EQ     $6001           VIA PORT A DATA (SAME AS OUTPUT)
 DDRB    .EQ     $6002           VIA DDRB
 DDRA    .EQ     $6003           VIA DDRA
 
+SPACE   .EQ     %00100000       BLANK SPACE
+
 SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
 LCD_X   .EQ     $FE             LCD X position
 LCD_Y   .EQ     $FD             LCD Y position
 MODE    .EQ     $FC             BUTTON MODE
+MEMORY  .EQ     $0200           MEMORY SET ASIDE FOR CHARACTERS
 
 * ---------------------------------------------------------
 * SUB-ROUTINES
@@ -82,7 +85,14 @@ WAITLCD LDA     #%00000000      WE'LL NEED TO READ FROM THE DISPLAY, SO
         LDA     #%11111111      RESET VIA PORT B DATA DIRECTION SO THAT
         STA     DDRB              WE'RE READY TO SEND THE NEXT COMMAND.
         RTS
-        
+    
+INITMEM LDY     #80             NUM BYTES TO CLEAR
+        LDA     #SPACE          SPACE CHARACTER TO PUT INTO EMPTY MEMORY
+NXT_MEM STA     MEMORY,Y        CLEAR BUFFER ONE BYTE AT A TIME    
+        DEY
+        BPL     NXT_MEM
+        RTS
+    
 LCD_CHR STA 	ORB             DATA IS IN ACCUMULATOR
         LDA     #%10100000      E=H R/W=L RS=H  
         STA     ORA
@@ -118,12 +128,15 @@ AGAIN   LDA     IRA             WAIT FOR KEY UP
 * ---------------------------------------------------------
 * MAIN PROGRAM STARTS HERE
 
-START   JSR     INITVIA         INITIALIZE VIA
+START   CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
+        JSR     INITVIA         INITIALIZE VIA
         JSR     INITLCD         INITIALIZE LCD
+        JSR     INITMEM         INITIALIZE MEMORY
         LDA     #0
         STA     LCD_X           CLEAR LCD X POSITION
         STA     LCD_Y           CLEAR LCD Y POSITION
-        CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
+        LDA     #%01011000
+        STA     MODE            CLEAR MODE SELECT
 
 FUNCN   JSR     GETKEY
 MIDDLE  LDA     SWITCH
@@ -131,8 +144,14 @@ MIDDLE  LDA     SWITCH
         BNE     UP               ... TRY UP INSTEAD.
         LDA     #%00001100      DISABLE CURSOR
         JSR     LCD_CMD
-        LDA     #%01011000      SET TO 'X'
+
+        JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
+        TAY                     TRANSFER ACCUMULATOR TO X
+        LDA     MEMORY,Y        GET NEW CHARACTER FOR OUTPUT
+        ADC     #$01            ADD 1 TO GET THE NEXT
+        STA     MEMORY,Y        SAVE NEW CHARACTER IN RAM
         JSR     LCD_CHR         OUTPUT TO LCD
+        
         JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
         LDA     #%00001101      ENABLE CURSOR AGAIN
         JSR     LCD_CMD
