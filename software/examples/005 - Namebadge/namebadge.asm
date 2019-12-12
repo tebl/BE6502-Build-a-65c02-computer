@@ -218,7 +218,11 @@ D_PRV   LDA     #%00001100      TEMPORARILY DISABLE CURSOR
 LEFT    LDA     SWITCH
         CMP     #%00010111      BIT 3 LOW?
         BNE     RIGHT            ... TRY RIGHT INSTEAD.
-        LDA     LCD_X
+        LDA     MODE            CHECK IF IN CARET MODE,
+        BEQ     L_MOVE          IF NOT THEN EXIT MODE FIRST.
+        LDA     #%00001101      CHANGE CURSOR BACK
+        JSR     LCD_CMD          TO BLOCK MODE
+L_MOVE  LDA     LCD_X
         CMP     #0
         BEQ     L_DONE          DONE IF ALL THE WAY TO THE LEFT
         DEC     LCD_X           DECREMENT X POSITION
@@ -228,7 +232,11 @@ L_DONE  JMP     FUNCN
 RIGHT   LDA     SWITCH
         CMP     #%00001111      BIT 4 LOW? 
         BNE     NOKEY            GOTO NOKEY IF NOT
-        LDA     LCD_X
+        LDA     MODE            CHECK IF IN CARET MODE,
+        BEQ     R_MOVE          IF NOT THEN EXIT MODE FIRST.
+        LDA     #%00001101      CHANGE CURSOR BACK
+        JSR     LCD_CMD          TO BLOCK MODE
+R_MOVE  LDA     LCD_X
         CMP     #15             LAST POSITION
         BEQ     R_DONE          DONE IF ALL THE WAY TO THE RIGHT
         INC     LCD_X           INCREMENT X POSITION
