@@ -16,11 +16,14 @@ DDRB    .EQ     $6002           VIA DDRB
 DDRA    .EQ     $6003           VIA DDRA
 
 SPACE   .EQ     %00100000       BLANK SPACE
+MODE_MV .EQ     $00             MOVE CURSOR MODE
+MODE_LD .EQ     $01             DATA LOAD MODE
 
 SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
 LCD_X   .EQ     $FE             LCD X position
 LCD_Y   .EQ     $FD             LCD Y position
 MODE    .EQ     $FC             BUTTON MODE
+LAST    .EQ     $FB             LAST CHARACTER USED
 MEMORY  .EQ     $0200           MEMORY SET ASIDE FOR CHARACTERS
 
 * ---------------------------------------------------------
@@ -86,8 +89,8 @@ WAITLCD LDA     #%00000000      WE'LL NEED TO READ FROM THE DISPLAY, SO
         STA     DDRB              WE'RE READY TO SEND THE NEXT COMMAND.
         RTS
     
-INITMEM LDY     #80             NUM BYTES TO CLEAR
-        LDA     #SPACE          SPACE CHARACTER TO PUT INTO EMPTY MEMORY
+INITMEM LDY     #80             NUM BYTES TO CLEAR (80 CHARACTER MEMORY)
+        LDA     #$00            ZERO-FILL MEMORY
 NXT_MEM STA     MEMORY,Y        CLEAR BUFFER ONE BYTE AT A TIME    
         DEY
         BPL     NXT_MEM
@@ -135,63 +138,102 @@ START   CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
         LDA     #0
         STA     LCD_X           CLEAR LCD X POSITION
         STA     LCD_Y           CLEAR LCD Y POSITION
-        LDA     #%01011000
         STA     MODE            CLEAR MODE SELECT
+        LDA     #SPACE          SET LAST CHARACTER
+        STA     LAST             TO BE A SPACE
 
 FUNCN   JSR     GETKEY
 MIDDLE  LDA     SWITCH
         CMP     #%00011110      BIT 0 LOW?
         BNE     UP               ... TRY UP INSTEAD.
-        LDA     #%00001100      DISABLE CURSOR
-        JSR     LCD_CMD
-
+        LDA     MODE            CHECK MODE TO SEE WHERE WE ARE
+        BEQ     M_SET            ... 0, SWITCH TO ENTRY MODE
+        JMP     M_UNSET          ... 1, SWITCH TO CARET MODE
+M_SET   LDA     #%00001100      TEMPORARILY DISABLE CURSOR WHILE
+        JSR     LCD_CMD          CHANGING THINGS AROUND.
+        LDA     #MODE_LD        SET MODE TO DATA LOAD, SWITCHES WILL NOW
+        STA     MODE             CHANGE THE CHARACTER SHOWN.
         JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
         TAY                     TRANSFER ACCUMULATOR TO X
-        LDA     MEMORY,Y        GET NEW CHARACTER FOR OUTPUT
-        ADC     #$01            ADD 1 TO GET THE NEXT
-        STA     MEMORY,Y        SAVE NEW CHARACTER IN RAM
-        JSR     LCD_CHR         OUTPUT TO LCD
-        
+        LDA     MEMORY,Y        GET CURRENT CHARACTER FROM RAM,
+        BNE     M_SETN0          ENSURE IT IS NOT 0
+        LDA     LAST            SET EQUAL TO LAST CHARACTER IF IT WAS,
+        STA     MEMORY,Y         UPDATE MEMORY AS WELL.
+M_SETN0 JSR     LCD_CHR         OUTPUT CHARACTER TO THE CURRENT POSITION
         JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
-        LDA     #%00001101      ENABLE CURSOR AGAIN
-        JSR     LCD_CMD
-        JMP     FUNCN
+        LDA     #%00001110      RE-ENABLE THE CURSOR, BUT HAVE IT
+        JSR     LCD_CMD          IN UNDERLINE MODE TO SHOW MODE.
+        JMP     FUNCN           DONE              
+M_UNSET LDA     #%00001101      CHANGE CURSOR BACK
+        JSR     LCD_CMD          TO BLOCK MODE
+        LDA     #MODE_MV        SET MODE TO MOVE, SWITCHES WILL NOW
+        STA     MODE             MOVE CARET POINTER INSTEAD.
+        JMP     FUNCN           DONE
 
 UP      LDA     SWITCH
         CMP     #%00011101      BIT 1 LOW?
-        BNE     DOWN             ... TRY DOWN INSTEAD.
+        BNE     DOWN             ... TRY DOWN INSTEAD.        
+        LDA     MODE            CHECK MODE TO SEE WHERE WE ARE,
+        BNE     U_NXT            NEXT CHARACTER IF MODE 1
         LDA     #$00            MOVE TO UPPER LINE
         STA     LCD_Y
-        JSR     LCD_POS         UPDATE DISPLAY
-        JMP     FUNCN
+        JSR     LCD_POS         UPDATE CARET POSITION
+        JMP     FUNCN           DONE MOVING CARET
+U_NXT   LDA     #%00001100      TEMPORARILY DISABLE CURSOR
+        JSR     LCD_CMD
+        JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
+        TAY                     TRANSFER ACCUMULATOR TO X
+        LDA     MEMORY,Y        GET NEW CHARACTER FOR OUTPUT
+        ADC     #$01            ADD 1 TO GET THE NEXT VALUE
+        STA     MEMORY,Y        SAVE NEW CHARACTER IN RAM,
+        STA     LAST             AND SET IT AS THE LAST CHARACTER
+        JSR     LCD_CHR         OUTPUT TO LCD
+        JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
+        LDA     #%00001110      RE-ENABLE THE CURSOR
+        JSR     LCD_CMD
+        JMP     FUNCN           DONE CHANGE CHARACTER
 
 DOWN    LDA     SWITCH
         CMP     #%00011011      BIT 2 LOW?    
         BNE     LEFT             ... TRY LEFT INSTEAD.
-        LDA     #$01            MOVE TO LOWER LINE
+        BNE     D_PRV           NEXT CHARACTER IF MODE 1
+        LDA     #$01            MOVE TO UPPER LINE
         STA     LCD_Y
-        JSR     LCD_POS         UPDATE DISPLAY
-        JMP     FUNCN
+        JSR     LCD_POS         UPDATE CARET POSITION
+        JMP     FUNCN           DONE MOVING CARET
+D_PRV   LDA     #%00001100      TEMPORARILY DISABLE CURSOR
+        JSR     LCD_CMD
+        JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
+        TAY                     TRANSFER ACCUMULATOR TO X
+        LDA     MEMORY,Y        GET NEW CHARACTER FOR OUTPUT
+        SBC     #$01            SUBTRACT 1 TO GET THE NEXT VALUE
+        STA     MEMORY,Y        SAVE NEW CHARACTER IN RAM,
+        STA     LAST             AND SET IT AS THE LAST CHARACTER
+        JSR     LCD_CHR         OUTPUT TO LCD
+        JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
+        LDA     #%00001110      RE-ENABLE THE CURSOR
+        JSR     LCD_CMD
+        JMP     FUNCN           DONE CHANGE CHARACTER
 
 LEFT    LDA     SWITCH
         CMP     #%00010111      BIT 3 LOW?
         BNE     RIGHT            ... TRY RIGHT INSTEAD.
         LDA     LCD_X
         CMP     #0
-        BEQ     FUNCN           DONE IF ALL THE WAY TO THE LEFT
+        BEQ     L_DONE          DONE IF ALL THE WAY TO THE LEFT
         DEC     LCD_X           DECREMENT X POSITION
         JSR     LCD_POS         UPDATE DISPLAY
-        JMP     FUNCN
+L_DONE  JMP     FUNCN
 
 RIGHT   LDA     SWITCH
         CMP     #%00001111      BIT 4 LOW? 
         BNE     NOKEY            GOTO NOKEY IF NOT
         LDA     LCD_X
         CMP     #15             LAST POSITION
-        BEQ     FUNCN           DONE IF ALL THE WAY TO THE RIGHT
+        BEQ     R_DONE          DONE IF ALL THE WAY TO THE RIGHT
         INC     LCD_X           INCREMENT X POSITION
         JSR     LCD_POS         UPDATE DISPLAY
-        JMP     FUNCN
+R_DONE  JMP     FUNCN
 
 NOKEY   NOP                     WAIT A BIT
         JMP     FUNCN            THEN RETURN TO SCANNING KEYPAD
