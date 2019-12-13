@@ -16,6 +16,7 @@ DDRB    .EQ     $6002           VIA DDRB
 DDRA    .EQ     $6003           VIA DDRA
 
 SPACE   .EQ     %00100000       BLANK SPACE
+A_CHR   .EQ     %01000001       'A'
 MODE_MV .EQ     $00             MOVE CURSOR MODE
 MODE_LD .EQ     $01             DATA LOAD MODE
 
@@ -139,8 +140,8 @@ START   CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
         STA     LCD_X           CLEAR LCD X POSITION
         STA     LCD_Y           CLEAR LCD Y POSITION
         STA     MODE            CLEAR MODE SELECT
-        LDA     #SPACE          SET LAST CHARACTER
-        STA     LAST             TO BE A SPACE
+        LDA     #A_CHR          SET LAST CHARACTER TO BE AN
+        STA     LAST             'A' TO BEGIN WITH.
 
 FUNCN   JSR     GETKEY
 MIDDLE  LDA     SWITCH
@@ -156,7 +157,7 @@ M_SET   LDA     #%00001100      TEMPORARILY DISABLE CURSOR WHILE
         JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
         TAY                     TRANSFER ACCUMULATOR TO X
         LDA     MEMORY,Y        GET CURRENT CHARACTER FROM RAM,
-        BNE     M_SETN0          ENSURE IT IS NOT 0
+        BEQ     M_SETN0          USE LAST CHARACTER ONLY IF 0
         LDA     LAST            SET EQUAL TO LAST CHARACTER IF IT WAS,
         STA     MEMORY,Y         UPDATE MEMORY AS WELL.
 M_SETN0 JSR     LCD_CHR         OUTPUT CHARACTER TO THE CURRENT POSITION
@@ -196,7 +197,8 @@ U_NXT   LDA     #%00001100      TEMPORARILY DISABLE CURSOR
 DOWN    LDA     SWITCH
         CMP     #%00011011      BIT 2 LOW?    
         BNE     LEFT             ... TRY LEFT INSTEAD.
-        BNE     D_PRV           NEXT CHARACTER IF MODE 1
+        LDA     MODE            CHECK MODE TO SEE WHERE WE ARE,
+        BNE     D_PRV            PREVIOUS CHARACTER IF MODE 1
         LDA     #$01            MOVE TO UPPER LINE
         STA     LCD_Y
         JSR     LCD_POS         UPDATE CARET POSITION
