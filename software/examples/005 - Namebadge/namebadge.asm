@@ -52,7 +52,7 @@ INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
         JSR     LCD_CMD
         JSR     WAITLCD
      
-        LDA     #%00001101      DISPLAY ON, CURSOR EN.
+        LDA     #%00001100      DISPLAY ON, NO CURSOR.
         JSR     LCD_CMD
         JSR     WAITLCD
      
@@ -90,11 +90,11 @@ WAITLCD LDA     #%00000000      WE'LL NEED TO READ FROM THE DISPLAY, SO
         STA     DDRB              WE'RE READY TO SEND THE NEXT COMMAND.
         RTS
     
-INITMEM LDY     #$FF            NUM BYTES TO CLEAR (80 CHARACTER MEMORY)
+INITMEM LDY     #80             NUM BYTES TO CLEAR (80 CHARACTER MEMORY)
         LDA     #$00            ZERO-FILL MEMORY
 NXT_MEM STA     MEMORY,Y        CLEAR BUFFER    
         DEY                      ONE BYTE
-        BNE     NXT_MEM          AT A TIME.
+        BPL     NXT_MEM          AT A TIME.
         RTS
     
 LCD_CHR STA 	ORB             DATA IS IN ACCUMULATOR
@@ -140,6 +140,8 @@ START   CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
         STA     LCD_X           CLEAR LCD X POSITION
         STA     LCD_Y           CLEAR LCD Y POSITION
         STA     MODE            CLEAR MODE SELECT
+        LDA     #%00001101      ENABLE BLOCK CURSOR.
+        JSR     LCD_CMD
         LDA     #A_CHR          SET LAST CHARACTER TO BE AN
         STA     LAST             'A' TO BEGIN WITH.
 
@@ -224,6 +226,8 @@ LEFT    LDA     SWITCH
         BNE     RIGHT            ... TRY RIGHT INSTEAD.
         LDA     MODE            CHECK IF IN CARET MODE,
         BEQ     L_MOVE          IF NOT THEN EXIT MODE FIRST.
+        LDA     #MODE_MV        SET MODE TO CARET
+        STA     MODE             MOVEMENT INSTEAD.
         LDA     #%00001101      CHANGE CURSOR BACK
         JSR     LCD_CMD          TO BLOCK MODE
 L_MOVE  LDA     LCD_X
@@ -238,6 +242,8 @@ RIGHT   LDA     SWITCH
         BNE     NOKEY            GOTO NOKEY IF NOT
         LDA     MODE            CHECK IF IN CARET MODE,
         BEQ     R_MOVE          IF NOT THEN EXIT MODE FIRST.
+        LDA     #MODE_MV        SET MODE TO CARET
+        STA     MODE             MOVEMENT INSTEAD.
         LDA     #%00001101      CHANGE CURSOR BACK
         JSR     LCD_CMD          TO BLOCK MODE
 R_MOVE  LDA     LCD_X
