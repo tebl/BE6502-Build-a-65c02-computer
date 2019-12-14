@@ -26,8 +26,8 @@ Pass two
 6003-                 16       DDRA    .EQ     $6003           VIA DDRA
 8000-                 17
 00FF-                 18       SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
-00FE-                 19       LCD_X   .EQ     $FE             LCD X position
-00FD-                 20       LCD_Y   .EQ     $FD             LCD Y position
+00FE-                 19       LCD_X   .EQ     $FE             LCD X POSITION
+00FD-                 20       LCD_Y   .EQ     $FD             LCD Y POSITION
 8000-                 21
 8000-                 22       * ---------------------------------------------------------
 8000-                 23       * SUB-ROUTINES

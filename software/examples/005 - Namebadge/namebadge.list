@@ -1,0 +1,279 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 65c02 overlay version 3.01.02
+
+Pass two
+0000-                  1       * ---------------------------------------------------------
+0000-                  2       * ALLOWS YOU TO MOVE AROUND ON THE SCREEN AND CHANGE THE
+0000-                  3       * CONTENTS OF EACH POSITION, IN EFFECT MAKING THE SBC AN
+0000-                  4       * ELECTRONIC NAMEBADGE.
+0000-                  5
+0000-                  6               .CR     65C02
+0000-                  7               .TF     namebadge.hex,INT
+8000-                  8               .OR     $8000
+8000-                  9               .TA     $0000
+8000-                 10
+6000-                 11       ORB     .EQ     $6000           VIA PORT B DATA
+6000-                 12       IRB     .EQ     $6000           VIA PORT A DATA (SAME AS OUTPUT)
+6001-                 13       ORA     .EQ     $6001           VIA PORT A DATA
+6001-                 14       IRA     .EQ     $6001           VIA PORT A DATA (SAME AS OUTPUT)
+6002-                 15       DDRB    .EQ     $6002           VIA DDRB
+6003-                 16       DDRA    .EQ     $6003           VIA DDRA
+8000-                 17
+0020-                 18       SPACE   .EQ     %00100000       BLANK SPACE
+0041-                 19       A_CHR   .EQ     %01000001       'A'
+0000-                 20       MODE_MV .EQ     $00             MOVE CURSOR MODE
+0001-                 21       MODE_LD .EQ     $01             DATA LOAD MODE
+8000-                 22
+00FF-                 23       SWITCH  .EQ     $FF             HOLDS SWITCH CODE PUSHED
+00FE-                 24       LCD_X   .EQ     $FE             LCD X position
+00FD-                 25       LCD_Y   .EQ     $FD             LCD Y position
+00FC-                 26       MODE    .EQ     $FC             BUTTON MODE
+00FB-                 27       LAST    .EQ     $FB             LAST CHARACTER USED
+0200-                 28       MEMORY  .EQ     $0200           MEMORY SET ASIDE FOR CHARACTERS
+8000-                 29
+8000-                 30       * ---------------------------------------------------------
+8000-                 31       * SUB-ROUTINES
+8000-                 32
+8000-A9 FF            33 (  2) INITVIA LDA     #%11111111      PORT B. DATA SIGNALS USED WITH
+8002-8D 02 60         34 (  4)         STA     DDRB            LCD DISPLAY ONLY, ALSO LEDs.
+8005-A9 E0            35 (  2)         LDA     #%11100000      PORT A. PA0-PA4 INPUT FOR SWITCHES,
+8007-8D 03 60         36 (  4)         STA     DDRA            PA5-PA7 USED FOR LCD CONTROL SIGNALS.
+800A-60               37 (  6)         RTS
+800B-                 38
+800B-A9 30            39 (  2) INITLCD LDA     #%00110000      FUNCTION SET (INITIALIZE)
+800D-20 41 80         40 (  6)         JSR     LCD_CMD
+8010-20 54 80         41 (  6)         JSR     WAITLCD
+8013-                 42
+8013-A9 30            43 (  2)         LDA     #%00110000
+8015-20 41 80         44 (  6)         JSR     LCD_CMD
+8018-20 54 80         45 (  6)         JSR     WAITLCD
+801B-                 46
+801B-A9 30            47 (  2)         LDA     #%00110000
+801D-20 41 80         48 (  6)         JSR     LCD_CMD
+8020-20 54 80         49 (  6)         JSR     WAITLCD
+8023-                 50
+8023-A9 38            51 (  2)         LDA     #%00111000      FUNCTION SET (8-BIT TRANSFER)
+8025-20 41 80         52 (  6)         JSR     LCD_CMD
+8028-20 54 80         53 (  6)         JSR     WAITLCD
+802B-                 54
+802B-A9 0C            55 (  2)         LDA     #%00001100      DISPLAY ON, NO CURSOR.
+802D-20 41 80         56 (  6)         JSR     LCD_CMD
+8030-20 54 80         57 (  6)         JSR     WAITLCD
+8033-                 58
+8033-A9 01            59 (  2)         LDA     #%00000001      CLEAR DISPLAY
+8035-20 41 80         60 (  6)         JSR     LCD_CMD
+8038-20 54 80         61 (  6)         JSR     WAITLCD
+803B-                 62
+803B-A9 06            63 (  2)         LDA     #%00000110      SET ENTRY MODE
+803D-20 41 80         64 (  6)         JSR     LCD_CMD
+8040-60               65 (  6)         RTS
+8041-                 66
+8041-8D 00 60         67 (  4) LCD_CMD STA     ORB             DATA IS IN ACCUMULATOR
+8044-A9 80            68 (  2)         LDA     #%10000000      E=H R/W=L RS=L
+8046-8D 01 60         69 (  4)         STA     ORA
+8049-A9 00            70 (  2)         LDA     #%00000000      E=L PULSE CLOCK LOW
+804B-8D 01 60         71 (  4)         STA     ORA
+804E-A9 80            72 (  2)         LDA     #%10000000      E=H
+8050-8D 01 60         73 (  4)         STA     ORA
+8053-60               74 (  6)         RTS
+8054-                 75
+8054-A9 00            76 (  2) WAITLCD LDA     #%00000000      WE'LL NEED TO READ FROM THE DISPLAY, SO
+8056-8D 02 60         77 (  4)         STA     DDRB             PORT B WILL NOW BE INPUTS.
+8059-A9 C0            78 (  2)         LDA     #%11000000      E=H R/W=H RS=L
+805B-8D 01 60         79 (  4)         STA     ORA
+805E-A9 40            80 (  2)         LDA     #%01000000      E=L PULSE CLOCK LOW
+8060-8D 01 60         81 (  4)         STA     ORA
+8063-A9 C0            82 (  2)         LDA     #%11000000      E=H
+8065-8D 01 60         83 (  4)         STA     ORA
+8068-AD 00 60         84 (  4)         LDA     IRB             READ LCD STATUS REGISTER
+806B-29 80            85 (  2)         AND     #%10000000      MASK OUT BUSY FLAG
+806D-D0 E5            86 (2**)         BNE     WAITLCD
+806F-A9 80            87 (  2)         LDA     #%10000000      LEAVE LCD CONTROL SIGNALS IN WRITE
+8071-8D 01 60         88 (  4)         STA     ORA
+8074-A9 FF            89 (  2)         LDA     #%11111111      RESET VIA PORT B DATA DIRECTION SO THAT
+8076-8D 02 60         90 (  4)         STA     DDRB              WE'RE READY TO SEND THE NEXT COMMAND.
+8079-60               91 (  6)         RTS
+807A-                 92
+807A-A0 50            93 (  2) INITMEM LDY     #80             NUM BYTES TO CLEAR (80 CHARACTER MEMORY)
+807C-A9 00            94 (  2)         LDA     #$00            ZERO-FILL MEMORY
+807E-99 00 02         95 (  5) NXT_MEM STA     MEMORY,Y        CLEAR BUFFER
+8081-88               96 (  2)         DEY                      ONE BYTE
+8082-10 FA            97 (2**)         BPL     NXT_MEM          AT A TIME.
+8084-60               98 (  6)         RTS
+8085-                 99
+8085-8D 00 60        100 (  4) LCD_CHR STA     ORB             DATA IS IN ACCUMULATOR
+8088-A9 A0           101 (  2)         LDA     #%10100000      E=H R/W=L RS=H
+808A-8D 01 60        102 (  4)         STA     ORA
+808D-A9 20           103 (  2)         LDA     #%00100000      E=L PULSE CLOCK LOW
+808F-8D 01 60        104 (  4)         STA     ORA
+8092-A9 A4           105 (  2)         LDA     #%10100100      E=H
+8094-8D 01 60        106 (  4)         STA     ORA
+8097-60              107 (  6)         RTS
+8098-                108
+8098-20 A1 80        109 (  6) LCD_POS JSR     LCD_ADR         GET CURRENT POSITION IN LCD DRAM
+809B-09 80           110 (  2)         ORA     #$80            ADD IN ORDER TO GET THE LCD COMMAND
+809D-20 41 80        111 (  6)         JSR     LCD_CMD         UPDATE POSITION ON LCD
+80A0-60              112 (  6)         RTS
+80A1-                113
+80A1-A5 FD           114 (  3) LCD_ADR LDA     LCD_Y           LOAD Y POSITION (LINE NUMBER)
+80A3-F0 02           115 (2**)         BEQ     ADD_X            LCD_Y POSITION IS 0?
+80A5-A9 40           116 (  2)         LDA     #$40             SET BASE TO $40 FOR LINE 1
+80A7-18              117 (  2) ADD_X   CLC                     CLEAR CARRY BIT (JUST IN CASE)
+80A8-65 FE           118 (  3)         ADC     LCD_X           ADD X POSITION
+80AA-60              119 (  6)         RTS
+80AB-                120
+80AB-AD 01 60        121 (  4) GETKEY  LDA     IRA             READ SWITCHES
+80AE-29 1F           122 (  2)         AND     #%00011111      MASK OUT OTHER BITS
+80B0-C9 1F           123 (  2)         CMP     #%00011111      NO KEYS PUSHED?
+80B2-F0 F7           124 (2**)         BEQ     GETKEY          CHECK AGAIN...
+80B4-85 FF           125 (  3)         STA     SWITCH          STORE VALUE READ
+80B6-AD 01 60        126 (  4) AGAIN   LDA     IRA             WAIT FOR KEY UP
+80B9-29 1F           127 (  2)         AND     #%00011111      MASK OUT OTHER BITS
+80BB-C9 1F           128 (  2)         CMP     #%00011111      NO KEYS PUSHED?
+80BD-D0 F7           129 (2**)         BNE     AGAIN           CHECK AGAIN...
+80BF-60              130 (  6)         RTS
+80C0-                131
+80C0-                132       * ---------------------------------------------------------
+80C0-                133       * MAIN PROGRAM STARTS HERE
+80C0-                134
+80C0-D8              135 (  2) START   CLD                     CLEAR DECIMAL MODE (JUST IN CASE)
+80C1-20 00 80        136 (  6)         JSR     INITVIA         INITIALIZE VIA
+80C4-20 0B 80        137 (  6)         JSR     INITLCD         INITIALIZE LCD
+80C7-20 7A 80        138 (  6)         JSR     INITMEM         INITIALIZE MEMORY
+80CA-A9 00           139 (  2)         LDA     #0
+80CC-85 FE           140 (  3)         STA     LCD_X           CLEAR LCD X POSITION
+80CE-85 FD           141 (  3)         STA     LCD_Y           CLEAR LCD Y POSITION
+80D0-85 FC           142 (  3)         STA     MODE            CLEAR MODE SELECT
+80D2-A9 0D           143 (  2)         LDA     #%00001101      ENABLE BLOCK CURSOR.
+80D4-20 41 80        144 (  6)         JSR     LCD_CMD
+80D7-A9 41           145 (  2)         LDA     #A_CHR          SET LAST CHARACTER TO BE AN
+80D9-85 FB           146 (  3)         STA     LAST             'A' TO BEGIN WITH.
+80DB-                147
+80DB-20 AB 80        148 (  6) FUNCN   JSR     GETKEY
+80DE-A5 FF           149 (  3) MIDDLE  LDA     SWITCH
+80E0-C9 1E           150 (  2)         CMP     #%00011110      BIT 0 LOW?
+80E2-D0 38           151 (2**)         BNE     UP               ... TRY UP INSTEAD.
+80E4-A5 FC           152 (  3)         LDA     MODE            CHECK MODE TO SEE WHERE WE ARE
+80E6-F0 03           153 (2**)         BEQ     M_SET            ... 0, SWITCH TO ENTRY MODE
+80E8-4C 10 81        154 (  3)         JMP     M_UNSET          ... 1, SWITCH TO CARET MODE
+80EB-A9 0C           155 (  2) M_SET   LDA     #%00001100      TEMPORARILY DISABLE CURSOR WHILE
+80ED-20 41 80        156 (  6)         JSR     LCD_CMD          CHANGING THINGS AROUND.
+80F0-A9 01           157 (  2)         LDA     #MODE_LD        SET MODE TO DATA LOAD, SWITCHES WILL NOW
+80F2-85 FC           158 (  3)         STA     MODE             CHANGE THE CHARACTER SHOWN INSTEAD.
+80F4-20 A1 80        159 (  6)         JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
+80F7-A8              160 (  2)         TAY                     TRANSFER ACCUMULATOR TO X
+80F8-B9 00 02        161 ( 4*)         LDA     MEMORY,Y        GET CURRENT CHARACTER FROM RAM,
+80FB-D0 05           162 (2**)         BNE     M_SETN0          USE LAST CHARACTER ONLY IF 0
+80FD-A5 FB           163 (  3)         LDA     LAST            SET EQUAL TO LAST CHARACTER IF IT WAS,
+80FF-99 00 02        164 (  5)         STA     MEMORY,Y         UPDATE MEMORY AS WELL.
+8102-20 85 80        165 (  6) M_SETN0 JSR     LCD_CHR         OUTPUT CHARACTER TO THE CURRENT POSITION
+8105-20 98 80        166 (  6)         JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
+8108-A9 0E           167 (  2)         LDA     #%00001110      RE-ENABLE THE CURSOR, BUT HAVE IT
+810A-20 41 80        168 (  6)         JSR     LCD_CMD          IN UNDERLINE MODE TO SHOW MODE.
+810D-4C DB 80        169 (  3)         JMP     FUNCN           DONE
+8110-A9 0D           170 (  2) M_UNSET LDA     #%00001101      CHANGE CURSOR BACK
+8112-20 41 80        171 (  6)         JSR     LCD_CMD          TO BLOCK MODE
+8115-A9 00           172 (  2)         LDA     #MODE_MV        SET MODE TO MOVE, SWITCHES WILL NOW
+8117-85 FC           173 (  3)         STA     MODE             MOVE CARET POINTER INSTEAD.
+8119-4C DB 80        174 (  3)         JMP     FUNCN           DONE
+811C-                175
+811C-A5 FF           176 (  3) UP      LDA     SWITCH
+811E-C9 1D           177 (  2)         CMP     #%00011101      BIT 1 LOW?
+8120-D0 30           178 (2**)         BNE     DOWN             ... TRY DOWN INSTEAD.
+8122-A5 FC           179 (  3)         LDA     MODE            CHECK MODE TO SEE WHERE WE ARE,
+8124-D0 0A           180 (2**)         BNE     U_NXT            NEXT CHARACTER IF MODE 1
+8126-A9 00           181 (  2)         LDA     #$00            MOVE TO UPPER LINE
+8128-85 FD           182 (  3)         STA     LCD_Y
+812A-20 98 80        183 (  6)         JSR     LCD_POS         UPDATE CARET POSITION
+812D-4C DB 80        184 (  3)         JMP     FUNCN           DONE MOVING CARET
+8130-A9 0C           185 (  2) U_NXT   LDA     #%00001100      TEMPORARILY DISABLE CURSOR
+8132-20 41 80        186 (  6)         JSR     LCD_CMD
+8135-20 A1 80        187 (  6)         JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
+8138-A8              188 (  2)         TAY                     TRANSFER ACCUMULATOR TO X
+8139-B9 00 02        189 ( 4*)         LDA     MEMORY,Y        GET NEW CHARACTER FOR OUTPUT
+813C-18              190 (  2)         CLC                     CLEAR CARRY BIT (JUST IN CASE)
+813D-69 01           191 (  2)         ADC     #$01            ADD 1 TO GET THE NEXT VALUE
+813F-99 00 02        192 (  5)         STA     MEMORY,Y        SAVE NEW CHARACTER IN RAM,
+8142-85 FB           193 (  3)         STA     LAST             ALSO SET IT AS THE LAST CHARACTER
+8144-20 85 80        194 (  6)         JSR     LCD_CHR         OUTPUT TO LCD
+8147-20 98 80        195 (  6)         JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
+814A-A9 0E           196 (  2)         LDA     #%00001110      RE-ENABLE THE CURSOR
+814C-20 41 80        197 (  6)         JSR     LCD_CMD
+814F-4C DB 80        198 (  3)         JMP     FUNCN           DONE CHANGE CHARACTER
+8152-                199
+8152-A5 FF           200 (  3) DOWN    LDA     SWITCH
+8154-C9 1B           201 (  2)         CMP     #%00011011      BIT 2 LOW?
+8156-D0 30           202 (2**)         BNE     LEFT             ... TRY LEFT INSTEAD.
+8158-A5 FC           203 (  3)         LDA     MODE            CHECK MODE TO SEE WHERE WE ARE,
+815A-D0 0A           204 (2**)         BNE     D_PRV            PREVIOUS CHARACTER IF MODE 1
+815C-A9 01           205 (  2)         LDA     #$01            MOVE TO UPPER LINE
+815E-85 FD           206 (  3)         STA     LCD_Y
+8160-20 98 80        207 (  6)         JSR     LCD_POS         UPDATE CARET POSITION
+8163-4C DB 80        208 (  3)         JMP     FUNCN           DONE MOVING CARET
+8166-A9 0C           209 (  2) D_PRV   LDA     #%00001100      TEMPORARILY DISABLE CURSOR
+8168-20 41 80        210 (  6)         JSR     LCD_CMD
+816B-20 A1 80        211 (  6)         JSR     LCD_ADR         LCD ADDRESS OFFSET TO ACCUMULATOR
+816E-A8              212 (  2)         TAY                     TRANSFER ACCUMULATOR TO X
+816F-B9 00 02        213 ( 4*)         LDA     MEMORY,Y        GET NEW CHARACTER FOR OUTPUT
+8172-38              214 (  2)         SEC                     SET CARRY-BIT BEFORE SUBTRACTION
+8173-E9 01           215 (  2)         SBC     #$01            SUBTRACT 1 TO GET THE NEXT VALUE
+8175-99 00 02        216 (  5)         STA     MEMORY,Y        SAVE NEW CHARACTER IN RAM,
+8178-85 FB           217 (  3)         STA     LAST             AND SET IT AS THE LAST CHARACTER
+817A-20 85 80        218 (  6)         JSR     LCD_CHR         OUTPUT TO LCD
+817D-20 98 80        219 (  6)         JSR     LCD_POS         RESET POSITION TO WHERE WE WERE
+8180-A9 0E           220 (  2)         LDA     #%00001110      RE-ENABLE THE CURSOR
+8182-20 41 80        221 (  6)         JSR     LCD_CMD
+8185-4C DB 80        222 (  3)         JMP     FUNCN           DONE CHANGE CHARACTER
+8188-                223
+8188-A5 FF           224 (  3) LEFT    LDA     SWITCH
+818A-C9 17           225 (  2)         CMP     #%00010111      BIT 3 LOW?
+818C-D0 1B           226 (2**)         BNE     RIGHT            ... TRY RIGHT INSTEAD.
+818E-A5 FC           227 (  3)         LDA     MODE            CHECK IF IN CARET MODE,
+8190-F0 09           228 (2**)         BEQ     L_MOVE          IF NOT THEN EXIT MODE FIRST.
+8192-A9 00           229 (  2)         LDA     #MODE_MV        SET MODE TO CARET
+8194-85 FC           230 (  3)         STA     MODE             MOVEMENT INSTEAD.
+8196-A9 0D           231 (  2)         LDA     #%00001101      CHANGE CURSOR BACK
+8198-20 41 80        232 (  6)         JSR     LCD_CMD          TO BLOCK MODE
+819B-A5 FE           233 (  3) L_MOVE  LDA     LCD_X
+819D-C9 00           234 (  2)         CMP     #0
+819F-F0 05           235 (2**)         BEQ     L_DONE          DONE IF ALL THE WAY TO THE LEFT
+81A1-C6 FE           236 (  5)         DEC     LCD_X           DECREMENT X POSITION
+81A3-20 98 80        237 (  6)         JSR     LCD_POS         UPDATE DISPLAY
+81A6-4C DB 80        238 (  3) L_DONE  JMP     FUNCN
+81A9-                239
+81A9-A5 FF           240 (  3) RIGHT   LDA     SWITCH
+81AB-C9 0F           241 (  2)         CMP     #%00001111      BIT 4 LOW?
+81AD-D0 1B           242 (2**)         BNE     NOKEY            GOTO NOKEY IF NOT
+81AF-A5 FC           243 (  3)         LDA     MODE            CHECK IF IN CARET MODE,
+81B1-F0 09           244 (2**)         BEQ     R_MOVE          IF NOT THEN EXIT MODE FIRST.
+81B3-A9 00           245 (  2)         LDA     #MODE_MV        SET MODE TO CARET
+81B5-85 FC           246 (  3)         STA     MODE             MOVEMENT INSTEAD.
+81B7-A9 0D           247 (  2)         LDA     #%00001101      CHANGE CURSOR BACK
+81B9-20 41 80        248 (  6)         JSR     LCD_CMD          TO BLOCK MODE
+81BC-A5 FE           249 (  3) R_MOVE  LDA     LCD_X
+81BE-C9 0F           250 (  2)         CMP     #15             LAST POSITION
+81C0-F0 05           251 (2**)         BEQ     R_DONE          DONE IF ALL THE WAY TO THE RIGHT
+81C2-E6 FE           252 (  5)         INC     LCD_X           INCREMENT X POSITION
+81C4-20 98 80        253 (  6)         JSR     LCD_POS         UPDATE DISPLAY
+81C7-4C DB 80        254 (  3) R_DONE  JMP     FUNCN
+81CA-                255
+81CA-EA              256 (  2) NOKEY   NOP                     WAIT A BIT
+81CB-4C DB 80        257 (  3)         JMP     FUNCN            THEN RETURN TO SCANNING KEYPAD
+81CE-                258
+81CE-                259       * ---------------------------------------------------------
+81CE-                260       * STORE VECTORS AT END OF EEPROM.
+FFFA-                261               .OR     $FFFA
+FFFA-                262               .TA     $7FFA
+FFFA-C0 80           263               .DA     START           NMI VECTOR
+FFFC-C0 80           264               .DA     START           RESET VECTOR
+FFFE-C0 80           265               .DA     START           IRQ VECTOR
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+
