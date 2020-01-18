@@ -32,6 +32,7 @@ LIBS:valves
 LIBS:mounting
 LIBS:be6502_backplane
 LIBS:arduino
+LIBS:switches
 LIBS:BE6502 Mega Adapter-cache
 EELAYER 25 0
 EELAYER END
@@ -232,7 +233,7 @@ F 3 "" H 12750 4850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 15400 11075 0    60   ~ 0
-A
+B
 Wire Bus Line
 	12625 950  6425 950 
 Wire Wire Line
@@ -516,18 +517,10 @@ NoConn ~ 3250 3400
 NoConn ~ 3250 3500
 NoConn ~ 3250 3600
 NoConn ~ 3250 3700
-NoConn ~ 3250 3900
-NoConn ~ 3250 4000
-NoConn ~ 3250 4100
-NoConn ~ 3250 4200
 NoConn ~ 3250 4300
 NoConn ~ 3250 4400
 NoConn ~ 3250 4500
 NoConn ~ 3250 4600
-NoConn ~ 3250 4700
-NoConn ~ 3250 4800
-NoConn ~ 3250 4900
-NoConn ~ 3250 5000
 NoConn ~ 3250 5100
 NoConn ~ 3250 5200
 NoConn ~ 3250 5300
@@ -1339,4 +1332,170 @@ Text Label 6225 3900 2    60   ~ 0
 Entry Wire Line
 	6250 3900 6350 4000
 NoConn ~ 3250 6600
+$Comp
+L SW_Push SW1
+U 1 1 5E236342
+P 2375 4425
+F 0 "SW1" H 2425 4525 50  0000 L CNN
+F 1 "SW_Push" H 2375 4365 50  0000 C CNN
+F 2 "Buttons_Switches_THT:SW_PUSH_6mm" H 2375 4625 50  0001 C CNN
+F 3 "" H 2375 4625 50  0001 C CNN
+	1    2375 4425
+	0    1    1    0   
+$EndComp
+$Comp
+L R R1
+U 1 1 5E2364BC
+P 2375 5225
+F 0 "R1" V 2455 5225 50  0000 C CNN
+F 1 "10k" V 2375 5225 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2305 5225 50  0001 C CNN
+F 3 "" H 2375 5225 50  0001 C CNN
+	1    2375 5225
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R2
+U 1 1 5E2366D0
+P 2675 5225
+F 0 "R2" V 2755 5225 50  0000 C CNN
+F 1 "10k" V 2675 5225 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2605 5225 50  0001 C CNN
+F 3 "" H 2675 5225 50  0001 C CNN
+	1    2675 5225
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R3
+U 1 1 5E236709
+P 2975 5225
+F 0 "R3" V 3055 5225 50  0000 C CNN
+F 1 "10k" V 2975 5225 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2905 5225 50  0001 C CNN
+F 3 "" H 2975 5225 50  0001 C CNN
+	1    2975 5225
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_Push SW2
+U 1 1 5E2369FB
+P 2675 4425
+F 0 "SW2" H 2725 4525 50  0000 L CNN
+F 1 "SW_Push" H 2675 4365 50  0000 C CNN
+F 2 "Buttons_Switches_THT:SW_PUSH_6mm" H 2675 4625 50  0001 C CNN
+F 3 "" H 2675 4625 50  0001 C CNN
+	1    2675 4425
+	0    1    1    0   
+$EndComp
+$Comp
+L SW_Push SW3
+U 1 1 5E236B4B
+P 2975 4425
+F 0 "SW3" H 3025 4525 50  0000 L CNN
+F 1 "SW_Push" H 2975 4365 50  0000 C CNN
+F 2 "Buttons_Switches_THT:SW_PUSH_6mm" H 2975 4625 50  0001 C CNN
+F 3 "" H 2975 4625 50  0001 C CNN
+	1    2975 4425
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2375 4625 2375 5075
+Wire Wire Line
+	3250 4700 2375 4700
+Connection ~ 2375 4700
+Wire Wire Line
+	2675 4625 2675 5075
+Wire Wire Line
+	2675 4800 3250 4800
+Connection ~ 2675 4800
+Wire Wire Line
+	3250 4900 2975 4900
+Wire Wire Line
+	2975 4625 2975 5075
+Connection ~ 2975 4900
+Wire Wire Line
+	2375 5375 2375 5450
+Wire Wire Line
+	2025 5450 2975 5450
+Wire Wire Line
+	2975 5450 2975 5375
+Wire Wire Line
+	2675 5375 2675 5525
+Connection ~ 2675 5450
+Wire Wire Line
+	2375 4225 2375 4150
+Wire Wire Line
+	2375 4150 2975 4150
+Wire Wire Line
+	2975 4150 2975 4225
+Wire Wire Line
+	2675 4075 2675 4225
+Connection ~ 2675 4150
+$Comp
+L VCC #PWR011
+U 1 1 5E237AFB
+P 2675 4075
+F 0 "#PWR011" H 2675 3925 50  0001 C CNN
+F 1 "VCC" H 2675 4225 50  0000 C CNN
+F 2 "" H 2675 4075 50  0001 C CNN
+F 3 "" H 2675 4075 50  0001 C CNN
+	1    2675 4075
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR012
+U 1 1 5E237B2B
+P 2675 5525
+F 0 "#PWR012" H 2675 5275 50  0001 C CNN
+F 1 "GND" H 2675 5375 50  0000 C CNN
+F 2 "" H 2675 5525 50  0001 C CNN
+F 3 "" H 2675 5525 50  0001 C CNN
+	1    2675 5525
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED_Small D1
+U 1 1 5E2392BC
+P 2200 5000
+F 0 "D1" H 2150 5125 50  0000 L CNN
+F 1 "USER" H 2100 4900 50  0000 L CNN
+F 2 "LEDs:LED_D5.0mm" V 2200 5000 50  0001 C CNN
+F 3 "" V 2200 5000 50  0001 C CNN
+	1    2200 5000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 5000 2300 5000
+$Comp
+L R R4
+U 1 1 5E239C19
+P 2025 5225
+F 0 "R4" V 2105 5225 50  0000 C CNN
+F 1 "220" V 2025 5225 50  0000 C CNN
+F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 1955 5225 50  0001 C CNN
+F 3 "" H 2025 5225 50  0001 C CNN
+	1    2025 5225
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2025 5075 2025 5000
+Wire Wire Line
+	2025 5000 2100 5000
+Wire Wire Line
+	2025 5375 2025 5450
+Connection ~ 2375 5450
+NoConn ~ 3250 3900
+NoConn ~ 3250 4000
+NoConn ~ 3250 4100
+NoConn ~ 3250 4200
+Wire Notes Line
+	3150 5800 3150 3800
+Wire Notes Line
+	3150 3800 1875 3800
+Wire Notes Line
+	1875 3800 1875 5800
+Wire Notes Line
+	1875 5800 3150 5800
+Text Notes 1850 3750 0    60   ~ 0
+Added in revision B, function\nis user-definable (which\nexplains the generic names)
 $EndSCHEMATC

@@ -1,4 +1,4 @@
-update=17/11/2019 14:36:08
+update=18/01/2020 22:25:41
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,6 +23,8 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
+[general]
+version=1
 [eeschema]
 version=1
 LibDir=../common/library
@@ -60,6 +62,7 @@ LibName30=valves
 LibName31=mounting
 LibName32=be6502_backplane
 LibName33=arduino
+LibName34=C:/Program Files/KiCad/share/kicad/library/switches
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
@@ -70,5 +73,3 @@ NetFmtName=Pcbnew
 SpiceForceRefPrefix=0
 SpiceUseNetNumbers=0
 LabSize=60
-[general]
-version=1
