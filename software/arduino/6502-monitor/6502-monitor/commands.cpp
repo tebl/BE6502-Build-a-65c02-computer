@@ -4,6 +4,9 @@
 extern bool colorize;
 extern bool output;
 
+/* From original sketch by Ben Eater, prints the values currently found on
+ * the data and address bus. Usually called via interrupt.
+ */
 void on_clock() {
   if (!output) return;
   char output[15];

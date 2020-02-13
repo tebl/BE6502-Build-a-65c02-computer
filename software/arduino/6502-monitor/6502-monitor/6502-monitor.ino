@@ -1,13 +1,14 @@
 #include <Arduino.h>
-#include "6502-monitor.h"
 #include "constants.h"
 #include "commands.h"
 #include "process_serial.h"
+#include "process_switches.h"
 
 bool colorize = true;
 bool output = true;
 
 void setup() {
+  Serial.begin(115200);
   for (int n = 0; n < 16; n += 1) {
     pinMode(SBC_ADDR[n], INPUT);
   }
@@ -24,7 +25,6 @@ void setup() {
   pinMode(SBC_RW, INPUT);
   attachInterrupt(digitalPinToInterrupt(SBC_CLOCK), on_clock, RISING);
   
-  Serial.begin(115200);
   print_welcome();
 }
 
@@ -32,4 +32,5 @@ void loop() {
     while(Serial.available() > 0) {
         process_serial(Serial.read());
     }
+    process_switches();
 }
