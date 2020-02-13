@@ -1,5 +1,40 @@
-EESchema Schematic File Version 4
-EELAYER 30 0
+EESchema Schematic File Version 2
+LIBS:28c256
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:mounting
+LIBS:be6502_backplane
+LIBS:arduino
+LIBS:switches
+LIBS:BE6502 Mega Adapter-cache
+EELAYER 25 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
@@ -14,7 +49,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L mounting:Mounting M1
+L Mounting M1
 U 1 1 5D63FD8B
 P 15525 575
 F 0 "M1" H 15525 675 50  0001 C CNN
@@ -25,7 +60,7 @@ F 3 "" H 15525 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L mounting:Mounting M2
+L Mounting M2
 U 1 1 5D63FDB2
 P 15650 575
 F 0 "M2" H 15650 675 50  0001 C CNN
@@ -36,7 +71,7 @@ F 3 "" H 15650 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L mounting:Mounting M3
+L Mounting M3
 U 1 1 5D63FDD2
 P 15775 575
 F 0 "M3" H 15775 675 50  0001 C CNN
@@ -47,7 +82,7 @@ F 3 "" H 15775 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L mounting:Mounting M4
+L Mounting M4
 U 1 1 5D63FDF2
 P 15900 575
 F 0 "M4" H 15900 675 50  0001 C CNN
@@ -176,7 +211,7 @@ Entry Wire Line
 Entry Wire Line
 	12950 3075 13050 3175
 $Comp
-L power:VCC #PWR01
+L VCC #PWR01
 U 1 1 5D63F697
 P 12825 4650
 F 0 "#PWR01" H 12825 4500 50  0001 C CNN
@@ -187,7 +222,7 @@ F 3 "" H 12825 4650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR02
+L GND #PWR02
 U 1 1 5D63F634
 P 12750 4850
 F 0 "#PWR02" H 12750 4600 50  0001 C CNN
@@ -205,6 +240,10 @@ Wire Wire Line
 	13450 5375 13050 5375
 Wire Bus Line
 	12950 3875 12625 3875
+Wire Bus Line
+	12950 5075 12950 7075
+Wire Bus Line
+	12950 3075 12950 4575
 Wire Wire Line
 	13050 6475 13450 6475
 Wire Wire Line
@@ -268,7 +307,7 @@ Wire Wire Line
 Wire Wire Line
 	12750 4775 13450 4775
 $Comp
-L be6502_backplane:BE6502_Backplane2 J1
+L BE6502_Backplane2 J1
 U 1 1 5DC149FA
 P 13650 5075
 F 0 "J1" H 13650 7075 50  0000 C CNN
@@ -285,7 +324,7 @@ Wire Wire Line
 Text Notes 11825 10350 0    60   ~ 0
 The video series uses an Arduino Mega 2560 to monitor the bus signals used by the\ncomputer, this way code can be stepped through (at a low frequency) without the\nuse of a logic analyzer. This module acts as an Arduino shield that maps out all the\nsignals as well as doubling up as a 2/3 slot backplane for your own expansions.
 $Comp
-L arduino:Arduino_Mega2560_Shield XA1
+L Arduino_Mega2560_Shield XA1
 U 1 1 5DD08E2A
 P 4550 4750
 F 0 "XA1" V 4650 4750 60  0000 C CNN
@@ -296,9 +335,9 @@ F 3 "" H 5250 7500 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3050 6000 3175 6000
+	3050 6000 3250 6000
 Wire Wire Line
-	3175 6000 3175 6100
+	3175 6000 3175 6400
 Wire Wire Line
 	3175 6400 3250 6400
 Wire Wire Line
@@ -312,7 +351,7 @@ Wire Wire Line
 Connection ~ 3175 6100
 Connection ~ 3175 6000
 $Comp
-L power:GND #PWR03
+L GND #PWR03
 U 1 1 5DD091B1
 P 3050 6075
 F 0 "#PWR03" H 3050 5825 50  0001 C CNN
@@ -325,7 +364,7 @@ $EndComp
 Wire Wire Line
 	3050 6075 3050 6000
 $Comp
-L power:VCC #PWR04
+L VCC #PWR04
 U 1 1 5DD092A8
 P 2850 6175
 F 0 "#PWR04" H 2850 6025 50  0001 C CNN
@@ -442,7 +481,7 @@ R/~W
 Wire Wire Line
 	5850 2700 6250 2700
 $Comp
-L Device:Jumper_NO_Small JP1
+L Jumper_NO_Small JP1
 U 1 1 5DD0A73A
 P 2850 6375
 F 0 "JP1" H 2850 6455 50  0000 C CNN
@@ -455,7 +494,7 @@ $EndComp
 Wire Wire Line
 	2850 6175 2850 6275
 Wire Wire Line
-	2850 6475 2850 6700
+	2850 6475 2850 6800
 Wire Wire Line
 	2850 6700 3250 6700
 Connection ~ 2850 6700
@@ -543,6 +582,8 @@ Entry Wire Line
 	6250 6800 6350 6900
 Entry Wire Line
 	6250 6900 6350 7000
+Wire Bus Line
+	6350 2700 6350 7000
 Entry Wire Line
 	6250 2700 6350 2800
 Wire Bus Line
@@ -720,7 +761,7 @@ Entry Wire Line
 Entry Wire Line
 	11025 3075 11125 3175
 $Comp
-L power:VCC #PWR05
+L VCC #PWR05
 U 1 1 5DD0D173
 P 10900 4650
 F 0 "#PWR05" H 10900 4500 50  0001 C CNN
@@ -731,7 +772,7 @@ F 3 "" H 10900 4650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR06
+L GND #PWR06
 U 1 1 5DD0D179
 P 10825 4850
 F 0 "#PWR06" H 10825 4600 50  0001 C CNN
@@ -745,6 +786,10 @@ Wire Wire Line
 	11525 5375 11125 5375
 Wire Bus Line
 	11025 3875 10700 3875
+Wire Bus Line
+	11025 5075 11025 7075
+Wire Bus Line
+	11025 3075 11025 4575
 Wire Wire Line
 	11125 6475 11525 6475
 Wire Wire Line
@@ -808,7 +853,7 @@ Wire Wire Line
 Wire Wire Line
 	10825 4775 11525 4775
 $Comp
-L be6502_backplane:BE6502_Backplane2 J2
+L BE6502_Backplane2 J2
 U 1 1 5DD0D1A2
 P 11725 5075
 F 0 "J2" H 11725 7075 50  0000 C CNN
@@ -989,7 +1034,7 @@ Entry Wire Line
 Entry Wire Line
 	9125 3075 9225 3175
 $Comp
-L power:VCC #PWR07
+L VCC #PWR07
 U 1 1 5DD0D2FE
 P 9000 4650
 F 0 "#PWR07" H 9000 4500 50  0001 C CNN
@@ -1000,7 +1045,7 @@ F 3 "" H 9000 4650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR08
+L GND #PWR08
 U 1 1 5DD0D304
 P 8925 4850
 F 0 "#PWR08" H 8925 4600 50  0001 C CNN
@@ -1014,6 +1059,10 @@ Wire Wire Line
 	9625 5375 9225 5375
 Wire Bus Line
 	9125 3875 8800 3875
+Wire Bus Line
+	9125 5075 9125 7075
+Wire Bus Line
+	9125 3075 9125 4575
 Wire Wire Line
 	9225 6475 9625 6475
 Wire Wire Line
@@ -1077,7 +1126,7 @@ Wire Wire Line
 Wire Wire Line
 	8925 4775 9625 4775
 $Comp
-L be6502_backplane:BE6502_Backplane2 J3
+L BE6502_Backplane2 J3
 U 1 1 5DD0D32D
 P 9825 5075
 F 0 "J3" H 9825 7075 50  0000 C CNN
@@ -1142,7 +1191,7 @@ PIN39
 Wire Bus Line
 	8800 950  8800 5875
 $Comp
-L Device:C_Small C1
+L C_Small C1
 U 1 1 5DD0E0B6
 P 10975 10550
 F 0 "C1" H 10985 10620 50  0000 L CNN
@@ -1153,7 +1202,7 @@ F 3 "" H 10975 10550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C_Small C2
+L C_Small C2
 U 1 1 5DD0E10C
 P 11250 10550
 F 0 "C2" H 11260 10620 50  0000 L CNN
@@ -1164,19 +1213,19 @@ F 3 "" H 11250 10550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	10975 10300 10975 10375
+	10975 10300 10975 10450
 Wire Wire Line
-	10975 10375 11250 10375
+	10975 10375 11525 10375
 Wire Wire Line
 	11250 10375 11250 10450
 Wire Wire Line
 	10975 10650 10975 10725
 Wire Wire Line
-	10975 10725 11250 10725
+	10975 10725 11525 10725
 Wire Wire Line
-	11525 10650 11525 10725
+	11525 10650 11525 10800
 $Comp
-L power:GND #PWR09
+L GND #PWR09
 U 1 1 5DD0E2DE
 P 11525 10800
 F 0 "#PWR09" H 11525 10550 50  0001 C CNN
@@ -1188,7 +1237,7 @@ F 3 "" H 11525 10800 50  0001 C CNN
 $EndComp
 Connection ~ 11250 10725
 $Comp
-L power:VCC #PWR010
+L VCC #PWR010
 U 1 1 5DD0E425
 P 10975 10300
 F 0 "#PWR010" H 10975 10150 50  0001 C CNN
@@ -1200,7 +1249,7 @@ F 3 "" H 10975 10300 50  0001 C CNN
 $EndComp
 Connection ~ 10975 10375
 $Comp
-L Device:C_Small C3
+L C_Small C3
 U 1 1 5DD0EC50
 P 11525 10550
 F 0 "C3" H 11535 10620 50  0000 L CNN
@@ -1284,7 +1333,7 @@ Entry Wire Line
 	6250 3900 6350 4000
 NoConn ~ 3250 6600
 $Comp
-L switches:SW_Push SW1
+L SW_Push SW1
 U 1 1 5E236342
 P 2375 4425
 F 0 "SW1" H 2425 4525 50  0000 L CNN
@@ -1295,7 +1344,7 @@ F 3 "" H 2375 4625 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R R1
+L R R1
 U 1 1 5E2364BC
 P 2375 5225
 F 0 "R1" V 2455 5225 50  0000 C CNN
@@ -1306,7 +1355,7 @@ F 3 "" H 2375 5225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R2
+L R R2
 U 1 1 5E2366D0
 P 2675 5225
 F 0 "R2" V 2755 5225 50  0000 C CNN
@@ -1317,7 +1366,7 @@ F 3 "" H 2675 5225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R3
+L R R3
 U 1 1 5E236709
 P 2975 5225
 F 0 "R3" V 3055 5225 50  0000 C CNN
@@ -1328,7 +1377,7 @@ F 3 "" H 2975 5225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L switches:SW_Push SW2
+L SW_Push SW2
 U 1 1 5E2369FB
 P 2675 4425
 F 0 "SW2" H 2725 4525 50  0000 L CNN
@@ -1339,7 +1388,7 @@ F 3 "" H 2675 4625 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L switches:SW_Push SW3
+L SW_Push SW3
 U 1 1 5E236B4B
 P 2975 4425
 F 0 "SW3" H 3025 4525 50  0000 L CNN
@@ -1350,40 +1399,40 @@ F 3 "" H 2975 4625 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	2375 4625 2375 4700
+	2375 4625 2375 5075
 Wire Wire Line
 	3250 4700 2375 4700
 Connection ~ 2375 4700
 Wire Wire Line
-	2675 4625 2675 4800
+	2675 4625 2675 5075
 Wire Wire Line
 	2675 4800 3250 4800
 Connection ~ 2675 4800
 Wire Wire Line
 	3250 4900 2975 4900
 Wire Wire Line
-	2975 4625 2975 4900
+	2975 4625 2975 5075
 Connection ~ 2975 4900
 Wire Wire Line
 	2375 5375 2375 5450
 Wire Wire Line
-	2025 5450 2375 5450
+	2025 5450 2975 5450
 Wire Wire Line
 	2975 5450 2975 5375
 Wire Wire Line
-	2675 5375 2675 5450
+	2675 5375 2675 5525
 Connection ~ 2675 5450
 Wire Wire Line
 	2375 4225 2375 4150
 Wire Wire Line
-	2375 4150 2675 4150
+	2375 4150 2975 4150
 Wire Wire Line
 	2975 4150 2975 4225
 Wire Wire Line
-	2675 4075 2675 4150
+	2675 4075 2675 4225
 Connection ~ 2675 4150
 $Comp
-L power:VCC #PWR011
+L VCC #PWR011
 U 1 1 5E237AFB
 P 2675 4075
 F 0 "#PWR011" H 2675 3925 50  0001 C CNN
@@ -1394,7 +1443,7 @@ F 3 "" H 2675 4075 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR012
+L GND #PWR012
 U 1 1 5E237B2B
 P 2675 5525
 F 0 "#PWR012" H 2675 5275 50  0001 C CNN
@@ -1405,7 +1454,7 @@ F 3 "" H 2675 5525 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:LED_Small D1
+L LED_Small D1
 U 1 1 5E2392BC
 P 2200 5000
 F 0 "D1" H 2150 5125 50  0000 L CNN
@@ -1418,7 +1467,7 @@ $EndComp
 Wire Wire Line
 	3250 5000 2300 5000
 $Comp
-L Device:R R4
+L R R4
 U 1 1 5E239C19
 P 2025 5225
 F 0 "R4" V 2105 5225 50  0000 C CNN
@@ -1449,64 +1498,4 @@ Wire Notes Line
 	1875 5800 3150 5800
 Text Notes 1850 3750 0    60   ~ 0
 Added in revision B, function\nis user-definable (which\nexplains the generic names)
-Wire Wire Line
-	3175 6300 3175 6400
-Wire Wire Line
-	3175 6200 3175 6300
-Wire Wire Line
-	3175 6100 3175 6200
-Wire Wire Line
-	3175 6000 3250 6000
-Wire Wire Line
-	2850 6700 2850 6800
-Wire Wire Line
-	11250 10725 11525 10725
-Wire Wire Line
-	10975 10375 10975 10450
-Wire Wire Line
-	11525 10725 11525 10800
-Wire Wire Line
-	11250 10375 11525 10375
-Wire Wire Line
-	2375 4700 2375 5075
-Wire Wire Line
-	2675 4800 2675 5075
-Wire Wire Line
-	2975 4900 2975 5075
-Wire Wire Line
-	2675 5450 2975 5450
-Wire Wire Line
-	2675 5450 2675 5525
-Wire Wire Line
-	2675 4150 2975 4150
-Wire Wire Line
-	2675 4150 2675 4225
-Wire Wire Line
-	2375 5450 2675 5450
-Wire Bus Line
-	12950 3875 12950 4575
-Wire Bus Line
-	11025 3875 11025 4575
-Wire Bus Line
-	9125 3875 9125 4575
-Wire Bus Line
-	12950 5075 12950 5875
-Wire Bus Line
-	12950 3075 12950 3875
-Wire Bus Line
-	11025 5075 11025 5875
-Wire Bus Line
-	11025 3075 11025 3875
-Wire Bus Line
-	9125 5075 9125 5875
-Wire Bus Line
-	9125 3075 9125 3875
-Wire Bus Line
-	12950 5875 12950 7075
-Wire Bus Line
-	11025 5875 11025 7075
-Wire Bus Line
-	9125 5875 9125 7075
-Wire Bus Line
-	6350 2700 6350 7000
 $EndSCHEMATC
