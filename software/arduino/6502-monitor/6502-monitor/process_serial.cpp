@@ -2,8 +2,7 @@
 #include "constants.h"
 #include "commands.h"
 
-/*
- * Process a single received byte that was received over
+/* Process a single received byte that was received over
  * the serial connection to the Arduino Nano, the byte
  * will be automatically echoed back to the terminal
  * application. 
@@ -20,10 +19,10 @@ void process_serial(const byte byte_in) {
     Serial.print((char) byte_in);
     switch (byte_in) {
     /* Handle backspace character. Echoing will already have
-        * moved the cursor back one position, but we'll need to
-        * output a space and then move cursor back  again to
-        * actually clear the character that was rubbed out.
-        */
+     * moved the cursor back one position, but we'll need to
+     * output a space and then move cursor back  again to
+     * actually clear the character that was rubbed out.
+     */
     case '\b':
         if (input_pos > 0) {
             input_pos--;
@@ -32,9 +31,9 @@ void process_serial(const byte byte_in) {
         break;
 
     /* Handle end-of-line, ignore when one of them comes at the
-        * start of a line to gracefully handle differences between
-        * client platforms differences.
-        */
+     * start of a line to gracefully handle differences between
+     * client platforms differences.
+     */
     case '\n':
     case '\r':
         if (input_pos > 0) {

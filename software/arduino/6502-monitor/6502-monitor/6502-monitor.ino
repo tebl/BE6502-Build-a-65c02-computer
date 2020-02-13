@@ -5,29 +5,36 @@
 #include "process_serial.h"
 
 bool colorize = true;
+bool output = true;
 
 void setup() {
   for (int n = 0; n < 16; n += 1) {
-    pinMode(ADDR[n], INPUT);
+    pinMode(SBC_ADDR[n], INPUT);
   }
   for (int n = 0; n < 8; n += 1) {
-    pinMode(DATA[n], INPUT);
+    pinMode(SBC_DATA[n], INPUT);
   }
-  pinMode(CLOCK, INPUT);
-  pinMode(READ_WRITE, INPUT);
 
-  //attachInterrupt(digitalPinToInterrupt(PHI2), onClock, RISING);
+  pinMode(USER_LED, OUTPUT);
+  pinMode(USER_SW1, INPUT);
+  pinMode(USER_SW2, INPUT);
+  pinMode(USER_SW3, INPUT);
+
+  pinMode(SBC_CLOCK, INPUT);
+  pinMode(SBC_RW, INPUT);
+  attachInterrupt(digitalPinToInterrupt(SBC_CLOCK), onClock, RISING);
   
   Serial.begin(115200);
   print_welcome();
 }
 
 void onClock() {
+  if (!output) return;
   char output[15];
 
   unsigned int address = 0;
   for (int n = 0; n < 16; n += 1) {
-    int bit = digitalRead(ADDR[n]) ? 1 : 0;
+    int bit = digitalRead(SBC_ADDR[n]) ? 1 : 0;
     Serial.print(bit);
     address = (address << 1) + bit;
   }
@@ -36,12 +43,12 @@ void onClock() {
   
   unsigned int data = 0;
   for (int n = 0; n < 8; n += 1) {
-    int bit = digitalRead(DATA[n]) ? 1 : 0;
+    int bit = digitalRead(SBC_DATA[n]) ? 1 : 0;
     Serial.print(bit);
     data = (data << 1) + bit;
   }
 
-  sprintf(output, "   %04X  %c %02X", address, digitalRead(READ_WRITE) ? 'r' : 'W', data);
+  sprintf(output, "   %04X  %c %02X", address, digitalRead(SBC_RW) ? 'R' : 'W', data);
   Serial.println(output);  
 }
 

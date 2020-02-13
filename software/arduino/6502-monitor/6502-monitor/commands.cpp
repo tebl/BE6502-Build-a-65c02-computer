@@ -1,20 +1,45 @@
 #include <Arduino.h>
 #include "constants.h"
 #include "colorize.h"
-
-void print_version() {
-    Serial.print(F("6502 Monitor "));
-    Serial.println(VERSION);
-}
+extern bool colorize;
+extern bool output;
 
 void print_help() {
+  ansi_notice();
+  Serial.println(F("Commands supported:"));
+  ansi_default();
+  Serial.println(F("help              Prints this screen"));
+  Serial.println(F("monitor <on|off>  Monitor updates"));
+  Serial.println(F("version           Prints 6502 Monitor version"));
+}
 
+void print_version() {
+  Serial.print(F("6502 Monitor "));
+  Serial.println(VERSION);
 }
 
 void print_welcome() {
-    ansi_bright();
-    print_version();
-    ansi_default();
+  ansi_bright();
+  print_version();
+  ansi_default();
+}
+
+void set_monitor_off() {
+  output = false;
+  Serial.print(F("Monitor output "));
+  ansi_weak();
+  Serial.print(F("OFF"));
+  ansi_default();
+  Serial.println();
+}
+
+void set_monitor_on() {
+  Serial.print(F("Monitor output "));
+  ansi_notice();
+  Serial.print(F("ON"));
+  ansi_default();
+  Serial.println();
+  output = true;
 }
 
 void echo_command(String command) {
@@ -51,8 +76,10 @@ bool handle_command(String command, String name, void (*function)()) {
  * of as a complete listing to keep things easy.
  */
 void select_command(String command) {
-  if (handle_command(command, F("version"), print_version));
-  else if (handle_command(command, F("help"), print_help));
+  if (handle_command(command, F("help"), print_help));
+  else if (handle_command(command, F("monitor on"), set_monitor_on));
+  else if (handle_command(command, F("monitor off"), set_monitor_off));
+  else if (handle_command(command, F("version"), print_version));
   else {
     echo_unknown(command);
   }
