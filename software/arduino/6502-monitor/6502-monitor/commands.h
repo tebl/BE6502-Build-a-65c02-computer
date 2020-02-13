@@ -1,3 +1,4 @@
+void on_clock();
 void print_welcome();
 void print_version();
 void set_monitor_off();
