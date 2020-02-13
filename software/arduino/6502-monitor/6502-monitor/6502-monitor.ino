@@ -1,7 +1,10 @@
-const char ADDR[] = {22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52};
-const char DATA[] = {39, 41, 43, 45, 47, 49, 51, 53};
-#define CLOCK 2
-#define READ_WRITE 3
+#include <Arduino.h>
+#include "6502-monitor.h"
+#include "constants.h"
+#include "commands.h"
+#include "process_serial.h"
+
+bool colorize = true;
 
 void setup() {
   for (int n = 0; n < 16; n += 1) {
@@ -13,9 +16,10 @@ void setup() {
   pinMode(CLOCK, INPUT);
   pinMode(READ_WRITE, INPUT);
 
-  attachInterrupt(digitalPinToInterrupt(CLOCK), onClock, RISING);
+  //attachInterrupt(digitalPinToInterrupt(PHI2), onClock, RISING);
   
   Serial.begin(115200);
+  print_welcome();
 }
 
 void onClock() {
@@ -42,4 +46,7 @@ void onClock() {
 }
 
 void loop() {
+    while(Serial.available() > 0) {
+        process_serial(Serial.read());
+    }
 }
