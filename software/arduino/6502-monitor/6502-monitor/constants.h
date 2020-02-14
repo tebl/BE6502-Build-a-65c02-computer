@@ -2,7 +2,6 @@
 #define BAUD_RATE 115200
 #define MAX_INPUT_SIZE 100
 
-
 #define SBC_CLOCK 2
 #define SBC_RW 3
 #define SBC_IRQ 5
@@ -46,7 +45,7 @@ const char SBC_DATA[] = {39, 41, 43, 45, 47, 49, 51, 53};
 #define SBC_PIN38 12
 #define SBC_PIN39 13
 
-#define USER_LED A11
-#define USER_SW1 A8
-#define USER_SW2 A9
-#define USER_SW3 A10
+#define USER_LED 65
+#define USER_SW1 62
+#define USER_SW2 63
+#define USER_SW3 64
