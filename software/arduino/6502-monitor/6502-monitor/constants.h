@@ -2,10 +2,12 @@
 #define BAUD_RATE 115200
 #define MAX_INPUT_SIZE 100
 
+/* Pin definitions */
 #define SBC_CLOCK 2
 #define SBC_RW 3
 #define SBC_IRQ 5
 #define SBC_NMI 6
+#define SBC_BE 4
 #define SBC_RDY 7
 #define SBC_SYNC 8
 #define SBC_RESET 23
@@ -38,7 +40,6 @@ const char SBC_ADDR[] = {22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48,
 #define SBC_D0 53
 const char SBC_DATA[] = {39, 41, 43, 45, 47, 49, 51, 53};
 
-#define SBC_PIN21 4
 #define SBC_PIN35 9
 #define SBC_PIN36 10
 #define SBC_PIN37 11
@@ -49,3 +50,9 @@ const char SBC_DATA[] = {39, 41, 43, 45, 47, 49, 51, 53};
 #define USER_SW1 62
 #define USER_SW2 63
 #define USER_SW3 64
+
+/* Arduino clock modes */
+#define CLK_MODE_NONE 0
+#define CLK_MODE_MANUAL 1
+#define CLK_MODE_AUTO 2
+const long CLK_PERIOD[] = {1000000, 500000, 250000, 125000, 62500, 31250};

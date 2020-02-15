@@ -1,0 +1,28 @@
+{
+    "name": "TimerThree", 
+    "version": "1.1", 
+    "keywords": [
+        "timer"
+    ], 
+    "description": "Allow to use the built-in 16 bit Timer3", 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/PaulStoffregen/TimerThree.git"
+    }, 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr", 
+        "teensy"
+    ], 
+    "authors": [
+        {
+            "email": null, 
+            "url": "https://github.com/PaulStoffregen", 
+            "maintainer": false, 
+            "name": "Paul Stoffregen"
+        }
+    ], 
+    "id": 132
+}

@@ -1,3 +1,8 @@
+void do_auto_clock();
+void do_manual_clock();
+void do_tick();
+void do_toggle_speed();
+void do_reset();
 void on_clock();
 void print_welcome();
 void print_version();

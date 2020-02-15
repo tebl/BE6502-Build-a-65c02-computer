@@ -1,11 +1,24 @@
 #include <Arduino.h>
+#include <TimerThree.h>
 #include "constants.h"
 #include "commands.h"
 #include "process_serial.h"
 #include "process_switches.h"
 
-bool colorize = true;
-bool output = true;
+/* Able to use VT100 commands on serial, disable if you get wierd characters
+ * in serial output - or switch to a serial terminal that supports them.
+ */
+bool colorize = true;     
+
+/* Enable bus monitor output */
+bool output = false;
+
+/* Controls the ability of the Arduino Mega 2560 to generate the system clock,
+ * but since we don't want two clocks fighting eachother this is normally
+ * disabled until explicitly enabled.
+ */
+int clock_mode = CLK_MODE_NONE;
+int clock_setting = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -25,6 +38,8 @@ void setup() {
   pinMode(SBC_RW, INPUT);
   attachInterrupt(digitalPinToInterrupt(SBC_CLOCK), on_clock, RISING);
   
+  Timer3.initialize(CLK_PERIOD[clock_setting]);
+
   print_welcome();
 }
 

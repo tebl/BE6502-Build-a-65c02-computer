@@ -30,12 +30,24 @@ void flash_led(int num_flashes) {
     }
 }
 
-void switch1_pulse() {
-    Serial.print("x");
+void sw1_long() {
+    do_reset();
 }
 
-void switch1_long() {
-    Serial.print("o");
+void sw2_pulse() {
+    do_tick();
+}
+
+void sw2_long() {
+    do_manual_clock();
+}
+
+void sw3_pulse() {
+    do_toggle_speed();
+}
+
+void sw3_long() {
+    do_auto_clock();
 }
 
 
@@ -87,7 +99,7 @@ void check_switch(const int pin_number, void (*function1)(), void (*function2)()
 }
 
 void process_switches() {
-    check_switch(USER_SW1, switch1_pulse, switch1_long);
-    check_switch(USER_SW2, switch1_pulse, nullptr);
-    check_switch(USER_SW3, nullptr, switch1_long);
+    check_switch(USER_SW1, nullptr, sw1_long);
+    check_switch(USER_SW2, sw2_pulse, sw2_long);
+    check_switch(USER_SW3, sw3_pulse, sw3_long);
 }
