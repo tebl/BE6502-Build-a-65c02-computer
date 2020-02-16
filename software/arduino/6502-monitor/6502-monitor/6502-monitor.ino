@@ -11,7 +11,7 @@
 bool colorize = true;     
 
 /* Enable bus monitor output */
-bool output = false;
+bool int_enabled = false;
 
 /* Controls the ability of the Arduino Mega 2560 to generate the system clock,
  * but since we don't want two clocks fighting eachother this is normally
@@ -36,7 +36,6 @@ void setup() {
 
   pinMode(SBC_CLOCK, INPUT);
   pinMode(SBC_RW, INPUT);
-  attachInterrupt(digitalPinToInterrupt(SBC_CLOCK), on_clock, RISING);
   
   Timer3.initialize(CLK_PERIOD[clock_setting]);
 

@@ -55,4 +55,17 @@ const char SBC_DATA[] = {39, 41, 43, 45, 47, 49, 51, 53};
 #define CLK_MODE_NONE 0
 #define CLK_MODE_MANUAL 1
 #define CLK_MODE_AUTO 2
-const long CLK_PERIOD[] = {1000000, 500000, 250000, 125000, 62500, 31250};
+/*                            1Hz     2Hz     4Hz    16Hz   32Hz   128   256 */
+const long CLK_PERIOD[] = {1000000, 500000, 250000, 62500, 31250, 7812, 3906};
+#define CLK_MAX_SETTING 6
+#define CLK_MAX_MONITOR_SPEED 5
+
+/* SBC Address Segments */
+#define ADR_UNSPECIFIED 0
+#define ADR_RAM 1
+#define ADR_ZERO_PAGE 2
+#define ADR_STACK 3
+#define ADR_VIA 4
+#define ADR_CUSTOM 5
+#define ADR_ROM 6
+#define ADR_VECTORS 7
