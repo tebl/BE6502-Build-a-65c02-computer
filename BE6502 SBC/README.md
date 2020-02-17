@@ -12,7 +12,9 @@ As you can see from the big shiny thing, I've also got the 1 Mhz oscillator inst
 
 ![1 Mhz](https://github.com/tebl/BE6502/raw/master/BE6502%20SBC/gallery/2019-11-27%2020.50.17.jpg)
 
-I did however have some issues running the CPU reliably at this speed, this is due to the reset circuit specified not being suitable for use at anything other than very low speeds. While we're probably waiting for part 4 of the video series to fix this issue, you can build one yourself on a breadboard with just about the same parts seen earlier. I'm using a somewhat simplified version of the one at [RC6502 Reset Circuit](https://github.com/tebl/RC6502-Apple-1-Replica/tree/master/RC6502%20Reset%20Circuit) by leaving out the oscillator, we've already got one, and the 74LS74 bits. For masters of the Commodore 64 the circuit will seem familiar, this is because it's the one originally used on its boards!
+I did however have some issues running the CPU reliably at this speed, this is due to the reset circuit specified not being suitable for use at anything other than very low speeds. While we're probably waiting for part 8 of the video series to fix this issue, you can build one yourself on a breadboard with just about the same parts seen earlier in the series.
+
+The hardware solution I'm using is a somewhat simplified version of the one at [RC6502 Reset Circuit](https://github.com/tebl/RC6502-Apple-1-Replica/tree/master/RC6502%20Reset%20Circuit), this is mainly by leaving out the oscillator (since we've already got one) and the 74LS74. For masters of the Commodore 64 the circuit will seem familiar, this is because it's the one originally used on its boards! Alternatively as a software solution, the Arduino Mega can also be used to perform this task - this is done by holding down the first switch (since revision B of the Mega Adapter) or by typing in reset via the serial interface.
 
 ## Jumpers
 | Reference | Position | Description                                        |
@@ -49,7 +51,7 @@ Some vendors will have the same ICs in different form factors, the ones you want
 | JP3          | 3p straight pin header                |     1 |
 | J3           | 2.1mm x 5.5mm barrel plug             |     1 |
 | JP1          | Single row, 2p straight pin header    |     2 |
-| R1-R3        | 3k3 (3300) ohm resistor               |     3 |
+| R1-R3,R18*   | 3k3 (3300) ohm resistor               |     4 |
 | R4-R9        | 1k ohm resistor                       |     6 |
 | R10-R17      | 220 ohm resistor                      |     8 |
 | U1           | W65C02 DIP-40                         |     1 |
@@ -61,5 +63,7 @@ Some vendors will have the same ICs in different form factors, the ones you want
 | SW1-SW6      | Momentary push button                 |     6 |
 | X1           | 1.000Mhz TTL Oscillator, (DIP-14)     |     1 |
 |              | Jumpers for settings (CAP headers)    |     3 |
+
+*) R18 was added to SBC revision B boards as I had forgotten to add the pull-up for the BE-line, causing instability on the boards due to it floating around. Refer to this [picture](https://github.com/tebl/BE6502-Build-a-65c02-computer/raw/master/gallery/2020-02-16%2015.50.14-1.jpg) for a convenient spot to add it to revision A boards.
 
 When constructing the board I recommend using 60/40 solder as the lead-free is more trouble than it's worth for hobby use, take your time with it and try to build up the board starting with the lowest components before moving on to the larger pieces. The LCD will be mounted on top of other components, so check that nothing shorts on the underside and unless you're 100% sure about the construction and my design - install some female header pins on it so that you can easily remove it while troubleshooting the circuit underneath!
