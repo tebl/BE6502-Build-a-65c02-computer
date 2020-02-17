@@ -1,5 +1,5 @@
 # BE6502 - Build a 6502 computer
-[Ben Eater](https://eater.net/) has been a huge inspiration for many getting into building computers using basic electronic building blocks, his [videos](https://www.youtube.com/user/eaterbc) are truly excellent and it is no wonder he's often referred to as the Bob Ross of Breadboards! His latest project is [building a 6502 computer](https://eater.net/6502) on a breadboard, a video series that at this moment in time still has not concluded so this may not match whatever he does after part 3!
+[Ben Eater](https://eater.net/) has been a huge inspiration for many getting into building computers using basic electronic building blocks, his [videos](https://www.youtube.com/user/eaterbc) are truly excellent and it is no wonder he's often referred to as the Bob Ross of Breadboards! His latest project is [building a 6502 computer](https://eater.net/6502) on a breadboard, a video series that at this moment in time still has not concluded so this may not match whatever he does after part 7!
 
 ![SBC and clock module](https://github.com/tebl/BE6502/raw/master/gallery/2019-11-24%2013.24.12.jpg)
 
