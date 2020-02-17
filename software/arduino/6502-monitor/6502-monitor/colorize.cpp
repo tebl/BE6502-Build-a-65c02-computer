@@ -21,18 +21,26 @@ void ansi_error() {
   if (colorize) Serial.print(F("\033[1;31m"));
 }
 
+void ansi_status() {
+  if (colorize) {
+    Serial.print(F("\033[1;31mA\033[1;32mN\033[1;33mS\033[1;34mI"));
+    ansi_default();
+    Serial.print(F(" terminal codes "));
+    ansi_bright();
+    Serial.print(F("ON"));
+    ansi_default();
+    Serial.println(F("!"));
+  } else {
+    Serial.println(F("ANSI terminal codes OFF!"));
+  }
+}
+
 void ansi_on() {
   colorize = true;
-  Serial.print(F("\033[1;31mA\033[1;32mN\033[1;33mS\033[1;34mI"));
-  ansi_default();
-  Serial.print(F(" terminal codes "));
-  ansi_bright();
-  Serial.print(F("ON"));
-  ansi_default();
-  Serial.println(F("!"));
+  ansi_status();
 }
 
 void ansi_off() {
   colorize = false;
-  Serial.println(F("ANSI terminal codes OFF!"));
+  ansi_status();
 }

@@ -277,6 +277,7 @@ void print_help() {
   ansi_notice();
   Serial.println(F("Commands supported:"));
   ansi_default();
+  Serial.println(F("ansi <on|off>         Enable/disable terminal codes"));
   Serial.println(F("clock                 Print current clock settings"));
   Serial.println(F("clock <auto|manual>   Enables Arduino clock in manual or automatic mode"));
   Serial.println(F("help                  Prints this screen"));
@@ -345,7 +346,10 @@ bool handle_command(String command, String name, void (*function)()) {
  * given, if one is currently supported by the sketch.
  */
 void select_command(String command) {
-  if (handle_command(command, F("clock"), print_clock));
+       if (handle_command(command, F("ansi"), ansi_status));
+  else if (handle_command(command, F("ansi on"), ansi_on));
+  else if (handle_command(command, F("ansi off"), ansi_off));
+  else if (handle_command(command, F("clock"), print_clock));
   else if (handle_command(command, F("clock auto"), do_auto_clock));
   else if (handle_command(command, F("clock manual"), do_manual_clock));
   else if (handle_command(command, F("clock disabled"), do_clock_disable));
