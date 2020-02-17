@@ -4,7 +4,7 @@ EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
-Title ""
+Title "BE6502 SBC"
 Date ""
 Rev "B"
 Comp ""
@@ -534,8 +534,6 @@ F 3 "" H 15775 4300 50  0001 C CNN
 	1    15775 4300
 	-1   0    0    -1  
 $EndComp
-Text Notes 12175 10925 0    60   ~ 0
-BE6502 SBC
 Entry Wire Line
 	1350 5375 1450 5475
 Entry Wire Line

@@ -1059,10 +1059,8 @@ $EndComp
 Text Label 4450 2175 0    60   ~ 0
 ~NMI
 NoConn ~ 3275 1650
-Text GLabel 3350 1850 2    60   Input ~ 0
+Text GLabel 3275 1850 2    60   Input ~ 0
 CLOCK
-Wire Wire Line
-	3350 1850 3275 1850
 Text GLabel 6000 2900 0    60   Output ~ 0
 CLOCK
 Wire Wire Line
