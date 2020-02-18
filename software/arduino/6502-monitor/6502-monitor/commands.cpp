@@ -19,13 +19,19 @@ void print_help() {
   ansi_notice();
   Serial.println(F("Commands supported:"));
   ansi_default();
-  Serial.println(F("ansi <on|off|test>    Control usage of terminal codes"));
+  Serial.println(F("ansi on               Enable ANSI terminal code usage"));
+  Serial.println(F("ansi off              Disable ANSI terminal code usage"));
+  Serial.println(F("ansi test             Test ANSI terminal codes on terminal"));
   Serial.println(F("clear                 Clear screen"));
   Serial.println(F("clock                 Print current clock settings"));
-  Serial.println(F("clock <auto|manual>   Enables Arduino clock in manual or automatic mode"));
+  Serial.println(F("clock auto            Start or resume Arduino clock"));
+  Serial.println(F("clock <speed>         Set Arduino clock in Hz (1,2,4,16,32,128,256)"));
+  Serial.println(F("clock manual          Set Arduino clock to manual"));
+  Serial.println(F("clock external        Disable Arduino clock options"));
   Serial.println(F("help                  Prints this screen"));
   Serial.println(F("monitor <on|off>      BUS monitor updates"));
   Serial.println(F("reset                 Reset computer"));
+  Serial.println(F("tick                  Manual clock tick, alternatively use '.'"));
   Serial.println(F("version               Prints 6502 Monitor version"));
 }
 
@@ -41,12 +47,18 @@ void print_welcome() {
   ansi_default();
 }
 
+/* Called when a recognized command has been recognized, but before the
+ * function is actually called.
+ */
 void echo_command(String command) {
   ansi_notice();
   Serial.println("> "+ command);
   ansi_default();
 }
 
+/* Called when the entered command has not been recognized, we don't know
+ * what to do next so we'll just print it as an error instead.
+ */
 void echo_unknown(String command) {
   ansi_error();
   Serial.println("? " + command);
@@ -89,8 +101,15 @@ void select_command(String command) {
   else if (handle_command(command, F("clear"), do_clear));
   else if (handle_command(command, F("clock"), print_clock));
   else if (handle_command(command, F("clock auto"), do_auto_clock));
+  else if (handle_command(command, F("clock 1"), set_clock_1Hz));
+  else if (handle_command(command, F("clock 2"), set_clock_2Hz));
+  else if (handle_command(command, F("clock 4"), set_clock_4Hz));
+  else if (handle_command(command, F("clock 16"), set_clock_16Hz));
+  else if (handle_command(command, F("clock 32"), set_clock_32Hz));
+  else if (handle_command(command, F("clock 128"), set_clock_128Hz));
+  else if (handle_command(command, F("clock 256"), set_clock_256Hz));
   else if (handle_command(command, F("clock manual"), do_manual_clock));
-  else if (handle_command(command, F("clock disabled"), do_clock_disable));
+  else if (handle_command(command, F("clock external"), do_clock_disable));
   else if (handle_command(command, F("help"), print_help));
   else if (handle_command(command, F("monitor on"), set_monitor_on));
   else if (handle_command(command, F("monitor off"), set_monitor_off));

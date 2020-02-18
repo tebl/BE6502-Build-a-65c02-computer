@@ -58,8 +58,15 @@ const char SBC_DATA[] = {39, 41, 43, 45, 47, 49, 51, 53};
 #define CLK_MODE_AUTO 2
 /*                            1Hz     2Hz     4Hz    16Hz   32Hz   128   256 */
 const long CLK_PERIOD[] = {1000000, 500000, 250000, 62500, 31250, 7812, 3906};
-#define CLK_MAX_SETTING 6
-#define CLK_MAX_MONITOR_SPEED 5
+#define CLK_SPEED_1 0
+#define CLK_SPEED_2 1
+#define CLK_SPEED_4 2
+#define CLK_SPEED_16 3
+#define CLK_SPEED_32 4
+#define CLK_SPEED_128 5
+#define CLK_SPEED_256 6
+#define CLK_MAX_SETTING CLK_SPEED_256
+#define CLK_MAX_MONITOR_SPEED CLK_SPEED_32
 
 /* SBC Address Segments */
 #define ADR_UNSPECIFIED 0

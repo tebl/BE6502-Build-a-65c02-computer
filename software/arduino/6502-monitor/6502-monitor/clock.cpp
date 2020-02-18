@@ -156,12 +156,12 @@ void set_clock_mode(int new_mode) {
     if (clock_mode == CLK_MODE_NONE) {
       clk_assert();
       pwm_enable();
-      if (clock_setting < CLK_MAX_MONITOR_SPEED) int_attach();
+      if (clock_setting <= CLK_MAX_MONITOR_SPEED) int_attach();
       else int_detach();
     }
     if (clock_mode == CLK_MODE_MANUAL) {
       pwm_enable();
-      if (clock_setting < CLK_MAX_MONITOR_SPEED) int_attach();
+      if (clock_setting <= CLK_MAX_MONITOR_SPEED) int_attach();
       else int_detach();
     }
     break;
@@ -221,7 +221,7 @@ void do_reset() {
     case CLK_MODE_AUTO:
       set_clock_mode(CLK_MODE_MANUAL);
     case CLK_MODE_MANUAL:
-      ansi_highlight();
+      ansi_notice();
       suppress_monitor = true;
       Serial.print("Doing controlled reset..."); 
       ansi_default();
@@ -243,7 +243,7 @@ void do_reset() {
       break;
 
     default:
-      ansi_highlight();
+      ansi_notice();
       Serial.print("Doing timed reset...");
       ansi_default();
       digitalWrite(SBC_RESET, HIGH);
@@ -283,23 +283,25 @@ void do_tick() {
  * the function will automatically switch to automatic mode using previously
  * used speed. 
  */
-void do_toggle_speed() {
+void set_clock_speed(int new_setting) {
   if (clock_mode == CLK_MODE_NONE) {
     Serial.print(F("Arduino clock is set to "));
     ansi_error();
     Serial.print(F("EXTERNAL"));
     ansi_default();
     Serial.println();
-  }
-
-  if (clock_mode == CLK_MODE_MANUAL) do_auto_clock();
-  else {
-    if (clock_mode == CLK_MODE_AUTO) {
-      clock_setting++;
-      if (clock_setting > CLK_MAX_SETTING) clock_setting = 0;
-      if (clock_setting < CLK_MAX_MONITOR_SPEED) int_attach();
-      else int_detach();
+  } else {
+    clock_setting = new_setting;
+    
+    if (clock_mode == CLK_MODE_MANUAL) {
       Timer3.setPeriod(CLK_PERIOD[clock_setting]);
+      do_auto_clock();
+    }
+
+    if (clock_mode == CLK_MODE_AUTO) {
+      Timer3.setPeriod(CLK_PERIOD[clock_setting]);
+      if (clock_setting <= CLK_MAX_MONITOR_SPEED) int_attach();
+      else int_detach();
 
       Serial.print("Arduino clock speed set to ");
       ansi_notice();
@@ -308,6 +310,28 @@ void do_toggle_speed() {
       ansi_default();
       Serial.println();
     }
+  }
+}
+void set_clock_1Hz() { set_clock_speed(CLK_SPEED_1); }
+void set_clock_2Hz() { set_clock_speed(CLK_SPEED_2); }
+void set_clock_4Hz() { set_clock_speed(CLK_SPEED_4); }
+void set_clock_16Hz() { set_clock_speed(CLK_SPEED_16); }
+void set_clock_32Hz() { set_clock_speed(CLK_SPEED_32); }
+void set_clock_128Hz() { set_clock_speed(CLK_SPEED_128); }
+void set_clock_256Hz() { set_clock_speed(CLK_SPEED_256); }
+
+/* Toggle Arduino clock speed as long as the Arduino is in charge of it, ie.
+ * it's not under control by the external clock. If we're manually clocking
+ * the function will automatically switch to automatic mode using previously
+ * used speed. 
+ */
+void do_toggle_speed() {
+  if (clock_mode == CLK_MODE_MANUAL) {
+      do_auto_clock();
+  } else {
+    int new_setting = clock_setting + 1;
+    if (new_setting > CLK_MAX_SETTING) new_setting = 0;
+    set_clock_speed(new_setting);
   }
 }
 

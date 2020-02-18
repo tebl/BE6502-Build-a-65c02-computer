@@ -2,6 +2,7 @@
 #include "ansi.h"
 extern bool ansi_enabled;
 
+/* Clear the screen and return cursor to top left position */
 void ansi_clear() {
   if (ansi_enabled) {
     Serial.print(F("\033[H"));
@@ -9,6 +10,13 @@ void ansi_clear() {
   }
 }
 
+/* Set the specified colour as the current foreground colour, in order to
+ * keep compatibility somewhat manageable only the basic 8 colours should
+ * be used as well as the optional bright versions of them. A specified
+ * background can be used instead, but the way this works is that 
+ * foreground will remain locked at the default color so this may not be
+ * all that practical.
+ */
 void ansi_colour(int colour, bool bright) {
   if (ansi_enabled) {
     Serial.print(F("\033["));
@@ -18,6 +26,10 @@ void ansi_colour(int colour, bool bright) {
   }
 }
 
+/* Configure text decoration effects, but note that compatibily with actual
+ * terminal software is very limited - mostly bold, underline and reversed
+ * seem to work reliably.
+ */
 void ansi_decoration(int decoration) {
   if (!ansi_enabled) return;
   Serial.print(F("\033["));
@@ -25,6 +37,7 @@ void ansi_decoration(int decoration) {
   Serial.print("m");
 }
 
+/* Reset any formatting previously set. */
 void ansi_default() {
   ansi_colour(COLOUR_RESET);
 }
@@ -40,7 +53,6 @@ void ansi_debug() {
 
 void ansi_error() {
   ansi_colour(COLOUR_RED, true);
-  ansi_decoration(TEXT_DECORATION_BLINK);
 }
 
 void ansi_notice() {
@@ -75,6 +87,10 @@ void ansi_off() {
   ansi_status();
 }
 
+/* Test ANSI control codes by writing them out to the serial terminal,
+ * obviously won't work when the codes are deactivated. Verification will
+ * be up to the user to determine. 
+ */
 void ansi_test() {
   ansi_clear();
 
