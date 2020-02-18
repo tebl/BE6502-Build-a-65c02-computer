@@ -43,6 +43,11 @@ void process_serial(const byte byte_in) {
         }
         break;
 
+    /* Use a period on the keyboard to have the bus monitor do a
+     * single clock tick, if the function has been unlocked. In
+     * order to keep the user from seeing it we'll immidiately send
+     * a backspace after receiving the character.
+     */
     case '.':
         Serial.print("\b");
         do_tick();
