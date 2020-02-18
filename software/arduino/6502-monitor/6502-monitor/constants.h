@@ -1,6 +1,7 @@
 #define VERSION "0.1"
 #define BAUD_RATE 115200
 #define MAX_INPUT_SIZE 100
+#define DEBUG
 
 /* Pin definitions */
 #define SBC_CLOCK 2

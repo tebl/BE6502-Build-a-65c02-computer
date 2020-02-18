@@ -8,7 +8,7 @@
 /* Able to use VT100 commands on serial, disable if you get wierd characters
  * in serial output - or switch to a serial terminal that supports them.
  */
-bool colorize = true;     
+bool ansi_enabled = true;     
 
 /* Enable bus monitor output */
 bool int_enabled = false;

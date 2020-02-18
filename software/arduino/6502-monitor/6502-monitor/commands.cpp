@@ -1,15 +1,31 @@
 #include <Arduino.h>
 #include <TimerThree.h>
 #include "constants.h"
-#include "colorize.h"
+#include "ansi.h"
 
-extern bool colorize;
+extern bool ansi_enabled;
 extern bool int_enabled;
 extern int clock_mode;
 extern int clock_setting;
 
+void debug(const char *string) {
+  #ifdef DEBUG
+  ansi_debug();
+  Serial.println(string);
+  ansi_default();
+  #endif
+}
+
+void debug(const __FlashStringHelper *string) {
+  #ifdef DEBUG
+  ansi_debug();
+  Serial.println(string);
+  ansi_default();
+  #endif
+}
+
 void clk_assert() {
-  Serial.println("Controlling clock pin");
+  debug(F("Controlling clock pin"));
   digitalWrite(SBC_CLOCK, LOW);
   pinMode(SBC_CLOCK, OUTPUT);  
 }
@@ -187,18 +203,46 @@ void do_clock_disable() {
 
 /* Reset SBC by holding w65c02 CPU in reset for 250ms. */
 void do_reset() {
-  ansi_bright();
-  Serial.print("Resetting...");
-  ansi_default();
-  digitalWrite(SBC_RESET, HIGH);
-  pinMode(SBC_RESET, OUTPUT);
-  digitalWrite(SBC_RESET, LOW);
-  delay(250);
-  digitalWrite(SBC_RESET, HIGH);
-  pinMode(SBC_RESET, INPUT);
-  ansi_weak();
-  Serial.println(" done!");
-  ansi_default();
+  int current_mode = clock_mode;
+
+  switch (clock_mode) {
+    case CLK_MODE_AUTO:
+      set_clock_mode(CLK_MODE_MANUAL);
+    case CLK_MODE_MANUAL:
+      ansi_highlight();
+      Serial.print("Doing controlled reset..."); 
+      ansi_default();
+      digitalWrite(SBC_RESET, HIGH);
+      pinMode(SBC_RESET, OUTPUT);
+      digitalWrite(SBC_RESET, LOW);
+
+      clk_tick();
+      clk_tick();
+
+      digitalWrite(SBC_RESET, HIGH);
+      pinMode(SBC_RESET, INPUT);
+      set_clock_mode(current_mode);
+
+      ansi_weak();
+      Serial.println(" done!");
+      ansi_default();
+      break;
+
+    default:
+      ansi_highlight();
+      Serial.print("Doing timed reset...");
+      ansi_default();
+      digitalWrite(SBC_RESET, HIGH);
+      pinMode(SBC_RESET, OUTPUT);
+      digitalWrite(SBC_RESET, LOW);
+      delay(250);
+      digitalWrite(SBC_RESET, HIGH);
+      pinMode(SBC_RESET, INPUT);
+      ansi_weak();
+      Serial.println(" done!");
+      ansi_default();
+      break;
+  }
 }
 
 /* Perform a manual clock pulse as long as clocking has been enabled. */
@@ -277,7 +321,7 @@ void print_help() {
   ansi_notice();
   Serial.println(F("Commands supported:"));
   ansi_default();
-  Serial.println(F("ansi <on|off>         Enable/disable terminal codes"));
+  Serial.println(F("ansi <on|off|test>    Control usage of terminal codes"));
   Serial.println(F("clock                 Print current clock settings"));
   Serial.println(F("clock <auto|manual>   Enables Arduino clock in manual or automatic mode"));
   Serial.println(F("help                  Prints this screen"));
@@ -292,7 +336,8 @@ void print_version() {
 }
 
 void print_welcome() {
-  ansi_bright();
+  ansi_clear();
+  ansi_highlight();
   print_version();
   ansi_default();
 }
@@ -349,6 +394,7 @@ void select_command(String command) {
        if (handle_command(command, F("ansi"), ansi_status));
   else if (handle_command(command, F("ansi on"), ansi_on));
   else if (handle_command(command, F("ansi off"), ansi_off));
+  else if (handle_command(command, F("ansi test"), ansi_test));
   else if (handle_command(command, F("clock"), print_clock));
   else if (handle_command(command, F("clock auto"), do_auto_clock));
   else if (handle_command(command, F("clock manual"), do_manual_clock));
