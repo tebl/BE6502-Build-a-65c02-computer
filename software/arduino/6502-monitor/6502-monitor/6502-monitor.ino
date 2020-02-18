@@ -11,6 +11,7 @@
 bool ansi_enabled = true;     
 
 /* Enable bus monitor output */
+volatile bool suppress_monitor = false;
 bool int_enabled = false;
 
 /* Controls the ability of the Arduino Mega 2560 to generate the system clock,
@@ -37,8 +38,7 @@ void setup() {
   pinMode(SBC_CLOCK, INPUT);
   pinMode(SBC_RW, INPUT);
   
-  Timer3.initialize(CLK_PERIOD[clock_setting]);
-
+  commands_init();
   print_welcome();
 }
 

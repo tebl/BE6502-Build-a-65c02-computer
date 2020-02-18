@@ -1,3 +1,5 @@
+void commands_init();
+
 void do_auto_clock();
 void do_manual_clock();
 void do_tick();

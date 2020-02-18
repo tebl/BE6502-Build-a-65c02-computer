@@ -9,7 +9,7 @@ void ansi_clear() {
   }
 }
 
-void ansi_colour(int colour, bool bright = false) {
+void ansi_colour(int colour, bool bright) {
   if (ansi_enabled) {
     Serial.print(F("\033["));
     if (bright) Serial.print(F("1;"));
@@ -18,7 +18,7 @@ void ansi_colour(int colour, bool bright = false) {
   }
 }
 
-void ansi_decoration(int decoration = TEXT_DECORATION_PLAIN) {
+void ansi_decoration(int decoration) {
   if (!ansi_enabled) return;
   Serial.print(F("\033["));
   Serial.print(decoration);

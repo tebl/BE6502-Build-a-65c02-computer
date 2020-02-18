@@ -43,6 +43,11 @@ void process_serial(const byte byte_in) {
         }
         break;
 
+    case '.':
+        Serial.print("\b");
+        do_tick();
+        break;
+
     /* Ignore any leading zeroes */
     case ' ':
         if (input_pos == 0) break;
