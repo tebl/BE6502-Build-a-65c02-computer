@@ -4,6 +4,7 @@
 #include "commands.h"
 #include "process_serial.h"
 #include "process_switches.h"
+#include "bus_control.h"
 
 /* Able to use VT100 commands on serial, disable if you get wierd characters
  * in serial output - or switch to a serial terminal that supports them.

@@ -4,6 +4,7 @@
 #include "debug.h"
 #include "ansi.h"
 #include "clock.h"
+#include "bus_control.h"
 
 extern bool ansi_enabled;
 extern volatile bool suppress_monitor;
@@ -28,6 +29,11 @@ void print_help() {
   Serial.println(F("clock <speed>         Set Arduino clock in Hz (1,2,4,16,32,128,256)"));
   Serial.println(F("clock manual          Set Arduino clock to manual"));
   Serial.println(F("clock external        Disable Arduino clock options"));
+  Serial.println(F("dump ram              Dump RAM"));
+  Serial.println(F("dump rom              Dump ROM"));
+  Serial.println(F("dump stack            Dump stack area"));
+  Serial.println(F("dump vectors          Dump initialization vectors"));
+  Serial.println(F("dump zp               Dump Zero-page"));
   Serial.println(F("help                  Prints this screen"));
   Serial.println(F("monitor <on|off>      BUS monitor updates"));
   Serial.println(F("reset                 Reset computer"));
@@ -98,6 +104,7 @@ void select_command(String command) {
   else if (handle_command(command, F("ansi on"), ansi_on));
   else if (handle_command(command, F("ansi off"), ansi_off));
   else if (handle_command(command, F("ansi test"), ansi_test));
+  else if (handle_command(command, F("bus test"), do_bus_test));
   else if (handle_command(command, F("clear"), do_clear));
   else if (handle_command(command, F("clock"), print_clock));
   else if (handle_command(command, F("clock auto"), do_auto_clock));
@@ -110,6 +117,11 @@ void select_command(String command) {
   else if (handle_command(command, F("clock 256"), set_clock_256Hz));
   else if (handle_command(command, F("clock manual"), do_manual_clock));
   else if (handle_command(command, F("clock external"), do_clock_disable));
+  else if (handle_command(command, F("dump ram"), dump_ram));
+  else if (handle_command(command, F("dump zp"), dump_zero_page));
+  else if (handle_command(command, F("dump stack"), dump_stack));
+  else if (handle_command(command, F("dump rom"), dump_rom));
+  else if (handle_command(command, F("dump vectors"), dump_vectors));
   else if (handle_command(command, F("help"), print_help));
   else if (handle_command(command, F("monitor on"), set_monitor_on));
   else if (handle_command(command, F("monitor off"), set_monitor_off));

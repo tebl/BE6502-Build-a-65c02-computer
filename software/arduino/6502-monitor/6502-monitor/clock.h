@@ -16,5 +16,7 @@ void set_clock_256Hz();
 void do_manual_clock();
 void do_tick();
 
+void int_attach();
+void int_detach();
 void set_monitor_on();
 void set_monitor_off();
