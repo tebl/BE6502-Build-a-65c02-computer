@@ -12,11 +12,13 @@ extern volatile bool suppress_monitor;
 extern int clock_mode;
 extern int clock_setting;
 
+int command_set = COMMAND_SET_MAIN;
+
 void commands_init() {
   clock_initialize();
 }
 
-void print_help() {
+void print_help_main() {
   ansi_notice();
   Serial.println(F("Commands supported:"));
   ansi_default();
@@ -41,6 +43,20 @@ void print_help() {
   Serial.println(F("version               Prints 6502 Monitor version"));
 }
 
+void print_help_control() {
+  ansi_notice();
+  Serial.println(F("Commands supported:"));
+  ansi_default();
+  Serial.println(F("exit                  Exit bus control mode"));
+  Serial.println(F("clear                 Clear screen"));
+  Serial.println(F("dump ram              Dump RAM"));
+  Serial.println(F("dump rom              Dump ROM"));
+  Serial.println(F("dump stack            Dump stack area"));
+  Serial.println(F("dump vectors          Dump initialization vectors"));
+  Serial.println(F("dump zp               Dump Zero-page"));
+  Serial.println(F("help                  Prints this screen"));
+}
+
 void print_version() {
   Serial.print(F("6502 Monitor "));
   Serial.println(VERSION);
@@ -57,7 +73,16 @@ void print_welcome() {
  * function is actually called.
  */
 void echo_command(String command) {
-  ansi_notice();
+  switch (command_set) {
+    case COMMAND_SET_MAIN:
+    default:
+      ansi_colour(COLOUR_CYAN);
+      break;
+
+    case COMMAND_SET_CONTROL:
+      ansi_colour(COLOUR_MAGENTA);
+      break;
+  }
   Serial.println("> "+ command);
   ansi_default();
 }
@@ -86,20 +111,18 @@ void do_clear() {
  * and if it does the supplied function is run. Recognized
  * commands are echoed back to the user.
  */
-bool handle_command(String command, String name, void (*function)()) {
+bool handle_command(String command, String name, void (*function)(), bool suppress_echo = false) {
   if (command == name) {
-    echo_command(command);
+    if (!suppress_monitor) {
+      echo_command(command);
+    }
     (*function)();
     return true;
   }
   return false;
 }
 
-/*
- * Run the command associated with the text command
- * given, if one is currently supported by the sketch.
- */
-void select_command(String command) {
+void select_command_main(String command) {
        if (handle_command(command, F("ansi"), ansi_status));
   else if (handle_command(command, F("ansi on"), ansi_on));
   else if (handle_command(command, F("ansi off"), ansi_off));
@@ -117,12 +140,13 @@ void select_command(String command) {
   else if (handle_command(command, F("clock 256"), set_clock_256Hz));
   else if (handle_command(command, F("clock manual"), do_manual_clock));
   else if (handle_command(command, F("clock external"), do_clock_disable));
+  else if (handle_command(command, F("control"), set_control_on));
   else if (handle_command(command, F("dump ram"), dump_ram));
   else if (handle_command(command, F("dump zp"), dump_zero_page));
   else if (handle_command(command, F("dump stack"), dump_stack));
   else if (handle_command(command, F("dump rom"), dump_rom));
   else if (handle_command(command, F("dump vectors"), dump_vectors));
-  else if (handle_command(command, F("help"), print_help));
+  else if (handle_command(command, F("help"), print_help_main));
   else if (handle_command(command, F("monitor on"), set_monitor_on));
   else if (handle_command(command, F("monitor off"), set_monitor_off));
   else if (handle_command(command, F("reset"), do_reset));
@@ -130,5 +154,65 @@ void select_command(String command) {
   else if (handle_command(command, F("version"), print_version));
   else {
     echo_unknown(command);
+  }
+}
+
+void select_command_control(String command) {
+       if (handle_command(command, F("clear"), do_clear));
+  else if (handle_command(command, F("exit"), set_control_off));
+  else if (handle_command(command, F("help"), print_help_control));
+  else {
+    echo_unknown(command);
+  }
+}
+
+/*
+ * Run the command associated with the text command given, compared agains all
+ * known commands relevant to the currently selected command set.
+ */
+void select_command(String command) {
+  switch (command_set) {
+    case COMMAND_SET_MAIN:
+    default:
+      select_command_main(command);
+      break;
+
+    case COMMAND_SET_CONTROL:
+      select_command_control(command);
+      break;
+  }
+}
+
+void select_command_main(int user_switch, switch_functions_t* r) {
+  switch (user_switch) {
+    case USER_SW1:
+      r->short_press = nullptr;
+      r->long_press = do_reset;
+      return;
+    
+    case USER_SW2:
+      r->short_press = do_tick;
+      r->long_press = do_manual_clock;
+      break;
+
+    case USER_SW3:
+      r->short_press = do_toggle_speed;
+      r->long_press = do_auto_clock;
+      break;
+    }
+}
+
+
+void select_command(int user_switch, switch_functions_t* r) {
+  switch (command_set) {
+    case COMMAND_SET_MAIN:
+      select_command_main(user_switch, r);
+      break;
+
+    default:
+    case COMMAND_SET_CONTROL:
+      r->short_press = nullptr;
+      r->long_press = nullptr;
+      break;
   }
 }

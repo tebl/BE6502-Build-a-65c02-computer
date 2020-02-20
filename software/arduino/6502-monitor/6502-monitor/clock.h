@@ -12,6 +12,7 @@ void set_clock_16Hz();
 void set_clock_32Hz();
 void set_clock_128Hz();
 void set_clock_256Hz();
+void do_toggle_speed();
 
 void do_manual_clock();
 void do_tick();

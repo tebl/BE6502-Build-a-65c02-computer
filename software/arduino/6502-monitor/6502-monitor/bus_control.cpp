@@ -4,8 +4,11 @@
 #include "debug.h"
 #include "ansi.h"
 #include "clock.h"
+#include "commands.h"
 
 extern int clock_mode;
+
+extern int command_set;
 bool bus_asserted = false;
 
 bool check_available() {
@@ -270,6 +273,26 @@ void dump_rom() {
 
 void dump_vectors() {
   dump(0xfff0, 0xffff);
+}
+
+void set_control_on() {
+  command_set = COMMAND_SET_CONTROL;
+
+  Serial.print(F("BUS Control mode "));
+  ansi_highlight();
+  Serial.print(F("ENABLED"));
+  ansi_default();
+  Serial.println();
+}
+
+void set_control_off() {
+  command_set = COMMAND_SET_MAIN;
+
+  Serial.print(F("BUS Control mode "));
+  ansi_highlight();
+  Serial.print(F("DISABLED"));
+  ansi_default();
+  Serial.println();
 }
 
 void do_bus_test() {

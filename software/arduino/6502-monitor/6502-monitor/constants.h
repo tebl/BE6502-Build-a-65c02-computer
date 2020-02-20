@@ -77,3 +77,11 @@ const long CLK_PERIOD[] = {1000000, 500000, 250000, 62500, 31250, 7812, 3906};
 #define ADR_CUSTOM 5
 #define ADR_ROM 6
 #define ADR_VECTORS 7
+
+#define COMMAND_SET_MAIN 0
+#define COMMAND_SET_CONTROL 1
+
+typedef struct {
+    void (*short_press)();
+    void (*long_press)();
+} switch_functions_t;

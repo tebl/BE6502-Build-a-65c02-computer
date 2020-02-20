@@ -12,6 +12,7 @@ int switch_state[3];
 #define ACTION_RUN1 1
 #define ACTION_RUN2 2
 int switch_action[3];
+switch_functions_t switch_functions;
 
 unsigned long debounce_time[3];
 unsigned long DEBOUNCE_TIME1 = 50;
@@ -30,29 +31,8 @@ void flash_led(int num_flashes) {
     }
 }
 
-void sw1_long() {
-    do_reset();
-}
-
-void sw2_pulse() {
-    do_tick();
-}
-
-void sw2_long() {
-    do_manual_clock();
-}
-
-void sw3_pulse() {
-    do_toggle_speed();
-}
-
-void sw3_long() {
-    do_auto_clock();
-}
-
-
-void check_switch(const int pin_number, void (*function1)(), void (*function2)()) {
-    if (function1 == nullptr && function2 == nullptr) return;
+void check_switch(const int pin_number) {
+    if (switch_functions.short_press == nullptr && switch_functions.long_press == nullptr) return;
     int index = pin_number - USER_SW1;
 
     if (digitalRead(pin_number) == HIGH) {
@@ -63,7 +43,7 @@ void check_switch(const int pin_number, void (*function1)(), void (*function2)()
                 break;
             case STATE_CHECK1:
                 if ((millis() - debounce_time[index]) > DEBOUNCE_TIME1) {
-                    if (function1 != nullptr) {
+                    if (switch_functions.short_press != nullptr) {
                         flash_led(1);
                         switch_action[index] = ACTION_RUN1;
                     }
@@ -72,7 +52,7 @@ void check_switch(const int pin_number, void (*function1)(), void (*function2)()
                 break;
             case STATE_CHECK2:
                 if ((millis() - debounce_time[index]) > DEBOUNCE_TIME2) {
-                    if (function2 != nullptr) {
+                    if (switch_functions.long_press != nullptr) {
                         flash_led(2);
                         switch_action[index] = ACTION_RUN2;
                     }
@@ -87,10 +67,10 @@ void check_switch(const int pin_number, void (*function1)(), void (*function2)()
     } else {
         switch(switch_action[index]) {
             case ACTION_RUN1:
-                if (function1 != nullptr) (*function1)();
+                if (switch_functions.short_press != nullptr) (*switch_functions.short_press)();
                 break;
             case ACTION_RUN2:
-                if (function2 != nullptr) (*function2)();
+                if (switch_functions.long_press != nullptr) (*switch_functions.long_press)();
                 break;
         }
         switch_state[index] = STATE_WAIT;
@@ -99,7 +79,12 @@ void check_switch(const int pin_number, void (*function1)(), void (*function2)()
 }
 
 void process_switches() {
-    check_switch(USER_SW1, nullptr, sw1_long);
-    check_switch(USER_SW2, sw2_pulse, sw2_long);
-    check_switch(USER_SW3, sw3_pulse, sw3_long);
+    select_command(USER_SW1, &switch_functions);
+    check_switch(USER_SW1);
+
+    select_command(USER_SW2, &switch_functions);
+    check_switch(USER_SW2);
+
+    select_command(USER_SW3, &switch_functions);
+    check_switch(USER_SW3);
 }
