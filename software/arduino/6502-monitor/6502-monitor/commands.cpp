@@ -130,7 +130,7 @@ void select_command_main(String command) {
   else if (handle_command(command, F("bus test"), do_bus_test));
   else if (handle_command(command, F("clear"), do_clear));
   else if (handle_command(command, F("clock"), print_clock));
-  else if (handle_command(command, F("clock auto"), do_auto_clock));
+  else if (handle_command(command, F("clock auto"), set_auto_clock));
   else if (handle_command(command, F("clock 1"), set_clock_1Hz));
   else if (handle_command(command, F("clock 2"), set_clock_2Hz));
   else if (handle_command(command, F("clock 4"), set_clock_4Hz));
@@ -138,7 +138,7 @@ void select_command_main(String command) {
   else if (handle_command(command, F("clock 32"), set_clock_32Hz));
   else if (handle_command(command, F("clock 128"), set_clock_128Hz));
   else if (handle_command(command, F("clock 256"), set_clock_256Hz));
-  else if (handle_command(command, F("clock manual"), do_manual_clock));
+  else if (handle_command(command, F("clock manual"), set_manual_clock));
   else if (handle_command(command, F("clock external"), do_clock_disable));
   else if (handle_command(command, F("control"), set_control_on));
   else if (handle_command(command, F("dump ram"), dump_ram));
@@ -192,12 +192,12 @@ void select_command_main(int user_switch, switch_functions_t* r) {
     
     case USER_SW2:
       r->short_press = do_tick;
-      r->long_press = do_manual_clock;
+      r->long_press = set_manual_clock;
       break;
 
     case USER_SW3:
       r->short_press = do_toggle_speed;
-      r->long_press = do_auto_clock;
+      r->long_press = set_auto_clock;
       break;
     }
 }

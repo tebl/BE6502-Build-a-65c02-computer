@@ -21,7 +21,7 @@ bool check_available() {
         Serial.println();
         return false;
       case CLK_MODE_AUTO:
-        do_auto_clock();
+        set_auto_clock();
       case CLK_MODE_MANUAL:
         break; 
   }

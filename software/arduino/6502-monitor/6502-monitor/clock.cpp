@@ -170,7 +170,7 @@ void set_clock_mode(int new_mode) {
 }
 
 /* Set clock to manual */
-void do_manual_clock() {
+void set_manual_clock() {
   set_clock_mode(CLK_MODE_MANUAL);
 
   Serial.print(F("Arduino clock now set to "));
@@ -186,7 +186,7 @@ int delay_to_hz() {
 }
 
 /* Set clock to automatic */
-void do_auto_clock() {
+void set_auto_clock() {
   set_clock_mode(CLK_MODE_AUTO);
 
   Serial.print(F("Arduino clock now set to "));
@@ -272,7 +272,7 @@ void do_tick() {
     Serial.println();
   }
 
-  if (clock_mode == CLK_MODE_AUTO) do_manual_clock();
+  if (clock_mode == CLK_MODE_AUTO) set_manual_clock();
   if (clock_mode == CLK_MODE_MANUAL) {
     clk_tick();
   }
@@ -295,7 +295,7 @@ void set_clock_speed(int new_setting) {
     
     if (clock_mode == CLK_MODE_MANUAL) {
       Timer3.setPeriod(CLK_PERIOD[clock_setting]);
-      do_auto_clock();
+      set_auto_clock();
     }
 
     if (clock_mode == CLK_MODE_AUTO) {
@@ -327,7 +327,7 @@ void set_clock_256Hz() { set_clock_speed(CLK_SPEED_256); }
  */
 void do_toggle_speed() {
   if (clock_mode == CLK_MODE_MANUAL) {
-      do_auto_clock();
+      set_auto_clock();
   } else {
     int new_setting = clock_setting + 1;
     if (new_setting > CLK_MAX_SETTING) new_setting = 0;
