@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <TimerThree.h>
 #include "constants.h"
+#include "typedefs.h"
 #include "debug.h"
 #include "ansi.h"
 #include "clock.h"
@@ -31,11 +32,7 @@ void print_help_main() {
   Serial.println(F("clock <speed>         Set Arduino clock in Hz (1,2,4,16,32,128,256)"));
   Serial.println(F("clock manual          Set Arduino clock to manual"));
   Serial.println(F("clock external        Disable Arduino clock options"));
-  Serial.println(F("dump ram              Dump RAM"));
-  Serial.println(F("dump rom              Dump ROM"));
-  Serial.println(F("dump stack            Dump stack area"));
-  Serial.println(F("dump vectors          Dump initialization vectors"));
-  Serial.println(F("dump zp               Dump Zero-page"));
+  Serial.println(F("control               Enter bus control mode"));
   Serial.println(F("help                  Prints this screen"));
   Serial.println(F("monitor <on|off>      BUS monitor updates"));
   Serial.println(F("reset                 Reset computer"));
@@ -107,9 +104,18 @@ void do_clear() {
 }
 
 /*
- * Handle serial commands, mainly just matches the name
- * and if it does the supplied function is run. Recognized
- * commands are echoed back to the user.
+ * Specialized handler for when a period is sent via serial, but we need to
+ * actually make sure that we're in a command mode where this is sensible.
+ */
+void do_tick() {
+  if (command_set == COMMAND_SET_MAIN) {
+    do_manual_tick();
+  }
+}
+
+/*
+ * Handle serial commands, mainly just matches the name and if it does the
+ * supplied function is run. Recognized commands are echoed back to the user.
  */
 bool handle_command(String command, String name, void (*function)(), bool suppress_echo = false) {
   if (command == name) {
@@ -127,7 +133,6 @@ void select_command_main(String command) {
   else if (handle_command(command, F("ansi on"), ansi_on));
   else if (handle_command(command, F("ansi off"), ansi_off));
   else if (handle_command(command, F("ansi test"), ansi_test));
-  else if (handle_command(command, F("bus test"), do_bus_test));
   else if (handle_command(command, F("clear"), do_clear));
   else if (handle_command(command, F("clock"), print_clock));
   else if (handle_command(command, F("clock auto"), set_auto_clock));
@@ -139,13 +144,8 @@ void select_command_main(String command) {
   else if (handle_command(command, F("clock 128"), set_clock_128Hz));
   else if (handle_command(command, F("clock 256"), set_clock_256Hz));
   else if (handle_command(command, F("clock manual"), set_manual_clock));
-  else if (handle_command(command, F("clock external"), do_clock_disable));
+  else if (handle_command(command, F("clock external"), set_external_clock));
   else if (handle_command(command, F("control"), set_control_on));
-  else if (handle_command(command, F("dump ram"), dump_ram));
-  else if (handle_command(command, F("dump zp"), dump_zero_page));
-  else if (handle_command(command, F("dump stack"), dump_stack));
-  else if (handle_command(command, F("dump rom"), dump_rom));
-  else if (handle_command(command, F("dump vectors"), dump_vectors));
   else if (handle_command(command, F("help"), print_help_main));
   else if (handle_command(command, F("monitor on"), set_monitor_on));
   else if (handle_command(command, F("monitor off"), set_monitor_off));
@@ -159,6 +159,11 @@ void select_command_main(String command) {
 
 void select_command_control(String command) {
        if (handle_command(command, F("clear"), do_clear));
+  else if (handle_command(command, F("dump ram"), dump_ram));
+  else if (handle_command(command, F("dump zp"), dump_zero_page));
+  else if (handle_command(command, F("dump stack"), dump_stack));
+  else if (handle_command(command, F("dump rom"), dump_rom));
+  else if (handle_command(command, F("dump vectors"), dump_vectors));
   else if (handle_command(command, F("exit"), set_control_off));
   else if (handle_command(command, F("help"), print_help_control));
   else {
@@ -167,8 +172,8 @@ void select_command_control(String command) {
 }
 
 /*
- * Run the command associated with the text command given, compared agains all
- * known commands relevant to the currently selected command set.
+ * Run the command associated with the serial command given, compared against
+ * all known commands (depending on the currently selected command set).
  */
 void select_command(String command) {
   switch (command_set) {
@@ -202,7 +207,12 @@ void select_command_main(int user_switch, switch_functions_t* r) {
     }
 }
 
-
+/*
+ * Called upon way too frequently by process switches, it is used to determine
+ * the behavior of a specified switch before processing the state of it. This
+ * isn't simply mapped statically as the active command set changes depending
+ * on the mode used.
+ */
 void select_command(int user_switch, switch_functions_t* r) {
   switch (command_set) {
     case COMMAND_SET_MAIN:

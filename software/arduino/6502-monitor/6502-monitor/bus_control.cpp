@@ -11,23 +11,6 @@ extern int clock_mode;
 extern int command_set;
 bool bus_asserted = false;
 
-bool check_available() {
-  switch (clock_mode) {
-      case CLK_MODE_NONE:
-        Serial.print(F("Arduino clock is set to "));
-        ansi_error();
-        Serial.print(F("EXTERNAL"));
-        ansi_default();
-        Serial.println();
-        return false;
-      case CLK_MODE_AUTO:
-        set_auto_clock();
-      case CLK_MODE_MANUAL:
-        break; 
-  }
-  return true;
-}
-
 /* 
  * Assert control of address and data bus to enable direct control of the
  * various associated peripherals. Note that this assumes that we are able
@@ -155,12 +138,8 @@ void write_byte(byte value, bool set_direction = true) {
  * value with all bits set if we were not able to access the bus.
  */
 byte peek(const unsigned int address) {
-  if (!check_available()) return 0xff;
-  bus_assert();
   set_address(address);
   byte value = read_byte();
-  bus_release();
-
   return value;
 }
 
@@ -170,12 +149,9 @@ byte peek(const unsigned int address) {
  * you gave us in the first place!
  */
 byte poke(const unsigned int address, byte value) {
-  if (!check_available()) return 0xff;
-  bus_assert();
   set_address(address);
   write_byte(value, true);
   value = read_byte();
-  bus_release();
   return value;
 }
 
@@ -187,9 +163,6 @@ byte poke(const unsigned int address, byte value) {
  * been skipped.
  */
 void dump(const unsigned int start_address, const unsigned int end_address) {
-  if (!check_available()) return;
-  bus_assert();
-
   bool last_blank = false;
   bool skipped = false;
 
@@ -251,8 +224,6 @@ void dump(const unsigned int start_address, const unsigned int end_address) {
     /* Catch unsigned integer roll-over */
     if ((base + 16) == 0) break;
   }
-
-  bus_release();
 }
 
 void dump_ram() {
@@ -275,8 +246,27 @@ void dump_vectors() {
   dump(0xfff0, 0xffff);
 }
 
+bool check_available() {
+  switch (clock_mode) {
+      case CLK_MODE_NONE:
+        return false;
+      case CLK_MODE_AUTO:
+        set_manual_clock();
+      case CLK_MODE_MANUAL:
+        break; 
+  }
+  return true;
+}
+
 void set_control_on() {
+  if (!check_available()) {
+    ansi_error();
+    Serial.println(F("Arduino clock is set to EXTERNAL"));
+    ansi_default();
+    return;
+  }
   command_set = COMMAND_SET_CONTROL;
+  bus_assert();
 
   Serial.print(F("BUS Control mode "));
   ansi_highlight();
@@ -286,6 +276,7 @@ void set_control_on() {
 }
 
 void set_control_off() {
+  bus_release();
   command_set = COMMAND_SET_MAIN;
 
   Serial.print(F("BUS Control mode "));
@@ -295,6 +286,7 @@ void set_control_off() {
   Serial.println();
 }
 
+/*
 void do_bus_test() {
   if (!check_available()) return;
 
@@ -306,4 +298,4 @@ void do_bus_test() {
   bus_release();
 
   dump_stack();
-}
+}*/

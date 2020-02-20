@@ -199,7 +199,7 @@ void set_auto_clock() {
 }
 
 /* Disable clock and set it back to external */
-void do_clock_disable() {
+void set_external_clock() {
   set_clock_mode(CLK_MODE_NONE);
 
   Serial.print(F("Arduino clock now set to "));
@@ -263,7 +263,7 @@ void do_reset() {
  * function will also be used when a period character is sent via the
  * serial interface.
  */
-void do_tick() {
+void do_manual_tick() {
   if (clock_mode == CLK_MODE_NONE) {
     Serial.print(F("Arduino clock is set to "));
     ansi_error();

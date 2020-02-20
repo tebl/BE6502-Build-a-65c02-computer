@@ -1,3 +1,5 @@
+#include "typedefs.h"
+
 void commands_init();
 
 void set_auto_clock();

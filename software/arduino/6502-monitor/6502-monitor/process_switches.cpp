@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "constants.h"
+#include "typedefs.h"
 #include "commands.h"
 
 #define STATE_WAIT 0

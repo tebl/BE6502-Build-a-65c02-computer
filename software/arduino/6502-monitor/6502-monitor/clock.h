@@ -2,7 +2,7 @@ void clock_initialize();
 void do_reset();
 
 void print_clock();
-void do_clock_disable();
+void set_external_clock();
 
 void set_auto_clock();
 void set_clock_1Hz();
@@ -15,7 +15,7 @@ void set_clock_256Hz();
 void do_toggle_speed();
 
 void set_manual_clock();
-void do_tick();
+void do_manual_tick();
 
 void int_attach();
 void int_detach();
