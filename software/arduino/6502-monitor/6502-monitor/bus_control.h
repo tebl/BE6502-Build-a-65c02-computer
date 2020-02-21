@@ -2,13 +2,37 @@
 #define DATA_DIRECTION_WRITE 0
 #define MEMORY_BLOCK_SIZE 256
 
+void dump_memory(const unsigned long start_address, const unsigned long end_address);
 void dump_ram();
+void dump_ram_1k();
+void dump_ram_2k();
+void dump_ram_4k();
+void dump_ram_8k();
+void dump_ram_16k();
 void dump_zp();
 void dump_stack();
 void dump_rom();
 void dump_vectors();
-byte peek(const unsigned int address);
-byte poke(const unsigned address, byte value);
+
+void dump_intel(const unsigned long start_address, const unsigned long end_address);
+void dump_intel_ram();
+void dump_intel_ram_1k();
+void dump_intel_ram_2k();
+void dump_intel_ram_4k();
+void dump_intel_ram_8k();
+void dump_intel_ram_16k();
+void dump_intel_rom();
+void dump_intel_rom_1k();
+void dump_intel_rom_2k();
+void dump_intel_rom_4k();
+void dump_intel_rom_8k();
+void dump_intel_rom_16k();
+void dump_intel_rom_32k();
+void dump_intel_stack();
+void dump_intel_zp();
+
+byte peek(const unsigned long address);
+byte poke(const unsigned long address, byte value);
 void set_control_on();
 void set_control_off();
 void test_ram();

@@ -108,8 +108,8 @@ void bus_release() {
 /*
  * Set address pins, unsigned to allow for the full 65K address space.
  */
-void set_address(const unsigned int address) {
-  unsigned int value = address;
+void set_address(const unsigned long address) {
+  unsigned long value = address;
   for (int i = 15; i >= 0; i--) {
     digitalWrite(SBC_ADDR[i], value & 1);
     value = value >> 1;
@@ -153,7 +153,7 @@ void write_byte(byte value, bool set_direction = true) {
  * Have a peek at the specified memory address, but will return a blank
  * value with all bits set if we were not able to access the bus.
  */
-byte peek(const unsigned int address) {
+byte peek(const unsigned long address) {
   set_address(address);
   return read_byte();
 }
@@ -163,7 +163,7 @@ byte peek(const unsigned int address) {
  * checking will be done so make sure that the value returned is the same
  * you gave us in the first place!
  */
-byte poke(const unsigned int address, byte value) {
+byte poke(const unsigned long address, byte value) {
   set_address(address);
   write_byte(value, true);
   return read_byte();
@@ -196,13 +196,13 @@ void zero_ram() { zero_memory(0x0000, 0x3fff); }
  * them, then an asterisk will be printed in order to denote that a line has
  * been skipped.
  */
-void dump_memory(const unsigned int start_address, const unsigned int end_address) {
+void dump_memory(const unsigned long start_address, const unsigned long end_address) {
   bool last_blank = false;
   bool skipped = false;
   set_data_direction(DATA_DIRECTION_READ);
 
   ansi_notice_ln(F("        0  1  2  3  4  5  6  7    8  9  A  B  C  D  E  F "));
-  for (unsigned int base = start_address; base < end_address; base += 16) {
+  for (unsigned long base = start_address; base < end_address; base += 16) {
     byte data[16];
     int sum = 0;
     for (int offset = 0; offset <= 15; offset += 1) {
@@ -215,7 +215,7 @@ void dump_memory(const unsigned int start_address, const unsigned int end_addres
       if (!last_blank) {
         char buf[80];
         ansi_notice();
-        sprintf(buf, "$%.4X- ", base);
+        sprintf(buf, "$%.4X- ", (int)base);
         Serial.print(buf);
         ansi_default();
 
@@ -241,7 +241,7 @@ void dump_memory(const unsigned int start_address, const unsigned int end_addres
 
       char buf[80];
       ansi_notice();
-      sprintf(buf, "$%.4X- ", base);
+      sprintf(buf, "$%.4X- ", (unsigned int)base);
       Serial.print(buf);
       ansi_default();
 
@@ -251,21 +251,93 @@ void dump_memory(const unsigned int start_address, const unsigned int end_addres
 
       Serial.println(buf);
     }
-
-    /* Catch unsigned integer roll-over */
-    if ((base + 16) == 0) break;
   }
 
-  ansi_notice_ln(F("Done."));
+  ansi_notice_ln(F("done."));
 }
 void dump_ram() { dump_memory(0x0000, 0x3fff); }
+void dump_ram_1k() { dump_memory(0x0000, 0x03ff); }
+void dump_ram_2k() { dump_memory(0x0000, 0x07ff); }
+void dump_ram_4k() { dump_memory(0x0000, 0x0fff); }
+void dump_ram_8k() { dump_memory(0x0000, 0x1fff); }
+void dump_ram_16k() { dump_ram(); }
 void dump_zp() { dump_memory(0x0000, 0x00ff); }
 void dump_stack() { dump_memory(0x0100, 0x01ff); }
 void dump_rom() { dump_memory(0x8000, 0xffff); }
 void dump_vectors() { dump_memory(0xfff0, 0xffff); }
 
-bool test_memory_pattern(const unsigned int start_address, const unsigned int end_address, const byte pattern) {
-  unsigned int base = start_address;
+int intel_checksum(int byte_count, int hi, int lo, int record_type, int data_sum) {
+  int x = byte_count + hi + lo + record_type + data_sum;
+  x = x % 256;
+  x = ~x;
+  x = x + 1;
+  x = x & 0xFF;
+  return x;
+}
+
+/*
+ * Handle exporting of data to Intel HEX format, this data is printed to
+ * serial directly with a 16 byte record length along with the expected
+ * checksum. Note that addresses specified are in relation to the system!
+ */
+void dump_intel(const unsigned long start_address, const unsigned long end_address) {
+  set_data_direction(DATA_DIRECTION_READ);
+  int byte_count = 16;
+  
+  for (unsigned long base = start_address; base < end_address; base += 16) {
+    byte data[byte_count];
+    int hi = (base & 0xFF00) >> 8;
+    int lo = base & 0x00FF;
+
+    int sum = 0;
+    for (int offset = 0; offset < byte_count; offset += 1) {
+      set_address(base + offset);
+      data[offset] = read_byte(false);
+      sum += data[offset];
+    }
+
+    int checksum = intel_checksum(
+      0x10, 
+      hi,
+      lo,
+      0x00,
+      sum
+    );
+
+    char buf[80];
+    sprintf(buf, ":%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+            byte_count, hi, lo, 0x00,
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
+            data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15], checksum);
+
+    Serial.println(buf);
+  }
+
+  ansi_notice_ln(F("done."));
+}
+void dump_intel_ram() { dump_intel(0x0000, 0x3fff); }
+void dump_intel_ram_1k() { dump_intel(0x0000, 0x03ff); }
+void dump_intel_ram_2k() { dump_intel(0x0000, 0x07ff); }
+void dump_intel_ram_4k() { dump_intel(0x0000, 0x0fff); }
+void dump_intel_ram_8k() { dump_intel(0x0000, 0x1fff); }
+void dump_intel_ram_16k() { dump_intel_ram(); }
+void dump_intel_rom() { dump_intel(0x8000, 0xffff); }
+void dump_intel_rom_1k() { dump_intel(0x8000, 0x83ff); }
+void dump_intel_rom_2k() { dump_intel(0x8000, 0x87ff); }
+void dump_intel_rom_4k() { dump_intel(0x8000, 0x8fff); }
+void dump_intel_rom_8k() { dump_intel(0x8000, 0x9fff); }
+void dump_intel_rom_16k() { dump_intel(0x8000, 0xbfff); }
+void dump_intel_rom_32k() { dump_intel_rom(); }
+void dump_intel_stack() { dump_intel(0x0100, 0x01ff); }
+void dump_intel_zp() { dump_intel(0x0000, 0x00ff); }
+
+/*
+ * Tests a supplied segment of memory by writing the specified pattern to the
+ * entire block specified, then attempt to read it back to ensure that we are
+ * able to retrieve the same value.
+ */
+bool test_memory_pattern(const unsigned long start_address, const unsigned long end_address, const byte pattern) {
+  unsigned long base = start_address;
   bool passed = true;
   #ifdef DEBUG
   char tmp[20];
@@ -278,7 +350,7 @@ bool test_memory_pattern(const unsigned int start_address, const unsigned int en
     if (MEMORY_BLOCK_SIZE < max_bytes) max_bytes = MEMORY_BLOCK_SIZE;
 
     #ifdef DEBUG
-    sprintf(tmp, "0x%04X (%d bytes)", base, max_bytes);
+    sprintf(tmp, "0x%04X (%d bytes)", (unsigned int)base, max_bytes);
     ansi_debug_ln(tmp);
     #endif
 
@@ -310,7 +382,7 @@ bool test_memory_pattern(const unsigned int start_address, const unsigned int en
  * has different patterns written to it in 16 byte blocks before comparing
  * the value to what is read back.
  */
-void test_memory(const unsigned int start_address, const unsigned int end_address) {
+void test_memory(const unsigned long start_address, const unsigned long end_address) {
   const byte patterns[] = {0x55, 0xaa, 0x00, 0xff};
 
   for (int i = 0; i < 4; i++) {
