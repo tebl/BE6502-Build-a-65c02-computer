@@ -28,13 +28,22 @@
 
 void ansi_clear();
 void ansi_colour(int colour, bool bright = false);
+void ansi_colour(const __FlashStringHelper *string, int colour, bool bright = false, bool back_to_default = true);
 void ansi_decoration(int decoration = TEXT_DECORATION_PLAIN);
+void ansi_decoration(const __FlashStringHelper *string, int decoration = TEXT_DECORATION_PLAIN, bool back_to_default = true);
+
 void ansi_default();
 void ansi_debug();
+void ansi_debug(const __FlashStringHelper *string, bool back_to_default = true);
 void ansi_highlight();
+void ansi_highlight(const __FlashStringHelper *string, bool back_to_default = true);
 void ansi_weak();
+void ansi_weak(const __FlashStringHelper *string, bool back_to_default = true);
 void ansi_notice();
+void ansi_notice(const __FlashStringHelper *string, bool back_to_default = true);
 void ansi_error();
+void ansi_error(const __FlashStringHelper *string, bool back_to_default = true);
+
 void ansi_status();
 void ansi_test();
 void ansi_on();

@@ -2,7 +2,9 @@
 #include "ansi.h"
 extern bool ansi_enabled;
 
-/* Clear the screen and return cursor to top left position */
+/* 
+ * Clear the screen and return cursor to top left position.
+ */
 void ansi_clear() {
   if (ansi_enabled) {
     Serial.print(F("\033[H"));
@@ -25,6 +27,11 @@ void ansi_colour(int colour, bool bright) {
     Serial.print("m");
   }
 }
+void ansi_colour(const __FlashStringHelper *string, int colour, bool bright, bool back_to_default) {
+  ansi_colour(colour, bright);
+  Serial.print(string);
+  if (back_to_default) ansi_default();
+}
 
 /* Configure text decoration effects, but note that compatibily with actual
  * terminal software is very limited - mostly bold, underline and reversed
@@ -36,32 +43,36 @@ void ansi_decoration(int decoration) {
   Serial.print(decoration);
   Serial.print("m");
 }
+void ansi_decoration(const __FlashStringHelper *string, int decoration, bool back_to_default) {
+  ansi_decoration(decoration);
+  Serial.print(string);
+  if (back_to_default) ansi_default();
+}
 
 /* Reset any formatting previously set. */
-void ansi_default() {
-  ansi_colour(COLOUR_RESET);
-}
+void ansi_default() { ansi_colour(COLOUR_RESET); }
 
 void ansi_highlight() {
   ansi_colour(COLOUR_WHITE, true);
   ansi_decoration(TEXT_DECORATION_UNDERLINE);
 }
-
-void ansi_debug() {
-  ansi_colour(COLOUR_WHITE);
+void ansi_highlight(const __FlashStringHelper *string, bool back_to_default) {
+  ansi_highlight();
+  Serial.print(string);
+  if (back_to_default) ansi_default();
 }
 
-void ansi_error() {
-  ansi_colour(COLOUR_RED, true);
-}
+void ansi_debug() { ansi_colour(COLOUR_WHITE); }
+void ansi_debug(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_WHITE, false, back_to_default); }
 
-void ansi_notice() {
-  ansi_colour(COLOUR_CYAN);
-}
+void ansi_error() { ansi_colour(COLOUR_RED, true); }
+void ansi_error(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_RED, true, back_to_default); }
 
-void ansi_weak() {
-  ansi_colour(COLOUR_BLUE);
-}
+void ansi_notice() { ansi_colour(COLOUR_CYAN); }
+void ansi_notice(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_CYAN, false, back_to_default); }
+
+void ansi_weak() { ansi_colour(COLOUR_BLUE); }
+void ansi_weak(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_BLUE, false, back_to_default); }
 
 void ansi_status() {
   if (ansi_enabled) {
@@ -94,58 +105,40 @@ void ansi_off() {
 void ansi_test() {
   ansi_clear();
 
-  ansi_highlight();
-  Serial.print("HIGHLIGHT");
-  ansi_default();
+  ansi_highlight(F("HIGHLIGHT"));
   Serial.print(" ");
 
-  ansi_debug();
-  Serial.print("DEBUG");
-  ansi_default();
+  ansi_debug(F("DEBUG"));
   Serial.print(" ");
 
-  ansi_error();
-  Serial.print("ERROR");
-  ansi_default();
+  ansi_error(F("ERROR"));
   Serial.print(" ");
 
-  ansi_notice();
-  Serial.print("NOTICE");
-  ansi_default();
+  ansi_notice(F("NOTICE"));
   Serial.print(" ");
 
-  ansi_weak();
-  Serial.print("WEAK");
-  ansi_default();
+  ansi_weak(F("WEAK"));
   Serial.println();
 
-  ansi_decoration(TEXT_DECORATION_BOLD);
-  Serial.print("BOLD");
-  ansi_default();
+  ansi_decoration(F("BOLD"), TEXT_DECORATION_BOLD);
   Serial.print(" ");
-  ansi_decoration(TEXT_DECORATION_DIM);
-  Serial.print("DIM");
-  ansi_default();
+
+  ansi_decoration(F("DIM"), TEXT_DECORATION_DIM);
   Serial.print(" ");
-  ansi_decoration(TEXT_DECORATION_ITALIC);
-  Serial.print("ITALIC");
-  ansi_default();
+
+  ansi_decoration(F("ITALIC"), TEXT_DECORATION_ITALIC);
   Serial.print(" ");
-  ansi_decoration(TEXT_DECORATION_UNDERLINE);
-  Serial.print("UNDERLINE");
-  ansi_default();
+
+  ansi_decoration(F("UNDERLINE"), TEXT_DECORATION_UNDERLINE);
   Serial.print(" ");
-  ansi_decoration(TEXT_DECORATION_BLINK);
-  Serial.print("BLINK");
-  ansi_default();
+
+  ansi_decoration(F("BLINK"), TEXT_DECORATION_BLINK);
   Serial.print(" ");
-  ansi_decoration(TEXT_DECORATION_REVERSED);
-  Serial.print("REVERSED");
-  ansi_default();
+
+  ansi_decoration(F("REVERSED"), TEXT_DECORATION_REVERSED);
   Serial.print(" ");
-  ansi_decoration(TEXT_DECORATION_STRIKETHROUGH);
-  Serial.print("STRIKETHROUGH");
-  ansi_default();
+
+  ansi_decoration(F("STRIKETHROUGH"), TEXT_DECORATION_STRIKETHROUGH);
   Serial.println();
 
   for (int i = COLOUR_BLACK; i <= COLOUR_WHITE; i++) {
