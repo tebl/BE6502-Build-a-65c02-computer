@@ -174,10 +174,7 @@ void set_manual_clock() {
   set_clock_mode(CLK_MODE_MANUAL);
 
   Serial.print(F("Arduino clock now set to "));
-  ansi_weak();
-  Serial.print(F("MANUAL"));
-  ansi_default();
-  Serial.println();
+  ansi_weak_ln(F("MANUAL"));
 }
 
 /* Calculate clock speed in Hz */
@@ -190,12 +187,9 @@ void set_auto_clock() {
   set_clock_mode(CLK_MODE_AUTO);
 
   Serial.print(F("Arduino clock now set to "));
-  ansi_weak();
-  Serial.print(F("AUTOMATIC ("));
+  ansi_weak(F("AUTOMATIC ("));
   Serial.print(delay_to_hz());
-  Serial.print("Hz)");
-  ansi_default();
-  Serial.println();
+  ansi_weak_ln(F("Hz)"));
 }
 
 /* Disable clock and set it back to external */
@@ -203,10 +197,7 @@ void set_external_clock() {
   set_clock_mode(CLK_MODE_NONE);
 
   Serial.print(F("Arduino clock now set to "));
-  ansi_weak();
-  Serial.print(F("EXTERNAL"));
-  ansi_default();
-  Serial.println();
+  ansi_weak_ln(F("EXTERNAL"));
 }
 
 /* Reset SBC by holding w65c02 CPU in reset for 250ms if the clock is set to
@@ -221,10 +212,8 @@ void do_reset() {
     case CLK_MODE_AUTO:
       set_clock_mode(CLK_MODE_MANUAL);
     case CLK_MODE_MANUAL:
-      ansi_notice();
       suppress_monitor = true;
-      Serial.print("Doing controlled reset..."); 
-      ansi_default();
+      ansi_notice(F("Doing controlled reset..."));
       digitalWrite(SBC_RESET, HIGH);
       pinMode(SBC_RESET, OUTPUT);
       digitalWrite(SBC_RESET, LOW);
@@ -236,25 +225,19 @@ void do_reset() {
       pinMode(SBC_RESET, INPUT);
       set_clock_mode(current_mode);
 
-      ansi_weak();
-      Serial.println(" done!");
+      ansi_weak_ln(F(" done!"));
       suppress_monitor = false;
-      ansi_default();
       break;
 
     default:
-      ansi_notice();
-      Serial.print("Doing timed reset...");
-      ansi_default();
+      ansi_notice(F("Doing timed reset..."));
       digitalWrite(SBC_RESET, HIGH);
       pinMode(SBC_RESET, OUTPUT);
       digitalWrite(SBC_RESET, LOW);
       delay(250);
       digitalWrite(SBC_RESET, HIGH);
       pinMode(SBC_RESET, INPUT);
-      ansi_weak();
-      Serial.println(" done!");
-      ansi_default();
+      ansi_weak_ln(F(" done!"));
       break;
   }
 }
@@ -266,10 +249,7 @@ void do_reset() {
 void do_manual_tick() {
   if (clock_mode == CLK_MODE_NONE) {
     Serial.print(F("Arduino clock is set to "));
-    ansi_error();
-    Serial.print(F("EXTERNAL"));
-    ansi_default();
-    Serial.println();
+    ansi_error_ln(F("EXTERNAL"));
   }
 
   if (clock_mode == CLK_MODE_AUTO) set_manual_clock();
@@ -339,22 +319,15 @@ void print_clock() {
   switch (clock_mode) {
     case CLK_MODE_NONE:
       Serial.print(F("Arduino clock is set to "));
-      ansi_weak();
-      Serial.print(F("EXTERNAL"));
-      ansi_default();
-      Serial.println();
+      ansi_weak_ln(F("EXTERNAL"));
       break;
     case CLK_MODE_MANUAL:
       Serial.print(F("Arduino clock is set to "));
-      ansi_weak();
-      Serial.print(F("MANUAL"));
-      ansi_default();
-      Serial.println();
+      ansi_weak_ln(F("MANUAL"));
       break;
     case CLK_MODE_AUTO:
       Serial.print(F("Arduino clock is set to "));
-      ansi_weak();
-      Serial.print(F("AUTO ("));
+      ansi_weak(F("AUTO ("));
       Serial.print(delay_to_hz());
       Serial.print("Hz)");
       ansi_default();

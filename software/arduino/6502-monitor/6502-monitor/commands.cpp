@@ -29,15 +29,11 @@ void print_status() {
   int val = digitalRead(SBC_RESET);
   Serial.print(F("Host system "));
   if (val == 0) {
-    ansi_error();
-    Serial.print(F("offline"));
+    ansi_error_ln(F("offline"));
   }
   else {
-    ansi_notice();
-    Serial.print(F("powered"));
+    ansi_notice_ln(F("powered"));
   }
-  ansi_default();
-  Serial.println();
 }
 
 void print_version() {
@@ -199,19 +195,23 @@ void print_help_control() {
   Serial.println(F("dump vectors          Dump initialization vectors"));
   Serial.println(F("dump zp               Dump Zero-page"));
   Serial.println(F("help                  Prints this screen"));
+  Serial.println(F("zero zp               Zero page 0"));
   Serial.println(F("zero stack            Zero stack area"));
+  Serial.println(F("zero ram              Zero RAM"));
 }
 
 void select_command_control(String command) {
        if (handle_command(command, F("clear"), do_clear));
   else if (handle_command(command, F("dump ram"), dump_ram));
-  else if (handle_command(command, F("dump zp"), dump_zero_page));
+  else if (handle_command(command, F("dump zp"), dump_zp));
   else if (handle_command(command, F("dump stack"), dump_stack));
   else if (handle_command(command, F("dump rom"), dump_rom));
   else if (handle_command(command, F("dump vectors"), dump_vectors));
   else if (handle_command(command, F("exit"), set_control_off));
   else if (handle_command(command, F("help"), print_help_control));
+  else if (handle_command(command, F("zero zp"), zero_zp));
   else if (handle_command(command, F("zero stack"), zero_stack));
+  else if (handle_command(command, F("zero ram"), zero_ram));
   else {
     echo_unknown(command);
   }

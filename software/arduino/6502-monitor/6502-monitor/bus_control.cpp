@@ -169,7 +169,7 @@ byte poke(const unsigned int address, byte value) {
   return read_byte();
 }
 
-void zero_memory(const unsigned int start_address, const unsigned int end_address, byte value = 0xff) {
+void zero_memory(const unsigned int start_address, const unsigned int end_address, byte value = 0x00) {
   unsigned int num_bytes = 0;
   unsigned int base = start_address;
   set_data_direction(DATA_DIRECTION_WRITE);
@@ -180,8 +180,14 @@ void zero_memory(const unsigned int start_address, const unsigned int end_addres
     num_bytes++;
   }
   set_data_direction(DATA_DIRECTION_READ);
+  ansi_notice();
+  Serial.print(num_bytes);
+  Serial.println(F(" bytes written."));
+  ansi_default();
 }
-void zero_stack() { zero_memory(0x0100, 0x01ff, 0x55); }
+void zero_zp() { zero_memory(0x0000, 0x00ff); }
+void zero_stack() { zero_memory(0x0100, 0x01ff); }
+void zero_ram() { zero_memory(0x0000, 0x3fff); }
 
 /*
  * Dumps memory contents to the console, formatting it similarly to the hex
@@ -193,12 +199,9 @@ void zero_stack() { zero_memory(0x0100, 0x01ff, 0x55); }
 void dump_memory(const unsigned int start_address, const unsigned int end_address) {
   bool last_blank = false;
   bool skipped = false;
-
-  ansi_notice();
-  Serial.println(F("        0  1  2  3  4  5  6  7    8  9  A  B  C  D  E  F "));
-  ansi_default();
-
   set_data_direction(DATA_DIRECTION_READ);
+
+  ansi_notice_ln(F("        0  1  2  3  4  5  6  7    8  9  A  B  C  D  E  F "));
   for (unsigned int base = start_address; base < end_address; base += 16) {
     byte data[16];
     int sum = 0;
@@ -252,9 +255,11 @@ void dump_memory(const unsigned int start_address, const unsigned int end_addres
     /* Catch unsigned integer roll-over */
     if ((base + 16) == 0) break;
   }
+
+  ansi_notice_ln(F("Done."));
 }
 void dump_ram() { dump_memory(0x0000, 0x3fff); }
-void dump_zero_page() { dump_memory(0x0000, 0x00ff); }
+void dump_zp() { dump_memory(0x0000, 0x00ff); }
 void dump_stack() { dump_memory(0x0100, 0x01ff); }
 void dump_rom() { dump_memory(0x8000, 0xffff); }
 void dump_vectors() { dump_memory(0xfff0, 0xffff); }
@@ -284,19 +289,14 @@ bool check_control_dependencies() {
  */
 void set_control_on() {
   if (!check_control_dependencies()) {
-    ansi_error();
-    Serial.println(F("Arduino clock is set to EXTERNAL"));
-    ansi_default();
+    ansi_error_ln(F("Arduino clock is set to EXTERNAL"));
     return;
   }
   command_set = COMMAND_SET_CONTROL;
   bus_assert();
 
   Serial.print(F("BUS Control mode "));
-  ansi_highlight();
-  Serial.print(F("ENABLED"));
-  ansi_default();
-  Serial.println();
+  ansi_highlight_ln(F("ENABLED"));
 }
 
 /*
@@ -307,8 +307,5 @@ void set_control_off() {
   command_set = COMMAND_SET_MAIN;
 
   Serial.print(F("BUS Control mode "));
-  ansi_highlight();
-  Serial.print(F("DISABLED"));
-  ansi_default();
-  Serial.println();
+  ansi_highlight_ln(F("DISABLED"));
 }

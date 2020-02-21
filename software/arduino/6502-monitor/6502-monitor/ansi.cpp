@@ -27,11 +27,27 @@ void ansi_colour(int colour, bool bright) {
     Serial.print("m");
   }
 }
-void ansi_colour(const __FlashStringHelper *string, int colour, bool bright, bool back_to_default) {
+void ansi_colour(const __FlashStringHelper *string, int colour, bool bright, bool back_to_default, bool newline) {
   ansi_colour(colour, bright);
-  Serial.print(string);
+  if (newline) Serial.println(string);
+  else Serial.print(string);
   if (back_to_default) ansi_default();
 }
+void ansi_colour(const char *string, int colour, bool bright, bool back_to_default, bool newline) {
+  ansi_colour(colour, bright);
+  if (newline) Serial.println(string);
+  else Serial.print(string);
+  if (back_to_default) ansi_default();
+}
+void ansi_colour_ln(const __FlashStringHelper *string, int colour, bool bright, bool back_to_default) { ansi_colour(string, colour, bright, back_to_default, true); }
+void ansi_colour_ln(const char *string, int colour, bool bright, bool back_to_default) { ansi_colour(string, colour, bright, back_to_default, true); }
+
+/* 
+ * Reset any formatting previously set, this will affect both color and any
+ * applies styles.
+ */
+void ansi_default() { ansi_colour(COLOUR_RESET); }
+
 
 /* Configure text decoration effects, but note that compatibily with actual
  * terminal software is very limited - mostly bold, underline and reversed
@@ -43,36 +59,43 @@ void ansi_decoration(int decoration) {
   Serial.print(decoration);
   Serial.print("m");
 }
-void ansi_decoration(const __FlashStringHelper *string, int decoration, bool back_to_default) {
+void ansi_decoration(const __FlashStringHelper *string, int decoration, bool back_to_default, bool newline) {
   ansi_decoration(decoration);
-  Serial.print(string);
+  if (newline) Serial.println(string);
+  else Serial.print(string);
   if (back_to_default) ansi_default();
 }
-
-/* Reset any formatting previously set. */
-void ansi_default() { ansi_colour(COLOUR_RESET); }
+void ansi_decoration_ln(const __FlashStringHelper *string, int decoration, bool back_to_default) { ansi_decoration(string, decoration, true); }
 
 void ansi_highlight() {
   ansi_colour(COLOUR_WHITE, true);
   ansi_decoration(TEXT_DECORATION_UNDERLINE);
 }
-void ansi_highlight(const __FlashStringHelper *string, bool back_to_default) {
+void ansi_highlight(const __FlashStringHelper *string, bool back_to_default, bool newline) {
   ansi_highlight();
-  Serial.print(string);
+  if (newline) Serial.println(string);
+  else Serial.print(string);
   if (back_to_default) ansi_default();
 }
+void ansi_highlight_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_highlight(string, back_to_default, true); }
 
 void ansi_debug() { ansi_colour(COLOUR_WHITE); }
-void ansi_debug(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_WHITE, false, back_to_default); }
+void ansi_debug(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, newline); }
+void ansi_debug(const char *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, newline); }
+void ansi_debug_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, true); }
+void ansi_debug_ln(const char *string, bool back_to_default) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, true); }
 
 void ansi_error() { ansi_colour(COLOUR_RED, true); }
-void ansi_error(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_RED, true, back_to_default); }
+void ansi_error(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_RED, true, back_to_default, newline); }
+void ansi_error_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_RED, true, back_to_default, true); }
 
 void ansi_notice() { ansi_colour(COLOUR_CYAN); }
-void ansi_notice(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_CYAN, false, back_to_default); }
+void ansi_notice(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_CYAN, false, back_to_default, newline); }
+void ansi_notice_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_CYAN, false, back_to_default, true); }
 
 void ansi_weak() { ansi_colour(COLOUR_BLUE); }
-void ansi_weak(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_BLUE, false, back_to_default); }
+void ansi_weak(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_BLUE, false, back_to_default, newline); }
+void ansi_weak_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_BLUE, false, back_to_default, true); }
 
 void ansi_status() {
   if (ansi_enabled) {

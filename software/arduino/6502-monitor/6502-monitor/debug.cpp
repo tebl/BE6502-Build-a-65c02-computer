@@ -4,16 +4,12 @@
 
 void debug(const char *string) {
   #ifdef DEBUG
-  ansi_debug();
-  Serial.println(string);
-  ansi_default();
+  ansi_debug_ln(string);
   #endif
 }
 
 void debug(const __FlashStringHelper *string) {
   #ifdef DEBUG
-  ansi_debug();
-  Serial.println(string);
-  ansi_default();
+  ansi_debug_ln(string);
   #endif
 }
