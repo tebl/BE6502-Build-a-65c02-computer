@@ -195,6 +195,7 @@ void print_help_control() {
   Serial.println(F("dump vectors          Dump initialization vectors"));
   Serial.println(F("dump zp               Dump Zero-page"));
   Serial.println(F("help                  Prints this screen"));
+  Serial.println(F("test ram              RAM memory test (destructive)"));
   Serial.println(F("zero zp               Zero page 0"));
   Serial.println(F("zero stack            Zero stack area"));
   Serial.println(F("zero ram              Zero RAM"));
@@ -209,6 +210,9 @@ void select_command_control(String command) {
   else if (handle_command(command, F("dump vectors"), dump_vectors));
   else if (handle_command(command, F("exit"), set_control_off));
   else if (handle_command(command, F("help"), print_help_control));
+  else if (handle_command(command, F("test ram"), test_ram));
+  else if (handle_command(command, F("test zp"), test_zp));
+  else if (handle_command(command, F("test stack"), test_stack));
   else if (handle_command(command, F("zero zp"), zero_zp));
   else if (handle_command(command, F("zero stack"), zero_stack));
   else if (handle_command(command, F("zero ram"), zero_ram));

@@ -264,6 +264,76 @@ void dump_stack() { dump_memory(0x0100, 0x01ff); }
 void dump_rom() { dump_memory(0x8000, 0xffff); }
 void dump_vectors() { dump_memory(0xfff0, 0xffff); }
 
+bool test_memory_pattern(const unsigned int start_address, const unsigned int end_address, const byte pattern) {
+  unsigned int base = start_address;
+  bool passed = true;
+  #ifdef DEBUG
+  char tmp[20];
+  #endif
+
+  bool done = false;
+  while (!done) {
+    if (end_address < base) break;
+    int max_bytes = (end_address + 1) - base;
+    if (MEMORY_BLOCK_SIZE < max_bytes) max_bytes = MEMORY_BLOCK_SIZE;
+
+    #ifdef DEBUG
+    sprintf(tmp, "0x%04X (%d bytes)", base, max_bytes);
+    ansi_debug_ln(tmp);
+    #endif
+
+    set_data_direction(DATA_DIRECTION_WRITE);
+    for (int i = 0; i < max_bytes; i++) {
+      set_address(base + i);
+      write_byte(pattern, false);
+    }
+
+    set_data_direction(DATA_DIRECTION_READ);
+    for (int i = 0; i < max_bytes; i++) {
+      set_address(base + i);
+      if (pattern != read_byte(false)) {
+        passed = false;
+        break;
+      }
+    }
+
+    base += max_bytes;
+    if (!passed) break;
+  }
+
+  set_data_direction(DATA_DIRECTION_READ);
+  return passed;
+}
+
+/*
+ * Perform a test of the configured amount of memory, this section of memory
+ * has different patterns written to it in 16 byte blocks before comparing
+ * the value to what is read back.
+ */
+void test_memory(const unsigned int start_address, const unsigned int end_address) {
+  const byte patterns[] = {0x55, 0xaa, 0x00, 0xff};
+
+  for (int i = 0; i < 4; i++) {
+    char tmp[10];
+    ansi_notice(F("Pass "), false);
+    sprintf(tmp, "%d (0x%02X) ", i, patterns[i]);
+    Serial.println(tmp);
+    ansi_default();
+
+    if (test_memory_pattern(start_address, end_address, patterns[i])) {
+      ansi_notice_ln(F(" OK!"));
+    } else {
+      ansi_error_ln(F(" failed!"));
+      break;
+    }
+  }
+  
+  ansi_notice_ln(F("Memory test completed."));
+}
+void test_ram() { test_memory(0x000, 0x3fff); }
+void test_zp() { test_memory(0x0000, 0x00ff); }
+void test_stack() { test_memory(0x0100, 0x01ff); }
+
 /*
  * Check that we are able to transition into bus control mode, since we could
  * just as well be connected to an external clock module we'll require that
