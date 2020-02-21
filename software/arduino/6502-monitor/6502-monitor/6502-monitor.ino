@@ -4,7 +4,6 @@
 #include "commands.h"
 #include "process_serial.h"
 #include "process_switches.h"
-#include "bus_control.h"
 
 /* Able to use VT100 commands on serial, disable if you get wierd characters
  * in serial output - or switch to a serial terminal that supports them.
@@ -38,6 +37,8 @@ void setup() {
 
   pinMode(SBC_CLOCK, INPUT);
   pinMode(SBC_RW, INPUT);
+  pinMode(SBC_BE, INPUT);
+  pinMode(SBC_READY, INPUT);
   
   commands_init();
   print_welcome();

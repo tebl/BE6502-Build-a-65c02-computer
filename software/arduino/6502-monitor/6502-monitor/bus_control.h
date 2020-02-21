@@ -12,3 +12,4 @@ byte peek(const unsigned int address);
 byte poke(const unsigned address, byte value);
 void set_control_on();
 void set_control_off();
+void zero_stack();

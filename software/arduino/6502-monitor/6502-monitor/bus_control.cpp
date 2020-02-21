@@ -11,6 +11,31 @@ extern int clock_mode;
 extern int command_set;
 bool bus_asserted = false;
 
+/*
+ * Set the direction of the pins currently facing the computers data bus, this
+ * needs to be done so that it corresponds to whatever signalling we are
+ * performing. Note that incorrect use will lead to a dead Arduino, SBC or
+ * both!
+ */
+void set_data_direction(int direction) {
+  digitalWrite(SBC_RW, HIGH);
+  switch (direction) {
+    case DATA_DIRECTION_READ:
+      debug(F("Set data direction: READ"));
+      for (int i = 0; i < 8; i++) {
+        pinMode(SBC_DATA[i], INPUT);
+      }
+      break;
+
+    case DATA_DIRECTION_WRITE:
+      debug(F("Set data direction: WRITE"));
+      for (int i = 0; i < 8; i++) {
+        pinMode(SBC_DATA[i], OUTPUT);
+      }
+      break;
+  }
+}
+
 /* 
  * Assert control of address and data bus to enable direct control of the
  * various associated peripherals. Note that this assumes that we are able
@@ -20,24 +45,30 @@ void bus_assert() {
   if (bus_asserted) return;
   bus_asserted = true;
 
+  int_detach();
+
   debug(F("Assert READY"));
   digitalWrite(SBC_READY, LOW);
   pinMode(SBC_READY, OUTPUT);
-  delay(10);
+
+  debug(F("Clock HIGH"));
+  digitalWrite(SBC_CLOCK, HIGH);
+
   debug(F("Assert BE"));
   digitalWrite(SBC_BE, LOW);
   pinMode(SBC_BE, OUTPUT);
-  debug(F("Control R/W"));
+
+  debug(F("Control R/W"));  
   digitalWrite(SBC_RW, HIGH);
   pinMode(SBC_RW, OUTPUT);
-  debug(F("Clock HIGH"));
-  digitalWrite(SBC_CLOCK, HIGH);
 
   debug(F("Controlling A0-A15"));
   for (int n = 0; n < 16; n += 1) {
     pinMode(SBC_ADDR[n], OUTPUT);
     digitalWrite(SBC_ADDR[n], HIGH);
   }
+
+  set_data_direction(DATA_DIRECTION_READ);
 }
 
 /*
@@ -48,18 +79,12 @@ void bus_assert() {
  */
 void bus_release() {
   if (!bus_asserted) return;
-  debug(F("Release D0-D7"));
-  for (int n = 0; n < 8; n += 1) {
-    pinMode(SBC_DATA[n], INPUT);
-  }
+  set_data_direction(DATA_DIRECTION_READ);
 
   debug(F("Release A0-A15"));
   for (int n = 0; n < 16; n += 1) {
     pinMode(SBC_ADDR[n], INPUT);
   }
-
-  debug(F("Clock LOW"));
-  digitalWrite(SBC_CLOCK, LOW);
 
   debug(F("Release R/W"));
   pinMode(SBC_RW, INPUT);
@@ -67,31 +92,22 @@ void bus_release() {
   debug(F("Deassert BE"));
   digitalWrite(SBC_BE, HIGH);
   pinMode(SBC_BE, OUTPUT);
-  delay(10);
+
+  debug(F("Clock LOW"));
+  digitalWrite(SBC_CLOCK, LOW);
+
   debug(F("Deassert READY"));
   digitalWrite(SBC_READY, HIGH);
   pinMode(SBC_READY, INPUT);
 
+  int_attach();
+
   bus_asserted = false;
 }
 
-void set_data_direction(int direction) {
-  digitalWrite(SBC_RW, HIGH);
-  switch (direction) {
-    case DATA_DIRECTION_READ:
-      for (int i = 0; i < 8; i++) {
-        pinMode(SBC_DATA[i], INPUT);
-      }
-      break;
-
-    case DATA_DIRECTION_WRITE:
-      for (int i = 0; i < 8; i++) {
-        pinMode(SBC_DATA[i], OUTPUT);
-      }
-      break;
-  }
-}
-
+/*
+ * Set address pins, unsigned to allow for the full 65K address space.
+ */
 void set_address(const unsigned int address) {
   unsigned int value = address;
   for (int i = 15; i >= 0; i--) {
@@ -139,8 +155,7 @@ void write_byte(byte value, bool set_direction = true) {
  */
 byte peek(const unsigned int address) {
   set_address(address);
-  byte value = read_byte();
-  return value;
+  return read_byte();
 }
 
 /*
@@ -151,9 +166,22 @@ byte peek(const unsigned int address) {
 byte poke(const unsigned int address, byte value) {
   set_address(address);
   write_byte(value, true);
-  value = read_byte();
-  return value;
+  return read_byte();
 }
+
+void zero_memory(const unsigned int start_address, const unsigned int end_address, byte value = 0xff) {
+  unsigned int num_bytes = 0;
+  unsigned int base = start_address;
+  set_data_direction(DATA_DIRECTION_WRITE);
+  while (base <= end_address) {
+    set_address(base);
+    write_byte(value, false);
+    base++;
+    num_bytes++;
+  }
+  set_data_direction(DATA_DIRECTION_READ);
+}
+void zero_stack() { zero_memory(0x0100, 0x01ff, 0x55); }
 
 /*
  * Dumps memory contents to the console, formatting it similarly to the hex
@@ -162,7 +190,7 @@ byte poke(const unsigned int address, byte value) {
  * them, then an asterisk will be printed in order to denote that a line has
  * been skipped.
  */
-void dump(const unsigned int start_address, const unsigned int end_address) {
+void dump_memory(const unsigned int start_address, const unsigned int end_address) {
   bool last_blank = false;
   bool skipped = false;
 
@@ -225,28 +253,19 @@ void dump(const unsigned int start_address, const unsigned int end_address) {
     if ((base + 16) == 0) break;
   }
 }
+void dump_ram() { dump_memory(0x0000, 0x3fff); }
+void dump_zero_page() { dump_memory(0x0000, 0x00ff); }
+void dump_stack() { dump_memory(0x0100, 0x01ff); }
+void dump_rom() { dump_memory(0x8000, 0xffff); }
+void dump_vectors() { dump_memory(0xfff0, 0xffff); }
 
-void dump_ram() {
-  dump(0x0000, 0x3fff);
-}
-
-void dump_zero_page() {
-  dump(0x0000, 0x00ff);
-}
-
-void dump_stack() {
-  dump(0x0100, 0x01ff);
-}
-
-void dump_rom() {
-  dump(0x8000, 0xffff);
-}
-
-void dump_vectors() {
-  dump(0xfff0, 0xffff);
-}
-
-bool check_available() {
+/*
+ * Check that we are able to transition into bus control mode, since we could
+ * just as well be connected to an external clock module we'll require that
+ * the user has previously unlocked the Arduino clock (held down switch 2 or 3,
+ * or entered the corresponding serial command).
+ */
+bool check_control_dependencies() {
   switch (clock_mode) {
       case CLK_MODE_NONE:
         return false;
@@ -258,8 +277,13 @@ bool check_available() {
   return true;
 }
 
+/*
+ * Transition into bus control mode, but only if pre-flight checks are
+ * successful (see check_available). Note that this will redefine the user
+ * interface to match the new mode (both switches and serial commands).
+ */
 void set_control_on() {
-  if (!check_available()) {
+  if (!check_control_dependencies()) {
     ansi_error();
     Serial.println(F("Arduino clock is set to EXTERNAL"));
     ansi_default();
@@ -275,6 +299,9 @@ void set_control_on() {
   Serial.println();
 }
 
+/*
+ * Transition out of bus control mode, resuming normal operation.
+ */
 void set_control_off() {
   bus_release();
   command_set = COMMAND_SET_MAIN;
@@ -285,17 +312,3 @@ void set_control_off() {
   ansi_default();
   Serial.println();
 }
-
-/*
-void do_bus_test() {
-  if (!check_available()) return;
-
-  bus_assert();
-  for (int i = 0; i < 0xff; i++) {
-    set_address(0x0100 + i);
-    write_byte(0xff);
-  }
-  bus_release();
-
-  dump_stack();
-}*/
