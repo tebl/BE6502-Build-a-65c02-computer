@@ -272,6 +272,12 @@ void dump_rom_16k() { dump_memory(0x8000, 0xbfff); }
 void dump_rom_32k() { dump_rom(); }
 void dump_vectors() { dump_memory(0xfff0, 0xffff); }
 
+/*
+ * Generates the checksum used with Intel HEX files, this is calculated by
+ * summing all HEX-pairs of bytes within the record then finding 2s complement
+ * for that number. This is needed when verifying both imported and exported
+ * data for consistency.
+ */
 int intel_checksum(int byte_count, int hi, int lo, int record_type, int data_sum) {
   int x = byte_count + hi + lo + record_type + data_sum;
   x = x % 256;
@@ -288,15 +294,14 @@ int intel_checksum(int byte_count, int hi, int lo, int record_type, int data_sum
  */
 void dump_intel(const unsigned long start_address, const unsigned long end_address) {
   set_data_direction(DATA_DIRECTION_READ);
-  int byte_count = 16;
   
-  for (unsigned long base = start_address; base < end_address; base += 16) {
-    byte data[byte_count];
+  for (unsigned long base = start_address; base < end_address; base += MEMORY_RECORD_LENGTH) {
+    byte data[MEMORY_RECORD_LENGTH];
     int hi = (base & 0xFF00) >> 8;
     int lo = base & 0x00FF;
 
     int sum = 0;
-    for (int offset = 0; offset < byte_count; offset += 1) {
+    for (int offset = 0; offset < MEMORY_RECORD_LENGTH; offset += 1) {
       set_address(base + offset);
       data[offset] = read_byte(false);
       sum += data[offset];
@@ -312,7 +317,7 @@ void dump_intel(const unsigned long start_address, const unsigned long end_addre
 
     char buf[80];
     sprintf(buf, ":%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-            byte_count, hi, lo, 0x00,
+            MEMORY_RECORD_LENGTH, hi, lo, 0x00,
             data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
             data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15], checksum);
 
@@ -336,6 +341,82 @@ void dump_intel_rom_16k() { dump_intel(0x8000, 0xbfff); }
 void dump_intel_rom_32k() { dump_intel_rom(); }
 void dump_intel_stack() { dump_intel(0x0100, 0x01ff); }
 void dump_intel_zp() { dump_intel(0x0000, 0x00ff); }
+
+/*
+ * Calculate the checksum suitable for use with paper tape files, in this
+ * format all we really do is sum all of the HEX-pairs found in the record
+ * (data and headers).
+ */
+int paper_checksum(int byte_count, int hi, int lo, int data_sum) {
+  return byte_count + hi + lo + data_sum;
+}
+
+/*
+ * Handle exporting of data to Intel HEX format, this data is printed 
+ * to serial directly with a 16 byte record length along with the
+ * correct checksum.
+ * 
+ * KIM-1 paper tape format:
+ *  Data record:
+ *    ;bbaaaaddcccc
+ *    ;             = record start
+ *     bb           = byte count
+ *       aaaa       = address (HI/LO)
+ *           dd     = data byte(2 characters per byte)
+ *             cccc = record checksum
+ *    
+ *  Last record:
+ *    ;0000040004
+ *    ;bbaaaacccc
+ *    ;             = record start
+ *     bb           = 00
+ *       aaaa       = total records
+ *           cccc   = record checksum
+ */
+void dump_paper(const unsigned long start_address, const unsigned long end_address) {
+  set_data_direction(DATA_DIRECTION_READ);
+  const int byte_count = 16;
+
+  for (unsigned long base = start_address; base < end_address; base += 16) {
+    byte data[byte_count];
+    int hi = (base & 0xFF00) >> 8;
+    int lo = base & 0x00FF;
+
+    int data_sum = 0;
+    for (int offset = 0; offset < byte_count; offset += 1) {
+      set_address(base + offset);
+      data[offset] = read_byte(false);
+      data_sum += data[offset];
+    }
+    int checksum = paper_checksum(byte_count, hi, lo, data_sum);
+
+    char buf[80];
+    sprintf(buf, ";%02X%02X%02X", byte_count, hi, lo);
+    ansi_notice(buf);    
+    sprintf(buf, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
+            data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
+    Serial.print(buf);
+
+    sprintf(buf, "%04X", checksum);
+    ansi_notice_ln(buf);
+  }
+}
+void dump_paper_ram() { dump_paper(0x0000, 0x3fff); }
+void dump_paper_ram_1k() { dump_paper(0x0000, 0x03ff); }
+void dump_paper_ram_2k() { dump_paper(0x0000, 0x07ff); }
+void dump_paper_ram_4k() { dump_paper(0x0000, 0x0fff); }
+void dump_paper_ram_8k() { dump_paper(0x0000, 0x1fff); }
+void dump_paper_ram_16k() { dump_paper_ram(); }
+void dump_paper_rom() { dump_paper(0x8000, 0xffff); }
+void dump_paper_rom_1k() { dump_paper(0x8000, 0x83ff); }
+void dump_paper_rom_2k() { dump_paper(0x8000, 0x87ff); }
+void dump_paper_rom_4k() { dump_paper(0x8000, 0x8fff); }
+void dump_paper_rom_8k() { dump_paper(0x8000, 0x9fff); }
+void dump_paper_rom_16k() { dump_paper(0x8000, 0xbfff); }
+void dump_paper_rom_32k() { dump_paper_rom(); }
+void dump_paper_stack() { dump_paper(0x0100, 0x01ff); }
+void dump_paper_zp() { dump_paper(0x0000, 0x00ff); }
 
 /*
  * Tests a supplied segment of memory by writing the specified pattern to the
@@ -395,8 +476,7 @@ void test_memory(const unsigned long start_address, const unsigned long end_addr
     char tmp[10];
     ansi_notice(F("Pass "), false);
     sprintf(tmp, "%d (0x%02X) ", i, patterns[i]);
-    Serial.println(tmp);
-    ansi_default();
+    ansi_notice(tmp);
 
     if (test_memory_pattern(start_address, end_address, patterns[i])) {
       ansi_notice_ln(F(" OK!"));

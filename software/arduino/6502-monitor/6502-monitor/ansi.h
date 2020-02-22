@@ -37,23 +37,34 @@ void ansi_decoration(const __FlashStringHelper *string, int decoration = TEXT_DE
 void ansi_decoration_ln(const __FlashStringHelper *string, int decoration = TEXT_DECORATION_PLAIN, bool back_to_default = true);
 
 void ansi_default();
+
 void ansi_debug();
 void ansi_debug(const __FlashStringHelper *string, bool back_to_default = true, bool newline = false);
 void ansi_debug_ln(const __FlashStringHelper *string, bool back_to_default = true);
 void ansi_debug(const char *string, bool back_to_default = true, bool newline = false);
 void ansi_debug_ln(const char *string, bool back_to_default = true);
+
 void ansi_highlight();
 void ansi_highlight(const __FlashStringHelper *string, bool back_to_default = true, bool newline = false);
 void ansi_highlight_ln(const __FlashStringHelper *string, bool back_to_default = true);
+
 void ansi_weak();
 void ansi_weak(const __FlashStringHelper *string, bool back_to_default = true, bool newline = false);
 void ansi_weak_ln(const __FlashStringHelper *string, bool back_to_default = true);
+void ansi_weak(const char *string, bool back_to_default = true, bool newline = false);
+void ansi_weak_ln(const char *string, bool back_to_default = true);
+
 void ansi_notice();
 void ansi_notice(const __FlashStringHelper *string, bool back_to_default = true, bool newline = false);
 void ansi_notice_ln(const __FlashStringHelper *string, bool back_to_default = true);
+void ansi_notice(const char *string, bool back_to_default = true, bool newline = false);
+void ansi_notice_ln(const char *string, bool back_to_default = true);
+
 void ansi_error();
 void ansi_error(const __FlashStringHelper *string, bool back_to_default = true, bool newline = false);
 void ansi_error_ln(const __FlashStringHelper *string, bool back_to_default = true);
+void ansi_error(const char *string, bool back_to_default = true, bool newline = false);
+void ansi_error_ln(const char *string, bool back_to_default = true);
 
 void ansi_status();
 void ansi_test();

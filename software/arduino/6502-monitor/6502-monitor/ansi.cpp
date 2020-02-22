@@ -81,21 +81,27 @@ void ansi_highlight_ln(const __FlashStringHelper *string, bool back_to_default) 
 
 void ansi_debug() { ansi_colour(COLOUR_WHITE); }
 void ansi_debug(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, newline); }
-void ansi_debug(const char *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, newline); }
 void ansi_debug_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, true); }
+void ansi_debug(const char *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, newline); }
 void ansi_debug_ln(const char *string, bool back_to_default) { ansi_colour(string, COLOUR_WHITE, false, back_to_default, true); }
 
 void ansi_error() { ansi_colour(COLOUR_RED, true); }
 void ansi_error(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_RED, true, back_to_default, newline); }
 void ansi_error_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_RED, true, back_to_default, true); }
+void ansi_error(const char *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_RED, true, back_to_default, newline); }
+void ansi_error_ln(const char *string, bool back_to_default) { ansi_colour(string, COLOUR_RED, true, back_to_default, true); }
 
 void ansi_notice() { ansi_colour(COLOUR_CYAN); }
 void ansi_notice(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_CYAN, false, back_to_default, newline); }
 void ansi_notice_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_CYAN, false, back_to_default, true); }
+void ansi_notice(const char *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_CYAN, false, back_to_default, newline); }
+void ansi_notice_ln(const char *string, bool back_to_default) { ansi_colour(string, COLOUR_CYAN, false, back_to_default, true); }
 
 void ansi_weak() { ansi_colour(COLOUR_BLUE); }
 void ansi_weak(const __FlashStringHelper *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_BLUE, false, back_to_default, newline); }
 void ansi_weak_ln(const __FlashStringHelper *string, bool back_to_default) { ansi_colour(string, COLOUR_BLUE, false, back_to_default, true); }
+void ansi_weak(const char *string, bool back_to_default, bool newline) { ansi_colour(string, COLOUR_BLUE, false, back_to_default, newline); }
+void ansi_weak_ln(const char *string, bool back_to_default) { ansi_colour(string, COLOUR_BLUE, false, back_to_default, true); }
 
 void ansi_status() {
   if (ansi_enabled) {
