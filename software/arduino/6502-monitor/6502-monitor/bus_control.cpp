@@ -264,6 +264,12 @@ void dump_ram_16k() { dump_ram(); }
 void dump_zp() { dump_memory(0x0000, 0x00ff); }
 void dump_stack() { dump_memory(0x0100, 0x01ff); }
 void dump_rom() { dump_memory(0x8000, 0xffff); }
+void dump_rom_1k() { dump_memory(0x8000, 0x83ff); }
+void dump_rom_2k() { dump_memory(0x8000, 0x87ff); }
+void dump_rom_4k() { dump_memory(0x8000, 0x8fff); }
+void dump_rom_8k() { dump_memory(0x8000, 0x9fff); }
+void dump_rom_16k() { dump_memory(0x8000, 0xbfff); }
+void dump_rom_32k() { dump_rom(); }
 void dump_vectors() { dump_memory(0xfff0, 0xffff); }
 
 int intel_checksum(int byte_count, int hi, int lo, int record_type, int data_sum) {

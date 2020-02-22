@@ -12,6 +12,12 @@ void dump_ram_16k();
 void dump_zp();
 void dump_stack();
 void dump_rom();
+void dump_rom_1k();
+void dump_rom_2k();
+void dump_rom_4k();
+void dump_rom_8k();
+void dump_rom_16k();
+void dump_rom_32k();
 void dump_vectors();
 
 void dump_intel(const unsigned long start_address, const unsigned long end_address);
