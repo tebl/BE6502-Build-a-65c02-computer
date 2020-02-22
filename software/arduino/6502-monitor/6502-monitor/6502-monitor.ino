@@ -43,10 +43,6 @@ void setup() {
   
   commands_init();
   print_welcome();
-
-  set_manual_clock();
-  set_control_on();
-  dump_intel_zp();
 }
 
 void loop() {

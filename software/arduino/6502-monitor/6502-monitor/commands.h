@@ -7,8 +7,9 @@ void set_manual_clock();
 void do_tick();
 void do_reset();
 void on_clock();
-void print_welcome();
+void print_help();
 void print_version();
+void print_welcome();
 void set_monitor_off();
 void set_monitor_on();
 

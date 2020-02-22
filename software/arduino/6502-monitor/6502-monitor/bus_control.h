@@ -55,6 +55,7 @@ void dump_paper_rom_16k();
 void dump_paper_rom_32k();
 void dump_paper_stack();
 void dump_paper_zp();
+bool read_paper(String c);
 
 byte peek(const unsigned long address);
 byte poke(const unsigned long address, byte value);

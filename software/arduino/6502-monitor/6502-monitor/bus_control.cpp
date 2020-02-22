@@ -524,6 +524,57 @@ void dump_paper_rom_32k() { dump_paper_rom(); }
 void dump_paper_stack() { dump_paper(0x0100, 0x01ff); }
 void dump_paper_zp() { dump_paper(0x0000, 0x00ff); }
 
+/* Handle importing of paper tape files. Data is read and loaded on a line by
+ * line basis, so as far as error checking there is almost none implemented.
+ * For a description of the record format see dump_paper().
+  */
+bool read_paper(String c) {
+  if (c.length() < 11) return handle_record_error(c, F("record too short"));
+
+  unsigned int byte_count = convert_hex_pair(c[1], c[2]);
+  if (c.length() != (11 + (byte_count * 2))) return handle_record_error(c, F("length does not match data"));
+  if (byte_count > 24) return handle_record_error(c, F("buffer overflow"));
+
+  unsigned int address = convert_hex_address(c[3], c[4], c[5], c[6]);
+  int hi = (address & 0xFF00) >> 8;
+  int lo = address & 0x00FF;
+
+  byte data[24];
+  int data_sum = 0;
+  int d = 0;
+
+  for (int unsigned i = 0; i < (byte_count * 2); i+=2) {
+    data[d] = convert_hex_pair(
+      c.charAt(7 + i),
+      c.charAt(8 + i)
+    );
+    
+    data_sum += data[d];
+    d++;
+  }
+
+  int checksum = convert_hex_address(
+    c[7 + (byte_count * 2)], 
+    c[8 + (byte_count * 2)],
+    c[9 + (byte_count * 2)],
+    c[10 + (byte_count * 2)]
+  );
+
+  if (checksum == paper_checksum(byte_count, hi, lo, data_sum)) {
+    set_data_direction(DATA_DIRECTION_WRITE);
+    for (unsigned int i = 0; i < byte_count; i++) {
+      set_address(address + i);
+      write_byte(data[i], false);
+    }
+    set_data_direction(DATA_DIRECTION_READ);
+
+    echo_command(c);
+    return true;
+  } else {
+    return handle_record_error(c, F("checksum error"));
+  }
+}
+
 /*
  * Tests a supplied segment of memory by writing the specified pattern to the
  * entire block specified, then attempt to read it back to ensure that we are

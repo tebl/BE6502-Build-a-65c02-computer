@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "ansi.h"
 #include "clock.h"
+#include "help.h"
 #include "bus_control.h"
 
 extern bool ansi_enabled;
@@ -110,49 +111,6 @@ bool handle_command(String command, String name, void (*function)(), bool suppre
   return false;
 }
 
-void print_help_main() {
-  ansi_colour(COLOUR_CYAN);
-  Serial.println(F("Commands supported:"));
-  ansi_default();
-  Serial.println(F("ansi on               Enable ANSI terminal code usage"));
-  Serial.println(F("ansi off              Disable ANSI terminal code usage"));
-  Serial.println(F("ansi test             Test ANSI terminal codes on terminal"));
-  Serial.println(F("clear                 Clear screen"));
-  Serial.println(F("clock                 Print current clock settings"));
-  Serial.println(F("clock auto            Enable automatic Arduino clock, this will unlock fast "));
-  Serial.println(F("                      switching between manual and automatic mode. Holding "));
-  ansi_notice();
-    Serial.print(F("                      SW3"));
-  ansi_default();
-  Serial.println(F(                          " on Mega Adapter will do the same thing (one flash"));
-  Serial.println(F("                      and then two more)"));
-  Serial.println(F("clock <speed>         Set Arduino clock in Hz (1,2,4,16,32,128,256). Pushing"));
-  ansi_notice();
-    Serial.print(F("                      SW3"));
-  ansi_default();
-  Serial.println(F(                          " will toggle between the various speeds."));
-  Serial.println(F("clock manual          Set Arduino clock to manual"));
-  Serial.println(F("clock external        Disable Arduino clock options"));
-  Serial.println(F("control               Enter bus control mode"));
-  Serial.println(F("help                  Prints this screen"));
-  Serial.println(F("monitor <on|off>      BUS monitor updates"));
-  Serial.println(F("reset                 Reset computer depending on clock mode selected, hold "));
-  ansi_notice();
-    Serial.print(F("                      SW1"));
-  ansi_default();
-  Serial.println(F(                          " down for same function. Will reset for two cycles"));
-  Serial.println(F("                      when Arduino controls clock, otherwise 250ms as usual."));
-  Serial.println(F("status                Print system status"));
-  Serial.println(F("tick                  Manual clock tick, alternatively a period in the serial"));
-    Serial.print(F("                      terminal or pushing "));
-  ansi_notice();
-    Serial.print(F(                                           "SW2"));
-  ansi_default();
-  Serial.println(F(                                               " will perform the same task."));
-
-  Serial.println(F("version               Prints 6502 Monitor version"));
-}
-
 void select_command_main(String command) {
        if (handle_command(command, F("ansi"), ansi_status));
   else if (handle_command(command, F("ansi on"), ansi_on));
@@ -171,7 +129,7 @@ void select_command_main(String command) {
   else if (handle_command(command, F("clock manual"), set_manual_clock));
   else if (handle_command(command, F("clock external"), set_external_clock));
   else if (handle_command(command, F("control"), set_control_on));
-  else if (handle_command(command, F("help"), print_help_main));
+  else if (handle_command(command, F("help"), print_help));
   else if (handle_command(command, F("monitor on"), set_monitor_on));
   else if (handle_command(command, F("monitor off"), set_monitor_off));
   else if (handle_command(command, F("reset"), do_reset));
@@ -181,32 +139,6 @@ void select_command_main(String command) {
   else {
     echo_unknown(command);
   }
-}
-
-void print_help_control() {
-  ansi_colour(COLOUR_MAGENTA);
-  Serial.println(F("Commands supported:"));
-  ansi_default();
-  Serial.println(F("exit                  Exit bus control mode"));
-  Serial.println(F("clear                 Clear screen"));
-  Serial.println(F("dump ram              Dump RAM"));
-  Serial.println(F("dump ram <limit>      Limited RAM dump (1k, 2k, 4k, 8k or 16k)"));
-  Serial.println(F("dump rom              Dump ROM"));
-  Serial.println(F("dump rom <limit>      Limited ROM dump (1k, 2k, 4k, 8k, 16k or 32k)"));
-  Serial.println(F("dump stack            Dump stack area"));
-  Serial.println(F("dump vectors          Dump initialization vectors"));
-  Serial.println(F("dump zp               Dump Zero-page"));
-  Serial.println(F("help                  Prints this screen"));
-  Serial.println(F("intel ram             Dump RAM (Intel HEX format)"));
-  Serial.println(F("intel ram <limit>     Limited RAM dump (1k, 2k, 4k, 8k or 16k)"));
-  Serial.println(F("intel rom             Dump ROM (Intel HEX format)"));
-  Serial.println(F("intel rom <limit>     Limited ROM dump (1k, 2k, 4k, 8k, 16k or 32k)"));
-  Serial.println(F("intel stack           Dump stack area (Intel HEX format)"));
-  Serial.println(F("intel zp              Dump Zero-page (Intel HEX format)"));
-  Serial.println(F("test ram              RAM memory test"));
-  Serial.println(F("zero zp               Zero page 0"));
-  Serial.println(F("zero stack            Zero stack area"));
-  Serial.println(F("zero ram              Zero RAM"));
 }
 
 void select_command_control(String command) {
@@ -258,8 +190,9 @@ void select_command_control(String command) {
   else if (handle_command(command, F("paper rom 32k"), dump_paper_rom_32k));
   else if (handle_command(command, F("paper stack"), dump_paper_stack));
   else if (handle_command(command, F("paper zp"), dump_paper_zp));
+  else if (command.charAt(0) == ';') read_paper(command);
   else if (handle_command(command, F("exit"), set_control_off));
-  else if (handle_command(command, F("help"), print_help_control));
+  else if (handle_command(command, F("help"), print_help));
   else if (handle_command(command, F("test ram"), test_ram));
   else if (handle_command(command, F("test zp"), test_zp));
   else if (handle_command(command, F("test stack"), test_stack));
