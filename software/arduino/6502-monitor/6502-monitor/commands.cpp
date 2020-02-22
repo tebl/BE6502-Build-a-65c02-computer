@@ -242,6 +242,7 @@ void select_command_control(String command) {
   else if (handle_command(command, F("intel rom 32k"), dump_intel_rom_32k));
   else if (handle_command(command, F("intel stack"), dump_intel_stack));
   else if (handle_command(command, F("intel zp"), dump_intel_zp));
+  else if (command.charAt(0) == ':') read_intel(command);
   else if (handle_command(command, F("paper ram"), dump_paper_ram));
   else if (handle_command(command, F("paper ram 1k"), dump_paper_ram_1k));
   else if (handle_command(command, F("paper ram 2k"), dump_paper_ram_2k));

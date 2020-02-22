@@ -316,12 +316,14 @@ void dump_intel(const unsigned long start_address, const unsigned long end_addre
     );
 
     char buf[80];
-    sprintf(buf, ":%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-            MEMORY_RECORD_LENGTH, hi, lo, 0x00,
-            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
-            data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15], checksum);
-
-    Serial.println(buf);
+    sprintf(buf, ":%02X%02X%02X%02X", MEMORY_RECORD_LENGTH, hi, lo, 0x00);
+    ansi_notice(buf);    
+    sprintf(buf, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+                 data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7],
+                 data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]);
+    Serial.print(buf);
+    sprintf(buf, "%02X", checksum);
+    ansi_notice_ln(buf);    
   }
 
   ansi_notice_ln(F("done."));
@@ -341,6 +343,110 @@ void dump_intel_rom_16k() { dump_intel(0x8000, 0xbfff); }
 void dump_intel_rom_32k() { dump_intel_rom(); }
 void dump_intel_stack() { dump_intel(0x0100, 0x01ff); }
 void dump_intel_zp() { dump_intel(0x0000, 0x00ff); }
+
+/*
+ * Intel HEX error handling routine, mainly just serves as a convenient
+ * mechanism for dumping an error message out on the serial terminal and
+ * hope for the best.
+ */
+bool handle_record_error(String c, const __FlashStringHelper *e) {
+  ansi_error();
+  Serial.print(c);
+  Serial.print(" (");
+  Serial.print(e);
+  Serial.println(")");
+  ansi_default();
+  return false;
+}
+
+/*
+ * Convert the ASCII representation of a HEX digit into the corresponding
+ * binary value. A single HEX-digit would actually only be 4 bits, also known 
+ * as a nibble, and so only the 4 least significant bits will be set.
+ */
+byte convert_hex_digit(char digit) {
+  digit = (digit > '9' ? digit - 87 : digit - 48);
+  if (digit < 0) return digit + 32;
+  if (digit > 15) return 15;
+  return digit;
+}
+
+/*
+ * Converts a supplied HEX-digit pair to its corresponding byte value, each
+ * nibble is converted separately and the MSB are shifted to make room  for
+ * the 4 LSB.
+ */
+byte convert_hex_pair(char a1, char a0) {
+  return (
+      (convert_hex_digit(a1) << 4) +
+      (convert_hex_digit(a0))
+  );
+}
+
+/*
+ * Converts a 16-bit address specified as two sets of hex-digits into a long
+ * value that can be used more directly.
+ */
+long convert_hex_address(char a3, char a2, char a1, char a0) {
+  return (
+      (convert_hex_digit(a3) << 12) +
+      (convert_hex_digit(a2) << 8) +
+      (convert_hex_digit(a1) << 4) +
+      (convert_hex_digit(a0))
+   );
+}
+
+/*
+ * Handle importing of Intel HEX files. Data is read and loaded on a line by
+ * line basis, the maximum supported byte count for each is 0x20 (32 in
+ * decimal). The only record type recognized is the one for data.
+ */
+bool read_intel(String c) {
+  if (c.length() < 11) return handle_record_error(c, F("record too short"));
+
+  unsigned int byte_count = convert_hex_pair(c[1], c[2]);
+  if (c.length() != (11 + (byte_count * 2))) return handle_record_error(c, F("length does not match data"));
+  if (byte_count > 32) return handle_record_error(c, F("buffer overflow"));
+
+  unsigned int address = convert_hex_address(c[3], c[4], c[5], c[6]);
+  int hi = (address & 0xFF00) >> 8;
+  int lo = address & 0x00FF;
+  int record_type = convert_hex_pair(c[7], c[8]);
+
+  byte data[32];
+  int data_sum = 0;
+  int d = 0;
+  for (unsigned int i = 0; i < (byte_count * 2); i+=2) {
+      data[d] = convert_hex_pair(
+        c.charAt(9 + i),
+        c.charAt(10 + i)
+      );
+      
+      data_sum += data[d];
+      d++;
+  }
+
+  int checksum = convert_hex_pair(c[9 + (byte_count * 2)], c[10 + (byte_count * 2)]);
+  if (0x00 != ((byte_count + hi + lo + record_type + data_sum + checksum) & 0xFF)) {
+    return handle_record_error(c, F("checksum error"));
+  } else {
+    switch (record_type) {
+      case 0x00: /* data */
+        set_data_direction(DATA_DIRECTION_WRITE);
+        for (unsigned int i = 0; i < byte_count; i++) {
+          set_address(address + i);
+          write_byte(data[i], false);
+        }
+        set_data_direction(DATA_DIRECTION_READ);
+      case 0x01: /* end of file */
+      case 0x04: /* extended linear address */
+        echo_command(c);
+        return true;
+      default:
+        return handle_record_error(c, F("unknown record type"));
+    }
+  }
+}
 
 /*
  * Calculate the checksum suitable for use with paper tape files, in this

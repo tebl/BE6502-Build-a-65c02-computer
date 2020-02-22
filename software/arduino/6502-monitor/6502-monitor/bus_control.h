@@ -37,6 +37,7 @@ void dump_intel_rom_16k();
 void dump_intel_rom_32k();
 void dump_intel_stack();
 void dump_intel_zp();
+bool read_intel(String c);
 
 void dump_paper(const unsigned long start_address, const unsigned long end_address);
 void dump_paper_ram();
