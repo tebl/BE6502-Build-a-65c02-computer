@@ -1,0 +1,42 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# BE6502_Control
+#
+DEF BE6502_Control J 0 40 Y N 1 F N
+F0 "J" 0 300 50 H V C CNN
+F1 "BE6502_Control" 0 -400 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ Connector*:*_??x*mm*
+ Connector*:*1x??x*mm*
+ Pin?Header?Straight?1X*
+ Pin?Header?Angled?1X*
+ Socket?Strip?Straight?1X*
+ Socket?Strip?Angled?1X*
+$ENDFPLIST
+DRAW
+T 0 25 0 31 0 0 0 DOWN Normal 0 L C
+T 0 25 -300 31 0 0 0 GND Normal 0 L C
+T 0 25 -100 31 0 0 0 LEFT Normal 0 L C
+T 0 25 200 31 0 0 0 MIDDLE Normal 0 L C
+T 0 25 -200 31 0 0 0 RIGHT Normal 0 L C
+T 0 25 100 31 0 0 0 UP Normal 0 L C
+S 225 250 -50 -350 0 0 0 f
+S -50 -295 0 -305 1 1 6 N
+S -50 -195 0 -205 1 1 6 N
+S -50 -95 0 -105 1 1 6 N
+S -50 5 0 -5 1 1 6 N
+S -50 105 0 95 1 1 6 N
+S -50 205 0 195 1 1 6 N
+X MIDDLE 1 -200 200 150 R 50 50 1 1 P
+X UP 2 -200 100 150 R 50 50 1 1 P
+X DOWN 3 -200 0 150 R 50 50 1 1 P
+X LEFT 4 -200 -100 150 R 50 50 1 1 P
+X RIGHT 5 -200 -200 150 R 50 50 1 1 P
+X GND 6 -200 -300 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library

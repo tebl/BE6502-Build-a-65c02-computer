@@ -1,3 +1,4 @@
 (fp_lib_table
   (lib (name mounting)(type KiCad)(uri "$(KIPRJMOD)/../common/modules/mounting.pretty")(options "")(descr ""))
+  (lib (name lcd1602a)(type KiCad)(uri D:/owncloud/Documents/Projects/BE6502/common/modules/lcd1602a.pretty)(options "")(descr ""))
 )

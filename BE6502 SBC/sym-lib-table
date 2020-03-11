@@ -31,4 +31,5 @@
   (lib (name switches)(type Legacy)(uri ${KICAD_SYMBOL_DIR}/switches.lib)(options "")(descr ""))
   (lib (name be6502_backplane)(type Legacy)(uri D:/owncloud/Documents/Projects/BE6502/common/library/be6502_backplane.lib)(options "")(descr ""))
   (lib (name 16x2_lcd)(type Legacy)(uri D:/owncloud/Documents/Projects/BE6502/common/library/16x2_lcd.lib)(options "")(descr ""))
+  (lib (name be6502_control)(type Legacy)(uri D:/owncloud/Documents/Projects/BE6502/common/library/be6502_control.lib)(options "")(descr ""))
 )
