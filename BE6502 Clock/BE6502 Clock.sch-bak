@@ -1,5 +1,40 @@
-EESchema Schematic File Version 4
-EELAYER 30 0
+EESchema Schematic File Version 2
+LIBS:28c256
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:mounting
+LIBS:Oscillators
+LIBS:switches
+LIBS:clock_port
+LIBS:BE6502 Clock-cache
+EELAYER 25 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
@@ -14,7 +49,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L mounting:Mounting M1
+L Mounting M1
 U 1 1 5D63FD8B
 P 15525 575
 F 0 "M1" H 15525 675 50  0001 C CNN
@@ -25,7 +60,7 @@ F 3 "" H 15525 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L mounting:Mounting M2
+L Mounting M2
 U 1 1 5D63FDB2
 P 15650 575
 F 0 "M2" H 15650 675 50  0001 C CNN
@@ -36,7 +71,7 @@ F 3 "" H 15650 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L mounting:Mounting M3
+L Mounting M3
 U 1 1 5D63FDD2
 P 15775 575
 F 0 "M3" H 15775 675 50  0001 C CNN
@@ -47,7 +82,7 @@ F 3 "" H 15775 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L mounting:Mounting M4
+L Mounting M4
 U 1 1 5D63FDF2
 P 15900 575
 F 0 "M4" H 15900 675 50  0001 C CNN
@@ -58,7 +93,7 @@ F 3 "" H 15900 575 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR01
+L GND #PWR01
 U 1 1 5D71E74B
 P 11550 10925
 F 0 "#PWR01" H 11550 10675 50  0001 C CNN
@@ -69,7 +104,7 @@ F 3 "" H 11550 10925 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:VCC #PWR02
+L VCC #PWR02
 U 1 1 5D72035A
 P 11250 10325
 F 0 "#PWR02" H 11250 10175 50  0001 C CNN
@@ -88,7 +123,7 @@ CLOCK_OUT
 Text Notes 11850 10250 0    60   ~ 0
 A PCB build of the separate clock module, this is the same circuit used in Ben Eaters \n8bit computer build. While it can be used standalone as a clock module by itself, it is\nintended for use with the BE6502 computer and has a reduced chip-count.
 $Comp
-L clock_port:CLOCK_PORT J1
+L CLOCK_PORT J1
 U 1 1 5DC631B0
 P 3500 2725
 F 0 "J1" H 3500 2925 50  0000 C CNN
@@ -99,7 +134,7 @@ F 3 "" H 3500 2725 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:VCC #PWR03
+L VCC #PWR03
 U 1 1 5DC63488
 P 3775 2450
 F 0 "#PWR03" H 3775 2300 50  0001 C CNN
@@ -110,7 +145,7 @@ F 3 "" H 3775 2450 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR04
+L GND #PWR04
 U 1 1 5DC639FF
 P 3775 2900
 F 0 "#PWR04" H 3775 2650 50  0001 C CNN
@@ -121,7 +156,7 @@ F 3 "" H 3775 2900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:LM555 U1
+L LM555 U1
 U 1 1 5DD0C4D9
 P 3775 4450
 F 0 "U1" H 3425 4800 50  0000 L CNN
@@ -132,7 +167,7 @@ F 3 "" H 3775 4450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R1
+L R R1
 U 1 1 5DD0D9D0
 P 4350 4025
 F 0 "R1" V 4430 4025 50  0000 C CNN
@@ -143,7 +178,7 @@ F 3 "" H 4350 4025 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:VCC #PWR05
+L VCC #PWR05
 U 1 1 5DD0F19E
 P 3775 3725
 F 0 "#PWR05" H 3775 3575 50  0001 C CNN
@@ -154,7 +189,7 @@ F 3 "" H 3775 3725 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R2
+L R R2
 U 1 1 5DD0FE46
 P 4575 4450
 F 0 "R2" V 4655 4450 50  0000 C CNN
@@ -165,7 +200,7 @@ F 3 "" H 4575 4450 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L BE6502-Clock-rescue:POT RV1
+L POT RV1
 U 1 1 5DD1022D
 P 4875 4450
 F 0 "RV1" V 4700 4450 50  0000 C CNN
@@ -177,7 +212,7 @@ F 3 "" H 4875 4450 50  0001 C CNN
 $EndComp
 NoConn ~ 4875 4300
 $Comp
-L Device:C C5
+L C C5
 U 1 1 5DD128A8
 P 3050 5225
 F 0 "C5" H 2925 5300 50  0000 L CNN
@@ -188,7 +223,7 @@ F 3 "" H 3050 5225 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:CP_Small C6
+L CP_Small C6
 U 1 1 5DD13F27
 P 3275 5225
 F 0 "C6" H 3300 5300 50  0000 L CNN
@@ -199,7 +234,7 @@ F 3 "" H 3275 5225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR06
+L GND #PWR06
 U 1 1 5DD151E6
 P 3775 5525
 F 0 "#PWR06" H 3775 5275 50  0001 C CNN
@@ -210,7 +245,7 @@ F 3 "" H 3775 5525 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:SW_Push SW1
+L SW_Push SW1
 U 1 1 5DD17179
 P 6600 4250
 F 0 "SW1" H 6650 4350 50  0000 L CNN
@@ -221,7 +256,7 @@ F 3 "" H 6600 4450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:LM555 U2
+L LM555 U2
 U 1 1 5DD177E7
 P 7825 4450
 F 0 "U2" H 7475 4800 50  0000 L CNN
@@ -232,7 +267,7 @@ F 3 "" H 7825 4450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:VCC #PWR07
+L VCC #PWR07
 U 1 1 5DD17F3B
 P 7825 3725
 F 0 "#PWR07" H 7825 3575 50  0001 C CNN
@@ -243,7 +278,7 @@ F 3 "" H 7825 3725 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R4
+L R R4
 U 1 1 5DD196A1
 P 8400 4025
 F 0 "R4" V 8480 4025 50  0000 C CNN
@@ -254,7 +289,7 @@ F 3 "" H 8400 4025 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C2
+L C C2
 U 1 1 5DD1ABFD
 P 7175 5000
 F 0 "C2" H 7075 5100 50  0000 L CNN
@@ -265,7 +300,7 @@ F 3 "" H 7175 5000 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:C C3
+L C C3
 U 1 1 5DD1BFA5
 P 8400 5000
 F 0 "C3" H 8300 5100 50  0000 L CNN
@@ -276,7 +311,7 @@ F 3 "" H 8400 5000 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:R R3
+L R R3
 U 1 1 5DD1F0B8
 P 7100 4025
 F 0 "R3" V 7180 4025 50  0000 C CNN
@@ -287,7 +322,7 @@ F 3 "" H 7100 4025 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR08
+L GND #PWR08
 U 1 1 5DD22081
 P 7825 5300
 F 0 "#PWR08" H 7825 5050 50  0001 C CNN
@@ -298,7 +333,7 @@ F 3 "" H 7825 5300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:LM555 U3
+L LM555 U3
 U 1 1 5DD25E87
 P 11600 4450
 F 0 "U3" H 11250 4800 50  0000 L CNN
@@ -309,7 +344,7 @@ F 3 "" H 11600 4450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C1
+L C C1
 U 1 1 5DD277E4
 P 11025 5000
 F 0 "C1" H 10925 5100 50  0000 L CNN
@@ -321,7 +356,7 @@ F 3 "" H 11025 5000 50  0001 C CNN
 $EndComp
 NoConn ~ 12100 4450
 $Comp
-L Device:R R6
+L R R6
 U 1 1 5DD29E73
 P 10950 4025
 F 0 "R6" V 11030 4025 50  0000 C CNN
@@ -332,7 +367,7 @@ F 3 "" H 10950 4025 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R5
+L R R5
 U 1 1 5DD2A4F8
 P 10700 4025
 F 0 "R5" V 10780 4025 50  0000 C CNN
@@ -343,7 +378,7 @@ F 3 "" H 10700 4025 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:VCC #PWR09
+L VCC #PWR09
 U 1 1 5DD2B90D
 P 11600 3725
 F 0 "#PWR09" H 11600 3575 50  0001 C CNN
@@ -354,7 +389,7 @@ F 3 "" H 11600 3725 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:SW_DPDT_x2 SW2
+L SW_DPDT_x2 SW2
 U 1 1 5DD2F2F9
 P 10425 4550
 F 0 "SW2" H 10425 4720 50  0000 C CNN
@@ -365,7 +400,7 @@ F 3 "" H 10425 4550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:SW_DPDT_x2 SW2
+L SW_DPDT_x2 SW2
 U 2 1 5DD2F538
 P 15625 9500
 F 0 "SW2" H 15625 9670 50  0000 C CNN
@@ -379,7 +414,7 @@ NoConn ~ 15425 9500
 NoConn ~ 15825 9400
 NoConn ~ 15825 9600
 $Comp
-L BE6502-Clock-rescue:74LS08 U5
+L 74LS08 U5
 U 1 1 5DD379EC
 P 6075 6900
 F 0 "U5" H 6075 6950 50  0000 C CNN
@@ -390,7 +425,7 @@ F 3 "" H 6075 6900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS08 U5
+L 74LS08 U5
 U 2 1 5DD37AE5
 P 6075 7475
 F 0 "U5" H 6075 7525 50  0000 C CNN
@@ -401,7 +436,7 @@ F 3 "" H 6075 7475 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS08 U5
+L 74LS08 U5
 U 3 1 5DD37BDA
 P 10200 7075
 F 0 "U5" H 10200 7125 50  0000 C CNN
@@ -412,7 +447,7 @@ F 3 "" H 10200 7075 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS08 U5
+L 74LS08 U5
 U 4 1 5DD37DFE
 P 10575 10175
 F 0 "U5" H 10575 10225 50  0000 C CNN
@@ -423,7 +458,7 @@ F 3 "" H 10575 10175 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Device:C C4
+L C C4
 U 1 1 5DD4079C
 P 11250 10625
 F 0 "C4" H 11275 10725 50  0000 L CNN
@@ -434,7 +469,7 @@ F 3 "" H 11250 10625 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Device:C C7
+L C C7
 U 1 1 5DD40976
 P 11550 10625
 F 0 "C7" H 11575 10725 50  0000 L CNN
@@ -445,7 +480,7 @@ F 3 "" H 11550 10625 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS00 U4
+L 74LS00 U4
 U 1 1 5DD415AC
 P 7450 6900
 F 0 "U4" H 7450 6950 50  0000 C CNN
@@ -456,7 +491,7 @@ F 3 "" H 7450 6900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS00 U4
+L 74LS00 U4
 U 2 1 5DD41618
 P 7450 7475
 F 0 "U4" H 7450 7525 50  0000 C CNN
@@ -467,7 +502,7 @@ F 3 "" H 7450 7475 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS00 U4
+L 74LS00 U4
 U 3 1 5DD4168A
 P 8850 7175
 F 0 "U4" H 8850 7225 50  0000 C CNN
@@ -478,7 +513,7 @@ F 3 "" H 8850 7175 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BE6502-Clock-rescue:74LS00 U4
+L 74LS00 U4
 U 4 1 5DD416FD
 P 4725 7300
 F 0 "U4" H 4725 7350 50  0000 C CNN
@@ -489,7 +524,7 @@ F 3 "" H 4725 7300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:VCC #PWR010
+L VCC #PWR010
 U 1 1 5DD4D6AC
 P 9525 6900
 F 0 "#PWR010" H 9525 6750 50  0001 C CNN
@@ -501,7 +536,7 @@ F 3 "" H 9525 6900 50  0001 C CNN
 $EndComp
 NoConn ~ 10575 9575
 $Comp
-L power:GND #PWR011
+L GND #PWR011
 U 1 1 5DD4E50C
 P 10575 10925
 F 0 "#PWR011" H 10575 10675 50  0001 C CNN
@@ -514,7 +549,7 @@ $EndComp
 Text GLabel 11025 7075 2    60   Output ~ 0
 CLOCK_OUT
 $Comp
-L Device:LED_Small D1
+L LED_Small D1
 U 1 1 5DD4F378
 P 10925 7550
 F 0 "D1" H 10875 7675 50  0000 L CNN
@@ -525,7 +560,7 @@ F 3 "" V 10925 7550 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Device:R R7
+L R R7
 U 1 1 5DD4F5EF
 P 10925 7300
 F 0 "R7" V 11005 7300 50  0000 C CNN
@@ -536,7 +571,7 @@ F 3 "" H 10925 7300 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:GND #PWR012
+L GND #PWR012
 U 1 1 5DD5025E
 P 10925 7650
 F 0 "#PWR012" H 10925 7400 50  0001 C CNN
@@ -548,7 +583,7 @@ F 3 "" H 10925 7650 50  0001 C CNN
 $EndComp
 NoConn ~ 3700 2625
 $Comp
-L power:GND #PWR013
+L GND #PWR013
 U 1 1 5DD549BE
 P 11600 5300
 F 0 "#PWR013" H 11600 5050 50  0001 C CNN
@@ -559,7 +594,7 @@ F 3 "" H 11600 5300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C8
+L C C8
 U 1 1 5E3215B8
 P 6875 5000
 F 0 "C8" H 6775 5100 50  0000 L CNN
@@ -574,12 +609,12 @@ Wire Wire Line
 Wire Wire Line
 	11250 10850 11250 10775
 Wire Wire Line
-	11550 10775 11550 10850
+	11550 10775 11550 10925
 Connection ~ 11550 10850
 Wire Wire Line
 	11250 10400 11550 10400
 Wire Wire Line
-	11250 10325 11250 10400
+	11250 10325 11250 10475
 Wire Wire Line
 	11550 10400 11550 10475
 Connection ~ 11250 10400
@@ -598,19 +633,19 @@ Wire Wire Line
 Wire Wire Line
 	3200 3800 3200 4650
 Wire Wire Line
-	3775 3725 3775 3800
+	3775 3725 3775 4050
 Wire Wire Line
 	4350 3800 4350 3875
 Wire Wire Line
-	3200 3800 3775 3800
+	3200 3800 4350 3800
 Connection ~ 3775 3800
 Wire Wire Line
 	4350 4175 4350 4450
 Wire Wire Line
-	4275 4450 4350 4450
+	4275 4450 4425 4450
 Connection ~ 4350 4450
 Wire Wire Line
-	3125 4925 3275 4925
+	3125 4925 4875 4925
 Wire Wire Line
 	4350 4925 4350 4650
 Wire Wire Line
@@ -632,24 +667,24 @@ Connection ~ 3275 4925
 Wire Wire Line
 	3050 5375 3050 5450
 Wire Wire Line
-	3050 5450 3275 5450
+	3050 5450 3775 5450
 Wire Wire Line
 	3275 5450 3275 5325
 Wire Wire Line
-	3775 4850 3775 5450
+	3775 4850 3775 5525
 Connection ~ 3275 5450
 Connection ~ 3775 5450
 Wire Wire Line
 	4275 4250 5175 4250
 Wire Wire Line
-	7825 3725 7825 3800
+	7825 3725 7825 4050
 Wire Wire Line
-	7100 3800 7250 3800
+	7100 3800 8400 3800
 Connection ~ 7825 3800
 Wire Wire Line
 	8325 4450 8400 4450
 Wire Wire Line
-	8400 4175 8400 4450
+	8400 4175 8400 4850
 Wire Wire Line
 	8400 4650 8325 4650
 Wire Wire Line
@@ -663,18 +698,18 @@ Wire Wire Line
 Wire Wire Line
 	7175 5150 7175 5225
 Wire Wire Line
-	6325 5225 6875 5225
+	6325 5225 8400 5225
 Wire Wire Line
 	8400 5225 8400 5150
 Wire Wire Line
-	7825 4850 7825 5225
+	7825 4850 7825 5300
 Connection ~ 7825 5225
 Wire Wire Line
 	7325 4650 7250 4650
 Wire Wire Line
 	7250 4650 7250 3800
 Wire Wire Line
-	6800 4250 6875 4250
+	6800 4250 7325 4250
 Wire Wire Line
 	7100 4250 7100 4175
 Wire Wire Line
@@ -697,30 +732,30 @@ Wire Wire Line
 Wire Wire Line
 	11025 5150 11025 5225
 Wire Wire Line
-	10150 5225 11025 5225
+	10150 5225 12175 5225
 Wire Wire Line
-	11600 4850 11600 5225
+	11600 4850 11600 5300
 Wire Wire Line
 	12100 4650 12175 4650
 Wire Wire Line
 	12175 4650 12175 5225
 Connection ~ 11600 5225
 Wire Wire Line
-	10625 4650 10950 4650
+	10625 4650 11100 4650
 Wire Wire Line
 	10950 4650 10950 4175
 Wire Wire Line
 	10700 3875 10700 3800
 Wire Wire Line
-	10700 3800 10950 3800
+	10700 3800 11600 3800
 Wire Wire Line
 	10950 3800 10950 3875
 Wire Wire Line
-	11600 3725 11600 3800
+	11600 3725 11600 4050
 Connection ~ 10950 3800
 Connection ~ 11600 3800
 Wire Wire Line
-	10700 4175 10700 4250
+	10700 4175 10700 4450
 Wire Wire Line
 	10700 4250 11100 4250
 Connection ~ 10950 4650
@@ -747,7 +782,7 @@ Wire Wire Line
 Wire Wire Line
 	6775 7000 6850 7000
 Wire Wire Line
-	6775 6800 6775 6900
+	6775 6800 6775 7000
 Wire Wire Line
 	6775 6800 6850 6800
 Wire Wire Line
@@ -761,11 +796,11 @@ Wire Wire Line
 Wire Wire Line
 	8125 6900 8125 7075
 Wire Wire Line
-	6775 7375 6775 7475
+	6775 7375 6775 7575
 Wire Wire Line
 	4050 7400 4125 7400
 Wire Wire Line
-	4050 7200 4050 7300
+	4050 7200 4050 7400
 Wire Wire Line
 	4050 7200 4125 7200
 Wire Wire Line
@@ -775,7 +810,7 @@ Wire Wire Line
 	6675 6900 6775 6900
 Connection ~ 6775 6900
 Wire Wire Line
-	3975 6525 3975 7000
+	3975 6525 3975 7300
 Wire Wire Line
 	3975 7300 4050 7300
 Connection ~ 4050 7300
@@ -811,14 +846,14 @@ Wire Wire Line
 Wire Wire Line
 	10475 10775 10475 10850
 Wire Wire Line
-	10475 10850 10575 10850
+	10475 10850 10675 10850
 Wire Wire Line
 	10675 10850 10675 10775
 Wire Wire Line
 	10575 10850 10575 10925
 Connection ~ 10575 10850
 Wire Wire Line
-	10800 7075 10925 7075
+	10800 7075 11025 7075
 Wire Wire Line
 	10925 7150 10925 7075
 Connection ~ 10925 7075
@@ -828,70 +863,4 @@ Connection ~ 6875 4250
 Wire Wire Line
 	6875 5150 6875 5225
 Connection ~ 6875 5225
-Wire Wire Line
-	11550 10850 11550 10925
-Wire Wire Line
-	11250 10400 11250 10475
-Wire Wire Line
-	3775 3800 3775 4050
-Wire Wire Line
-	3775 3800 4350 3800
-Wire Wire Line
-	4350 4450 4425 4450
-Wire Wire Line
-	4350 4925 4875 4925
-Wire Wire Line
-	3275 4925 4350 4925
-Wire Wire Line
-	3275 5450 3775 5450
-Wire Wire Line
-	3775 5450 3775 5525
-Wire Wire Line
-	7825 3800 7825 4050
-Wire Wire Line
-	7825 3800 8400 3800
-Wire Wire Line
-	8400 4450 8400 4650
-Wire Wire Line
-	8400 4650 8400 4850
-Wire Wire Line
-	7825 5225 8400 5225
-Wire Wire Line
-	7825 5225 7825 5300
-Wire Wire Line
-	7250 3800 7825 3800
-Wire Wire Line
-	7100 4250 7325 4250
-Wire Wire Line
-	7175 5225 7825 5225
-Wire Wire Line
-	11600 5225 12175 5225
-Wire Wire Line
-	11600 5225 11600 5300
-Wire Wire Line
-	10950 3800 11600 3800
-Wire Wire Line
-	11600 3800 11600 4050
-Wire Wire Line
-	10950 4650 11100 4650
-Wire Wire Line
-	10700 4250 10700 4450
-Wire Wire Line
-	11025 5225 11600 5225
-Wire Wire Line
-	6775 7475 6775 7575
-Wire Wire Line
-	6775 6900 6775 7000
-Wire Wire Line
-	4050 7300 4050 7400
-Wire Wire Line
-	3975 7000 3975 7300
-Wire Wire Line
-	10575 10850 10675 10850
-Wire Wire Line
-	10925 7075 11025 7075
-Wire Wire Line
-	6875 4250 7100 4250
-Wire Wire Line
-	6875 5225 7175 5225
 $EndSCHEMATC

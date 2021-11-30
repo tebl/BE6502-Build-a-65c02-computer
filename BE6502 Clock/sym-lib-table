@@ -1,0 +1,6 @@
+(sym_lib_table
+  (lib (name BE6502-Clock-rescue)(type Legacy)(uri "${KIPRJMOD}/BE6502 Clock-rescue.lib")(options "")(descr ""))
+  (lib (name 28c256)(type Legacy)(uri D:/ownCloud/Documents/Projects/BE6502/common/library/28c256.lib)(options "")(descr ""))
+  (lib (name mounting)(type Legacy)(uri D:/ownCloud/Documents/Projects/BE6502/common/library/mounting.lib)(options "")(descr ""))
+  (lib (name clock_port)(type Legacy)(uri D:/ownCloud/Documents/Projects/BE6502/common/library/clock_port.lib)(options "")(descr ""))
+)
