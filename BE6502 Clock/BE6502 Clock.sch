@@ -4,9 +4,9 @@ EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
-Title ""
+Title "BE6502 Clock"
 Date ""
-Rev ""
+Rev "C"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -79,10 +79,6 @@ F 3 "" H 11250 10325 50  0001 C CNN
 	1    11250 10325
 	1    0    0    -1  
 $EndComp
-Text Notes 12175 10925 0    60   ~ 0
-BE6502 Clock
-Text Notes 15400 11075 0    60   ~ 0
-B
 Text GLabel 3925 2725 2    60   Input ~ 0
 CLOCK_OUT
 Text Notes 11850 10250 0    60   ~ 0
